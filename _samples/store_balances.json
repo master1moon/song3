@@ -1,0 +1,135 @@
+{
+  "items": [
+    {
+      "storeId": "store_1753586199593",
+      "storeName": "store_1753586199593",
+      "totalSales": 108000.0,
+      "totalPayments": 78000.0,
+      "balance": 30000.0,
+      "status": "credit"
+    },
+    {
+      "storeId": "store_1753586210152",
+      "storeName": "محمد قاسم",
+      "totalSales": 81000.0,
+      "totalPayments": 25000.0,
+      "balance": 56000.0,
+      "status": "credit"
+    },
+    {
+      "storeId": "store_1753586220564",
+      "storeName": "منير الشرعبي",
+      "totalSales": 402000.0,
+      "totalPayments": 267000.0,
+      "balance": 135000.0,
+      "status": "credit"
+    },
+    {
+      "storeId": "store_1753586235724",
+      "storeName": "محمد شمسي",
+      "totalSales": 135000.0,
+      "totalPayments": 93000.0,
+      "balance": 42000.0,
+      "status": "credit"
+    },
+    {
+      "storeId": "store_1753586249977",
+      "storeName": "الحجه العربية",
+      "totalSales": 56000.0,
+      "totalPayments": 42500.0,
+      "balance": 13500.0,
+      "status": "credit"
+    },
+    {
+      "storeId": "store_1753586260622",
+      "storeName": "عبدالجبار الدباشي",
+      "totalSales": 279000.0,
+      "totalPayments": 219000.0,
+      "balance": 60000.0,
+      "status": "credit"
+    },
+    {
+      "storeId": "store_1753586271939",
+      "storeName": "عبدالله الشرعبي",
+      "totalSales": 61000.0,
+      "totalPayments": 25000.0,
+      "balance": 36000.0,
+      "status": "credit"
+    },
+    {
+      "storeId": "store_1753983581309",
+      "storeName": "مهند",
+      "totalSales": 6000.0,
+      "totalPayments": 0.0,
+      "balance": 6000.0,
+      "status": "credit"
+    },
+    {
+      "storeId": "store_1754586303482",
+      "storeName": "خالي عبدالكريم",
+      "totalSales": 153000.0,
+      "totalPayments": 165000.0,
+      "balance": -12000.0,
+      "status": "debit"
+    },
+    {
+      "storeId": "store_1754586350290",
+      "storeName": "محمد مهيوب ابو علوش",
+      "totalSales": 316500.0,
+      "totalPayments": 296500.0,
+      "balance": 20000.0,
+      "status": "credit"
+    },
+    {
+      "storeId": "store_1756491464020",
+      "storeName": "عائدة ",
+      "totalSales": 40500.0,
+      "totalPayments": 40500.0,
+      "balance": 0.0,
+      "status": "credit"
+    },
+    {
+      "storeId": "store_1756566655741",
+      "storeName": "العامري",
+      "totalSales": 144000.0,
+      "totalPayments": 27000.0,
+      "balance": 117000.0,
+      "status": "credit"
+    }
+  ],
+  "inventoryValuesPerPackage": [
+    {
+      "packageId": "pkg_1753586105318",
+      "packageName": "100",
+      "quantity": 1470.0,
+      "retailPrice": 100.0,
+      "wholesalePrice": 90.0,
+      "distributorPrice": 80.0,
+      "retailValue": 147000.0,
+      "wholesaleValue": 132300.0,
+      "distributorValue": 117600.0
+    },
+    {
+      "packageId": "pkg_1753586124436",
+      "packageName": "200",
+      "quantity": 1145.0,
+      "retailPrice": 200.0,
+      "wholesalePrice": 180.0,
+      "distributorPrice": 160.0,
+      "retailValue": 229000.0,
+      "wholesaleValue": 206100.0,
+      "distributorValue": 183200.0
+    },
+    {
+      "packageId": "pkg_1753586144449",
+      "packageName": "500",
+      "quantity": 668.0,
+      "retailPrice": 500.0,
+      "wholesalePrice": 450.0,
+      "distributorPrice": 400.0,
+      "retailValue": 334000.0,
+      "wholesaleValue": 300600.0,
+      "distributorValue": 267200.0
+    }
+  ]
+}

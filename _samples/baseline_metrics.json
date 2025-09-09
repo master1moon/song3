@@ -1,0 +1,22 @@
+{
+  "version": "2.0",
+  "records": {
+    "stores": 11,
+    "packages": 3,
+    "inventory": 3,
+    "sales": 56,
+    "payments": 51,
+    "expenses": 14
+  },
+  "totals": {
+    "sales": 1782000.0,
+    "payments": 1278500.0,
+    "expenses": 719000.0,
+    "netProfit_allTime": 559500.0
+  },
+  "inventoryValues": {
+    "retailValueTotal": 710000.0,
+    "wholesaleValueTotal": 639000.0,
+    "distributorValueTotal": 568000.0
+  }
+}

@@ -236,6 +236,14 @@
             customCSS: '',                       // CSS مخصص
             customJS: '',                        // JavaScript مخصص
             experimentalFeatures: false,         // الميزات التجريبية
+            // أعلام التشغيل (Feature Flags) - افتراضياً متوقفة، لا تغيّر سلوك التطبيق إلا عند التفعيل الصريح
+            flags: {
+                safeJsonParse: false,            // تغليف JSON.parse لمنع الأعطال عند تلف البيانات
+                safeDomRendering: false,         // استخدام طرق عرض DOM آمنة بدلاً من innerHTML حيثما أمكن
+                idbChunking: false,              // تفريغ/مزامنة IndexedDB على دفعات لتجنب تجمّد الواجهة
+                enhancedGithubErrors: false,     // رسائل أخطاء تفصيلية لمزامنة GitHub
+                strictDateNormalization: false   // تطبيع تاريخ صارم قبل الفلترة/الحساب
+            },
             telemetry: false,                    // إرسال بيانات الاستخدام
             errorReporting: true,                // تقارير الأخطاء
             maintenanceMode: false,              // وضع الصيانة
@@ -1250,6 +1258,44 @@
         hasUnsavedChanges: hasUnsavedChanges,
         currentSettings: () => currentSettings,
         defaultSettings: () => defaultSettings
+    };
+
+    // أعلام التشغيل - طبقة مساعدة لتفعيل التحسينات بشكل آمن وتدريجي
+    // ملاحظة: هذه الطبقة لا تغيّر أي سلوك إلا إذا كانت experimentalFeatures=true والعلم المطلوب=true
+    window.FeatureFlags = {
+        isEnabled(flagName) {
+            try {
+                const adv = (currentSettings && currentSettings.advanced) ? currentSettings.advanced : {};
+                if (adv.experimentalFeatures !== true) return false;
+                const flags = adv.flags || {};
+                return flags[flagName] === true;
+            } catch(_) { return false; }
+        },
+        enable(flagName) {
+            try {
+                if (!flagName) return false;
+                updateSetting('advanced.experimentalFeatures', true);
+                const path = `advanced.flags.${flagName}`;
+                updateSetting(path, true);
+                saveSettings();
+                return true;
+            } catch(_) { return false; }
+        },
+        disable(flagName) {
+            try {
+                if (!flagName) return false;
+                const path = `advanced.flags.${flagName}`;
+                updateSetting(path, false);
+                saveSettings();
+                return true;
+            } catch(_) { return false; }
+        },
+        all() {
+            try {
+                const adv = (currentSettings && currentSettings.advanced) ? currentSettings.advanced : {};
+                return Object.assign({ experimentalFeatures: !!adv.experimentalFeatures }, adv.flags || {});
+            } catch(_) { return { experimentalFeatures: false }; }
+        }
     };
 
     // تحميل الإعدادات عند بدء التطبيق

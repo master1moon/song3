@@ -496,4 +496,14 @@ if (typeof window !== 'undefined') {
   window.switchSection = switchSection;
   window.getTodayDate = getTodayDate;
   window.refreshCurrentView = refreshCurrentView;
+  // واجهة برمجية صغيرة للأعلام ضمن النطاق العام (للاستخدام السريع في الكونسول)
+  if (typeof window.FeatureFlags === 'undefined' && typeof window.AppSettings !== 'undefined') {
+    // سيتم حقن FeatureFlags من settings.js بعد التحميل؛ هذا احتياطي فقط
+    window.FeatureFlags = {
+      isEnabled: () => false,
+      enable: () => false,
+      disable: () => false,
+      all: () => ({ experimentalFeatures: false })
+    };
+  }
 }

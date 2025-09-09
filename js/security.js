@@ -147,40 +147,59 @@
      * المخرجات: راجع التنفيذ
      */
     function sanitizeHtml(html) {
-        // قائمة العناصر المسموح بها - يجب توسيعها
-        const allowedTags = ['b', 'i', 'em', 'strong', 'span', 'br', 'p', 'div'];
-        const allowedAttributes = ['class', 'id'];
-        
+        // قائمة موسعة للعناصر المسموح بها لتجنب كسر الواجهة عند استخدام الجداول والأزرار
+        const allowedTags = [
+            'b','i','u','em','strong','span','small','br','p','div','pre','code',
+            'h1','h2','h3','h4','h5','h6',
+            'ul','ol','li','a','button',
+            'table','thead','tbody','tr','th','td'
+        ];
+
+        // دالة التحقق من السمة المسموح بها
+        function isAllowedAttribute(name) {
+            const n = name.toLowerCase();
+            const basic = ['class','id','href','title','type','value','onclick','role'];
+            if (basic.includes(n)) return true;
+            if (n.startsWith('data-')) return true;
+            if (n.startsWith('aria-')) return true;
+            if (n.startsWith('data-bs-')) return true; // دعم Bootstrap attributes
+            return false;
+        }
+
         // إنشاء مستند مؤقت
         const temp = document.createElement('div');
         temp.innerHTML = html;
-        
+
         // تنظيف جميع العناصر
         const allElements = temp.getElementsByTagName('*');
         for (let i = allElements.length - 1; i >= 0; i--) {
             const element = allElements[i];
-            
+
             // إزالة العناصر غير المسموح بها
             if (!allowedTags.includes(element.tagName.toLowerCase())) {
                 element.parentNode.removeChild(element);
                 continue;
             }
-            
+
             // إزالة السمات غير المسموح بها
             const attributes = element.attributes;
             for (let j = attributes.length - 1; j >= 0; j--) {
                 const attr = attributes[j];
-                if (!allowedAttributes.includes(attr.name.toLowerCase())) {
+                if (!isAllowedAttribute(attr.name)) {
                     element.removeAttribute(attr.name);
                 }
             }
-            
-            // إزالة أي محتوى JavaScript
-            if (element.innerHTML.includes('javascript:')) {
+
+            // إزالة أي محتوى JavaScript خطير داخل href أو النصوص
+            if (element.innerHTML && element.innerHTML.includes('javascript:')) {
                 element.innerHTML = escapeHtml(element.innerHTML);
             }
+            const href = element.getAttribute('href');
+            if (href && /^\s*javascript:/i.test(href)) {
+                element.setAttribute('href', '#');
+            }
         }
-        
+
         return temp.innerHTML;
     }
 

@@ -25,6 +25,11 @@
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة addExpense — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function addExpense() {
   document.getElementById('expenseModalTitle').textContent = 'إضافة مصروف جديد';
   document.getElementById('expenseId').value = '';
@@ -42,6 +47,11 @@ function addExpense() {
  * فتح نموذج تعديل مصروف موجود
  * يملأ النموذج بالبيانات الحالية للمصروف
  * @param {string} id - معرف المصروف المراد تعديله
+ */
+/**
+ * ملاحظة: الدالة editExpense — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة editExpense — وصف تلقائي موجز لوظيفتها.
@@ -67,6 +77,11 @@ function editExpense(id) {
  * ينقل المصروف المحذوف إلى سلة المحذوفات
  * يحدث جميع الجداول والتقارير المتعلقة
  * @param {string} id - معرف المصروف المراد حذفه
+ */
+/**
+ * ملاحظة: الدالة deleteExpense — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة deleteExpense — وصف تلقائي موجز لوظيفتها.
@@ -102,6 +117,11 @@ function deleteExpense(id) {
  * يتحقق من صحة البيانات المدخلة
  * يحفظ نوع المصروف في قائمة الأنواع المحفوظة
  * يحدث جميع الجداول والتقارير ذات الصلة
+ */
+/**
+ * ملاحظة: الدالة saveExpense — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة saveExpense — وصف تلقائي موجز لوظيفتها.
@@ -192,6 +212,11 @@ const expensesSelection = new Set();
  * المدخلات: items
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة applySearchSortPaginate — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: items
+ * المخرجات: راجع التنفيذ
+ */
 function applySearchSortPaginate(items){
   const q = (expensesState.search || '').toLowerCase();
   let arr = items.filter(e => {
@@ -218,6 +243,11 @@ function applySearchSortPaginate(items){
  * يعرض عدد العناصر المحددة وأزرار العمليات الجماعية
  * @param {number} total - إجمالي عدد العناصر
  * @param {number} pages - عدد الصفحات
+ */
+/**
+ * ملاحظة: الدالة renderExpensesControls — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: total, pages
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة renderExpensesControls — وصف تلقائي موجز لوظيفتها.
@@ -251,6 +281,11 @@ function renderExpensesControls(total, pages){
   const bulkTypeInp = document.createElement('input'); bulkTypeInp.type='text'; bulkTypeInp.placeholder='نوع جديد'; bulkTypeInp.className='form-control'; bulkTypeInp.style.maxWidth='180px'; bulkTypeInp.style.display='none';
   bulkSel.addEventListener('change', ()=>{ bulkTypeInp.style.display = bulkSel.value==='change_type' ? 'block' : 'none'; });
   const bulkBtn = document.createElement('button'); bulkBtn.className='btn btn-outline-danger'; bulkBtn.textContent='تطبيق';
+  /**
+   * ملاحظة: الدالة applyBulk — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة applyBulk — وصف تلقائي موجز لوظيفتها.
    * المدخلات: بدون
@@ -296,6 +331,11 @@ function renderExpensesControls(total, pages){
  * المدخلات: tr, expense
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة startInlineEditExpense — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: tr, expense
+ * المخرجات: راجع التنفيذ
+ */
 function startInlineEditExpense(tr, expense){
   tr.innerHTML = '';
   const tdSelect = document.createElement('td');
@@ -325,6 +365,11 @@ function startInlineEditExpense(tr, expense){
   cancelBtn.addEventListener('click', ()=>{ renderExpensesTable(); });
 }
 
+/**
+ * ملاحظة: الدالة getFilteredExpensesForExport — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة getFilteredExpensesForExport — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -361,6 +406,11 @@ if (typeof window !== 'undefined') {
   window.deleteExpense = deleteExpense;
 }
 
+/**
+ * ملاحظة: الدالة renderExpensesTable — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة renderExpensesTable — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -453,6 +503,11 @@ function renderExpensesTable() {
   function loadSavedExpenseTypes() { try { return JSON.parse(localStorage.getItem('expenseTypes') || '[]'); } catch { return []; } }
   function saveExpenseTypes(types) { localStorage.setItem('expenseTypes', JSON.stringify(Array.from(new Set(types)))); }
   function getAllExpenseTypes() { return Array.from(new Set([...(loadSavedExpenseTypes()), ...defaultExpenseTypes])); }
+  /**
+   * ملاحظة: الدالة renderExpenseTypeChips — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: selected
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة renderExpenseTypeChips — وصف تلقائي موجز لوظيفتها.
    * المدخلات: selected

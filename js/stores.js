@@ -36,6 +36,11 @@ const storesState = {
  * الأداء: تحسن بنسبة 80% عند استخدام الكاش
  * الكاش يتم تحديثه تلقائياً عند تغيير البيانات
  */
+/**
+ * ملاحظة: الدالة renderStoresList — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 async function renderStoresList() {
   const list = document.getElementById('storesList'); 
   if (!list) return;
@@ -146,6 +151,11 @@ async function renderStoresList() {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة initStoresFilters — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function initStoresFilters() {
   const searchInput = document.getElementById('storeSearchInput');
   const priceFilter = document.getElementById('storePriceFilter');
@@ -201,6 +211,11 @@ if (typeof window !== 'undefined') {
  * يتطلب HTTPS للعمل بشكل صحيح
  * قد لا يعمل على جميع المتصفحات (خاصة Safari وFirefox)
  * @returns {Promise<void>} يملأ حقل رقم الهاتف إذا نجح
+ */
+/**
+ * ملاحظة: الدالة selectContactPhone — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 async function selectContactPhone() {
   // التحقق من دعم المتصفح لـ Contact Picker API
@@ -297,6 +312,11 @@ if (typeof window !== 'undefined') {
  * يحسب إجمالي المبيعات والمدفوعات والرصيد المتبقي
  * يضيف أزرار التحكم (إضافة بيع، تسديد دفعة، تعديل، حذف)
  * @param {string} storeId - معرف المحل
+ */
+/**
+ * ملاحظة: الدالة showStoreDetails — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: storeId
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة showStoreDetails — وصف تلقائي موجز لوظيفتها.
@@ -643,6 +663,11 @@ function showStoreDetails(storeId) {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة addStore — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function addStore() {
   document.getElementById('storeModalTitle').textContent = 'إضافة محل جديد';
   document.getElementById('storeId').value = '';
@@ -657,6 +682,11 @@ function addStore() {
  * فتح نموذج تعديل محل موجود
  * يملأ النموذج بالبيانات الحالية للمحل
  * @param {string} id - معرف المحل المراد تعديله
+ */
+/**
+ * ملاحظة: الدالة editStore — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة editStore — وصف تلقائي موجز لوظيفتها.
@@ -681,6 +711,11 @@ function editStore(id) {
  * ينقل المحل وجميع بياناته المرتبطة إلى سلة المحذوفات
  * يحدث جميع الجداول والتقارير المتعلقة
  * @param {string} id - معرف المحل المراد حذفه
+ */
+/**
+ * ملاحظة: الدالة deleteStore — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة deleteStore — وصف تلقائي موجز لوظيفتها.
@@ -764,6 +799,11 @@ function deleteStore(id) {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة saveStore — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function saveStore() {
   const id = document.getElementById('storeId').value;
   const name = document.getElementById('storeName').value;
@@ -840,6 +880,11 @@ function saveStore() {
   let nextAction = null; // 'sale' | 'payment'
   const selectStoreModalEl = document.getElementById('selectStoreModal');
   const selectStoreModal = selectStoreModalEl ? new bootstrap.Modal(selectStoreModalEl) : null;
+  /**
+   * ملاحظة: الدالة openSelectStore — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: actionType
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة openSelectStore — وصف تلقائي موجز لوظيفتها.
    * المدخلات: actionType

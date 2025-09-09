@@ -22,6 +22,11 @@
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة renderTypes — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function renderTypes(){
     const tbody = document.getElementById('expenseTypesTable'); if (!tbody) return;
     const types = loadSavedExpenseTypes();

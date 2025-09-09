@@ -16,6 +16,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة initSettingsUI — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function initSettingsUI() {
         // التحقق من وجود AppSettings
         if (typeof window.AppSettings === 'undefined') {
@@ -44,6 +49,11 @@
 
     /**
      * تحميل الإعدادات الحالية في عناصر الواجهة
+     */
+    /**
+     * ملاحظة: الدالة loadSettingsToUI — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة loadSettingsToUI — وصف تلقائي موجز لوظيفتها.
@@ -121,6 +131,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة setupEventListeners — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function setupEventListeners() {
         // مستمع لتبديل التبويبات
         const tabs = document.querySelectorAll('#settingsTabs .list-group-item');
@@ -146,6 +161,11 @@
 
     /**
      * تبديل التبويب النشط
+     */
+    /**
+     * ملاحظة: الدالة switchSettingsTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: tabName
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة switchSettingsTab — وصف تلقائي موجز لوظيفتها.
@@ -178,6 +198,11 @@
 
     /**
      * إنشاء محتوى التبويبات الديناميكي
+     */
+    /**
+     * ملاحظة: الدالة createSettingsTabs — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createSettingsTabs — وصف تلقائي موجز لوظيفتها.
@@ -222,6 +247,11 @@
 
     /**
      * إنشاء تبويب العرض والمظهر
+     */
+    /**
+     * ملاحظة: الدالة createDisplayTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: display
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createDisplayTab — وصف تلقائي موجز لوظيفتها.
@@ -348,6 +378,11 @@
      * المدخلات: financial
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة createFinancialTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: financial
+     * المخرجات: راجع التنفيذ
+     */
     function createFinancialTab(financial) {
         return `
             <div class="settings-tab" id="financial-settings" style="display:none;">
@@ -431,6 +466,11 @@
 
     /**
      * إنشاء تبويب التنبيهات
+     */
+    /**
+     * ملاحظة: الدالة createNotificationsTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: notifications
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createNotificationsTab — وصف تلقائي موجز لوظيفتها.
@@ -527,6 +567,11 @@
 
     /**
      * إنشاء تبويب النسخ الاحتياطي
+     */
+    /**
+     * ملاحظة: الدالة createBackupTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: backup
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createBackupTab — وصف تلقائي موجز لوظيفتها.
@@ -675,6 +720,11 @@
      * المدخلات: security
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة createSecurityTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: security
+     * المخرجات: راجع التنفيذ
+     */
     function createSecurityTab(security) {
         return `
             <div class="settings-tab" id="security-settings" style="display:none;">
@@ -767,6 +817,11 @@
 
     /**
      * إنشاء تبويب التقارير والطباعة
+     */
+    /**
+     * ملاحظة: الدالة createReportsTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: reports
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createReportsTab — وصف تلقائي موجز لوظيفتها.
@@ -1021,6 +1076,11 @@
      * المدخلات: performance
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة createPerformanceTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: performance
+     * المخرجات: راجع التنفيذ
+     */
     function createPerformanceTab(performance) {
         return `
             <div class="settings-tab" id="performance-settings" style="display:none;">
@@ -1117,6 +1177,11 @@
      * المدخلات: id, value
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة setElementValue — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: id, value
+     * المخرجات: راجع التنفيذ
+     */
     function setElementValue(id, value) {
         const element = document.getElementById(id);
         if (element) {
@@ -1124,6 +1189,11 @@
         }
     }
 
+    /**
+     * ملاحظة: الدالة setElementChecked — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: id, checked
+     * المخرجات: راجع التنفيذ
+     */
     /**
      * ملاحظة: الدالة setElementChecked — وصف تلقائي موجز لوظيفتها.
      * المدخلات: id, checked
@@ -1196,6 +1266,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة exportSettings — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function exportSettings() {
         const jsonString = AppSettings.export();
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -1221,6 +1296,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة importSettings — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function importSettings() {
         const fileInput = document.getElementById('importSettingsFile');
         if (!fileInput || !fileInput.files.length) {
@@ -1233,6 +1313,11 @@
         const file = fileInput.files[0];
         const reader = new FileReader();
         
+        /**
+         * ملاحظة: الدالة reader.onload — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: e
+         * المخرجات: راجع التنفيذ
+         */
         reader.onload = function(e) {
             try {
                 const success = AppSettings.import(e.target.result);
@@ -1254,6 +1339,11 @@
     /**
      * معالجة رفع الشعار
      */
+    /**
+     * ملاحظة: الدالة window.handleLogoUpload — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: input
+     * المخرجات: راجع التنفيذ
+     */
     window.handleLogoUpload = function(input) {
         const file = input.files[0];
         if (!file) return;
@@ -1271,8 +1361,18 @@
         }
         
         const reader = new FileReader();
+        /**
+         * ملاحظة: الدالة reader.onload — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: e
+         * المخرجات: راجع التنفيذ
+         */
         reader.onload = function(e) {
             const img = new Image();
+            /**
+             * ملاحظة: الدالة img.onload — وصف تلقائي موجز لوظيفتها.
+             * المدخلات: بدون
+             * المخرجات: راجع التنفيذ
+             */
             img.onload = function() {
                 // تحديد الحجم المناسب (200x200 كحد أقصى)
                 const maxSize = 200;
@@ -1325,6 +1425,11 @@
     /**
      * حذف الشعار
      */
+    /**
+     * ملاحظة: الدالة window.removeLogo — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     window.removeLogo = function() {
         AppSettings.update('reports.companyLogo', '');
         document.getElementById('logoPreview').innerHTML = '<i class="fas fa-image text-muted"></i>';
@@ -1341,6 +1446,11 @@
     /**
      * تحديث الهوامش
      */
+    /**
+     * ملاحظة: الدالة window.updateMargin — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: side, value
+     * المخرجات: راجع التنفيذ
+     */
     window.updateMargin = function(side, value) {
         const margins = AppSettings.getAll().reports.margins;
         margins[side] = parseInt(value) || 0;
@@ -1349,6 +1459,11 @@
 
     /**
      * معاينة إعدادات التقرير
+     */
+    /**
+     * ملاحظة: الدالة window.previewReportSettings — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     window.previewReportSettings = function() {
         const settings = AppSettings.getAll().reports;
@@ -1513,6 +1628,11 @@
 
     /**
      * اختبار إعدادات الطباعة
+     */
+    /**
+     * ملاحظة: الدالة window.testPrintSettings — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     window.testPrintSettings = function() {
         const w = previewReportSettings();

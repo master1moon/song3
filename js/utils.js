@@ -24,6 +24,11 @@
  * المدخلات: input
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة toEnglishDigits — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: input
+ * المخرجات: راجع التنفيذ
+ */
 function toEnglishDigits(input) {
   if (input === null || input === undefined) return '';
   return String(input)
@@ -36,6 +41,11 @@ function toEnglishDigits(input) {
  * يحول الأرقام إلى إنجليزية أولاً ثم يضيف الفواصل
  * @param {*} num - الرقم المراد تنسيقه
  * @returns {string} الرقم منسق بفواصل إنجليزية
+ */
+/**
+ * ملاحظة: الدالة formatNumber — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: num
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة formatNumber — وصف تلقائي موجز لوظيفتها.
@@ -59,6 +69,11 @@ function formatNumber(num) {
  * المدخلات: str
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة parseFormattedNumber — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: str
+ * المخرجات: راجع التنفيذ
+ */
 function parseFormattedNumber(str) {
   if (!str) return 0;
   const eng = toEnglishDigits(str);
@@ -71,6 +86,11 @@ function parseFormattedNumber(str) {
  * يدعم عدة صيغ للتاريخ المدخل
  * @param {string} dateStr - نص التاريخ
  * @returns {string} التاريخ بصيغة YYYY-MM-DD
+ */
+/**
+ * ملاحظة: الدالة formatDateEn — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: dateStr
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة formatDateEn — وصف تلقائي موجز لوظيفتها.
@@ -145,6 +165,11 @@ function formatDateEn(dateStr) {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة setupFormattedInputs — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function setupFormattedInputs() {
   document.querySelectorAll('.formatted-input').forEach(input => {
     input.addEventListener('focus', function () {
@@ -204,6 +229,11 @@ function setupFormattedInputs() {
  * المدخلات: message, type, options = {}
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة showNotification — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: message, type, options = {}
+ * المخرجات: راجع التنفيذ
+ */
 function showNotification(message, type, options = {}) {
   const notification = document.getElementById('notification');
   const notificationText = document.getElementById('notificationText');
@@ -243,6 +273,11 @@ function showNotification(message, type, options = {}) {
  * يستدعي دوال تحديث خاصة لبعض الأقسام
  * @param {string} targetSection - معرف القسم المراد عرضه
  * @param {string} labelText - عنوان الصفحة (اختياري)
+ */
+/**
+ * ملاحظة: الدالة switchSection — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: targetSection, labelText
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة switchSection — وصف تلقائي موجز لوظيفتها.
@@ -305,6 +340,11 @@ document.addEventListener('DOMContentLoaded', function () {
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة openDrawer — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function openDrawer() {
     const drawer = document.getElementById('mobileDrawer');
     const backdrop = document.getElementById('drawerBackdrop');
@@ -312,6 +352,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (backdrop) backdrop.classList.add('show');
     document.body.classList.add('drawer-open');
   }
+  /**
+   * ملاحظة: الدالة closeDrawer — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة closeDrawer — وصف تلقائي موجز لوظيفتها.
    * المدخلات: بدون
@@ -365,6 +410,11 @@ function setTextSafe(el, text){ if (el) el.textContent = text; }
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة getTodayDate — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function getTodayDate() {
   const today = new Date();
   const year = today.getFullYear();
@@ -378,6 +428,11 @@ function getTodayDate() {
  * يحدث القوائم والجداول والتقارير بناءً على القسم النشط
  * يستخدم بعد أي عملية تعديل للبيانات لضمان ظهور التغييرات مباشرة
  * آمن للاستخدام - يتحقق من وجود الدوال قبل استدعائها
+ */
+/**
+ * ملاحظة: الدالة refreshCurrentView — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة refreshCurrentView — وصف تلقائي موجز لوظيفتها.

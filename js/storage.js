@@ -37,10 +37,20 @@
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة openDB — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function openDB(){
     if (dbPromise) return dbPromise;
     dbPromise = new Promise((resolve, reject) => {
       const req = indexedDB.open(DB_NAME, DB_VERSION);
+      /**
+       * ملاحظة: الدالة req.onupgradeneeded — وصف تلقائي موجز لوظيفتها.
+       * المدخلات: e
+       * المخرجات: راجع التنفيذ
+       */
       req.onupgradeneeded = function(e){
         const db = req.result;
         if (!db.objectStoreNames.contains('app')) db.createObjectStore('app');
@@ -72,6 +82,11 @@
    * @param {string} storeKey - مفتاح البيانات
    * @returns {Promise<any>} البيانات المخزنة
    */
+  /**
+   * ملاحظة: الدالة idbGet — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: storeKey
+   * المخرجات: راجع التنفيذ
+   */
   async function idbGet(storeKey){
     try{
       const db = await openDB();
@@ -90,6 +105,11 @@
    * @param {string} key - مفتاح التخزين
    * @param {any} value - البيانات للحفظ
    * @returns {Promise<boolean>} نجاح العملية
+   */
+  /**
+   * ملاحظة: الدالة idbSet — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: key, value
+   * المخرجات: راجع التنفيذ
    */
   async function idbSet(key, value){
     try{
@@ -114,6 +134,11 @@
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة getDataRef — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function getDataRef(){
     try {
       if (typeof window !== 'undefined' && typeof window.data !== 'undefined') return window.data;
@@ -126,6 +151,11 @@
    * مزامنة المصروفات مع IndexedDB
    * ينظف ويعيد ملء مخزن المصروفات
    * يستخدم لتسريع عمليات البحث والفلترة
+   */
+  /**
+   * ملاحظة: الدالة syncExpensesToIndexed — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
    */
   async function syncExpensesToIndexed(){
     try {
@@ -151,6 +181,11 @@
    * يطبع التواريخ بصيغة موحدة
    * يرسل حدث app-data-loaded عند الانتهاء
    * @returns {Promise<void>}
+   */
+  /**
+   * ملاحظة: الدالة window.loadData — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
    */
   window.loadData = async function(){
     try{
@@ -184,6 +219,11 @@
    * يحفظ في localStorage وIndexedDB
    * يزامن المصروفات مع مخزن منفصل
    * @returns {void}
+   */
+  /**
+   * ملاحظة: الدالة window.saveData — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
    */
   window.saveData = function(){
     const result = originalSaveData();

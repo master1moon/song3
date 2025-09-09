@@ -25,10 +25,20 @@
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة openDB — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function openDB(){
     if (dbPromise) return dbPromise;
     dbPromise = new Promise((resolve, reject) => {
       const req = indexedDB.open(DB_NAME, DB_VERSION);
+      /**
+       * ملاحظة: الدالة req.onupgradeneeded — وصف تلقائي موجز لوظيفتها.
+       * المدخلات: بدون
+       * المخرجات: راجع التنفيذ
+       */
       req.onupgradeneeded = function(){
         const db = req.result;
         if (!db.objectStoreNames.contains(STORE_BACKUP)) db.createObjectStore(STORE_BACKUP);
@@ -40,19 +50,44 @@
     return dbPromise;
   }
 
+  /**
+   * ملاحظة: الدالة idbGet — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: store, key
+   * المخرجات: راجع التنفيذ
+   */
   async function idbGet(store, key){
     try { const db = await openDB(); return await new Promise((res, rej)=>{ const tx=db.transaction(store,'readonly'); const os=tx.objectStore(store); const r=os.get(key); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); } catch { return undefined; }
   }
+  /**
+   * ملاحظة: الدالة idbPut — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: store, value
+   * المخرجات: راجع التنفيذ
+   */
   async function idbPut(store, value){
     try { const db = await openDB(); return await new Promise((res, rej)=>{ const tx=db.transaction(store,'readwrite'); const os=tx.objectStore(store); const r=os.put(value); r.onsuccess=()=>res(true); r.onerror=()=>rej(r.error); }); } catch { return false; }
   }
+  /**
+   * ملاحظة: الدالة idbDelete — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: store, key
+   * المخرجات: راجع التنفيذ
+   */
   async function idbDelete(store, key){
     try { const db = await openDB(); return await new Promise((res, rej)=>{ const tx=db.transaction(store,'readwrite'); const os=tx.objectStore(store); const r=os.delete(key); r.onsuccess=()=>res(true); r.onerror=()=>rej(r.error); }); } catch { return false; }
   }
+  /**
+   * ملاحظة: الدالة idbAll — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: store
+   * المخرجات: راجع التنفيذ
+   */
   async function idbAll(store){
     try { const db = await openDB(); return await new Promise((res, rej)=>{ const tx=db.transaction(store,'readonly'); const os=tx.objectStore(store); const r=os.getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>rej(r.error); }); } catch { return []; }
   }
 
+  /**
+   * ملاحظة: الدالة checksum — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: obj
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة checksum — وصف تلقائي موجز لوظيفتها.
    * المدخلات: obj
@@ -68,11 +103,21 @@
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة loadSettings — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function loadSettings(){
     try { return Object.assign({}, defaultSettings, JSON.parse(localStorage.getItem('backupSettings')||'{}')); } catch { return Object.assign({}, defaultSettings); }
   }
   function saveSettings(s){ localStorage.setItem('backupSettings', JSON.stringify(s)); }
 
+  /**
+   * ملاحظة: الدالة listSnapshots — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   async function listSnapshots(){
     const arr = await idbAll(STORE_SNAPSHOTS);
     return arr.sort((a,b)=> (b.createdAt||'').localeCompare(a.createdAt||''));
@@ -81,6 +126,11 @@
   function getCurrentData(){ try { return (typeof data !== 'undefined') ? data : window.data; } catch { return window.data; } }
   function setCurrentData(obj){ try { if (typeof data !== 'undefined') { data = obj; } else { window.data = obj; } } catch { window.data = obj; } }
 
+  /**
+   * ملاحظة: الدالة createSnapshot — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: reason
+   * المخرجات: راجع التنفيذ
+   */
   async function createSnapshot(reason){
     const cur = getCurrentData();
     if (!cur) return null;
@@ -105,6 +155,11 @@
     return snap;
   }
 
+  /**
+   * ملاحظة: الدالة restoreSnapshot — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: id
+   * المخرجات: راجع التنفيذ
+   */
   async function restoreSnapshot(id){
     const snap = await idbGet(STORE_SNAPSHOTS, id);
     if (!snap) { showNotification('تعذر العثور على النسخة', 'error'); return; }
@@ -130,6 +185,11 @@
    * المدخلات: snap
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة exportSnapshot — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: snap
+   * المخرجات: راجع التنفيذ
+   */
   function exportSnapshot(snap){
     const filename = `backup_${(snap.createdAt||'').replace(/[:T\-]/g,'').slice(0, 15)}.json`;
     const dataStr = JSON.stringify(snap.content, null, 2);
@@ -138,6 +198,11 @@
     const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
   }
 
+  /**
+   * ملاحظة: الدالة enforceRetention — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   async function enforceRetention(){
     const settings = loadSettings();
     const keep = Math.max(1, Number(settings.retention)||10);
@@ -146,6 +211,11 @@
     await Promise.all(toDelete.map(s => idbDelete(STORE_SNAPSHOTS, s.id)));
   }
 
+  /**
+   * ملاحظة: الدالة maybeAutoBackup — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: tag
+   * المخرجات: راجع التنفيذ
+   */
   async function maybeAutoBackup(tag){
     const settings = loadSettings();
     if (!settings.autoOnSave) return;
@@ -157,6 +227,11 @@
     await enforceRetention();
   }
 
+  /**
+   * ملاحظة: الدالة renderUI — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   async function renderUI(){
     const tbody = document.getElementById('snapshotsTable');
     if (!tbody) return;

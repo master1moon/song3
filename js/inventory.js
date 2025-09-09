@@ -25,6 +25,11 @@
  * المدخلات: packageId
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة getTotalInventoryForPackage — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: packageId
+ * المخرجات: راجع التنفيذ
+ */
 function getTotalInventoryForPackage(packageId) {
   return data.inventory
     .filter(item => item.packageId === packageId)
@@ -38,6 +43,11 @@ function getTotalInventoryForPackage(packageId) {
  * @param {string} packageId - معرف الباقة
  * @param {number} quantity - الكمية المطلوب خصمها
  * @returns {boolean} true إذا تم الخصم بنجاح، false إذا لم تكن الكمية متوفرة
+ */
+/**
+ * ملاحظة: الدالة deductFromInventory — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: packageId, quantity
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة deductFromInventory — وصف تلقائي موجز لوظيفتها.
@@ -70,6 +80,11 @@ function deductFromInventory(packageId, quantity) {
  * المدخلات: packageId, quantity
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة addToInventory — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: packageId, quantity
+ * المخرجات: راجع التنفيذ
+ */
 function addToInventory(packageId, quantity) {
   const existing = data.inventory.find(i => i.packageId === packageId);
   if (existing) { existing.quantity = (existing.quantity || 0) + quantity; }
@@ -80,6 +95,11 @@ function addToInventory(packageId, quantity) {
  * التحقق من انخفاض مخزون باقة محددة
  * يعرض تحذيراً إذا كان المخزون أقل من 200 كرت
  * @param {string} packageId - معرف الباقة المراد فحصها
+ */
+/**
+ * ملاحظة: الدالة checkLowStockForPackage — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: packageId
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة checkLowStockForPackage — وصف تلقائي موجز لوظيفتها.
@@ -101,6 +121,11 @@ function checkLowStockForPackage(packageId) {
  * يحسب قيمة المخزون بناءً على أنواع الأسعار المختلفة
  * يستخدم الطريقة الآمنة لعرض البيانات إذا كانت متاحة
  * يضيف أزرار التحكم (تعديل، حذف) لكل عنصر
+ */
+/**
+ * ملاحظة: الدالة renderInventoryTable — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة renderInventoryTable — وصف تلقائي موجز لوظيفتها.
@@ -205,6 +230,11 @@ function renderInventoryTable() {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة addInventory — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function addInventory() {
   const select = document.getElementById('inventoryPackage'); if (!select) return;
   select.innerHTML = '';
@@ -220,6 +250,11 @@ function addInventory() {
  * فتح نموذج تعديل عنصر مخزون موجود
  * يملأ النموذج بالبيانات الحالية للعنصر
  * @param {string} id - معرف عنصر المخزون المراد تعديله
+ */
+/**
+ * ملاحظة: الدالة editInventory — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة editInventory — وصف تلقائي موجز لوظيفتها.
@@ -249,6 +284,11 @@ function editInventory(id) {
  * المدخلات: id
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة deleteInventory — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
+ */
 function deleteInventory(id) {
   if (!confirm('هل أنت متأكد من حذف هذه الكمية؟')) return;
   const inv = data.inventory.find(i => i.id === id);
@@ -263,6 +303,11 @@ function deleteInventory(id) {
  * يتحقق من صحة البيانات المدخلة (الباقة، الكمية)
  * ينشئ معرف فريد للعناصر الجديدة
  * يحدث جدول المخزون ولوحة المعلومات
+ */
+/**
+ * ملاحظة: الدالة saveInventory — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة saveInventory — وصف تلقائي موجز لوظيفتها.

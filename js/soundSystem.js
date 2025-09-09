@@ -22,6 +22,11 @@
         /**
          * تهيئة نظام الصوت
          */
+        /**
+         * ملاحظة: الدالة init — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: بدون
+         * المخرجات: راجع التنفيذ
+         */
         init: function() {
             if (this.isInitialized) return;
             
@@ -44,6 +49,11 @@
         /**
          * تحميل إعدادات الصوت
          */
+        /**
+         * ملاحظة: الدالة loadSettings — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: بدون
+         * المخرجات: راجع التنفيذ
+         */
         loadSettings: function() {
             if (typeof AppSettings !== 'undefined') {
                 const settings = AppSettings.get('notifications');
@@ -57,6 +67,11 @@
         /**
          * تشغيل صوت تنبيه
          * @param {string} type - نوع التنبيه (success, error, warning, info)
+         */
+        /**
+         * ملاحظة: الدالة playNotification — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: type = 'info'
+         * المخرجات: راجع التنفيذ
          */
         playNotification: function(type = 'info') {
             if (!this.isEnabled || !this.audioContext) return;
@@ -105,6 +120,11 @@
          * @param {number} frequency - التردد بالهرتز
          * @param {number} duration - المدة بالثواني
          */
+        /**
+         * ملاحظة: الدالة playTone — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: frequency, duration
+         * المخرجات: راجع التنفيذ
+         */
         playTone: function(frequency, duration) {
             if (!this.audioContext) return;
             
@@ -142,6 +162,11 @@
         /**
          * تشغيل صوت النقر
          */
+        /**
+         * ملاحظة: الدالة playClick — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: بدون
+         * المخرجات: راجع التنفيذ
+         */
         playClick: function() {
             if (!this.isEnabled || !this.audioContext) return;
             
@@ -154,6 +179,11 @@
          * @param {boolean} enabled - تفعيل/تعطيل الصوت
          * @param {number} volume - مستوى الصوت (0-100)
          */
+        /**
+         * ملاحظة: الدالة updateSettings — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: enabled, volume
+         * المخرجات: راجع التنفيذ
+         */
         updateSettings: function(enabled, volume) {
             this.isEnabled = enabled;
             this.volume = Math.max(0, Math.min(100, volume));
@@ -162,6 +192,11 @@
         /**
          * اختبار الصوت
          * @param {string} type - نوع الصوت للاختبار
+         */
+        /**
+         * ملاحظة: الدالة test — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: type = 'info'
+         * المخرجات: راجع التنفيذ
          */
         test: function(type = 'info') {
             const wasEnabled = this.isEnabled;

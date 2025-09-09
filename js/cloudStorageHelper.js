@@ -16,6 +16,11 @@
              * الحل الأول: استخدام Google Forms كوسيط
              * ينشئ رابط لنموذج Google يحفظ البيانات
              */
+            /**
+             * ملاحظة: الدالة createFormLink — وصف تلقائي موجز لوظيفتها.
+             * المدخلات: backupData
+             * المخرجات: راجع التنفيذ
+             */
             createFormLink(backupData) {
                 // تحويل البيانات إلى نص
                 const dataStr = JSON.stringify(backupData, null, 2);
@@ -45,6 +50,11 @@
             /**
              * الحل الثاني: استخدام Google Colab
              * ينشئ كود Python لحفظ في Drive
+             */
+            /**
+             * ملاحظة: الدالة createColabCode — وصف تلقائي موجز لوظيفتها.
+             * المدخلات: backupData
+             * المخرجات: راجع التنفيذ
              */
             createColabCode(backupData) {
                 const dataStr = JSON.stringify(backupData, null, 2);
@@ -97,6 +107,11 @@ print(f"📁 المسار الكامل: {filepath}")
             /**
              * الحل الثالث: رابط mailto مع المرفقات
              * يفتح البريد الإلكتروني مع البيانات
+             */
+            /**
+             * ملاحظة: الدالة createEmailLink — وصف تلقائي موجز لوظيفتها.
+             * المدخلات: backupData, filename
+             * المخرجات: راجع التنفيذ
              */
             createEmailLink(backupData, filename) {
                 const dataStr = JSON.stringify(backupData, null, 2);
@@ -172,6 +187,11 @@ print(f"📁 المسار الكامل: {filepath}")
              * الحل الأول: Dropbox Email-to-Dropbox
              * يستخدم خدمة Send to Dropbox
              */
+            /**
+             * ملاحظة: الدالة createEmailUpload — وصف تلقائي موجز لوظيفتها.
+             * المدخلات: backupData, filename
+             * المخرجات: راجع التنفيذ
+             */
             createEmailUpload(backupData, filename) {
                 return `
                     <div class="alert alert-info">
@@ -189,6 +209,11 @@ print(f"📁 المسار الكامل: {filepath}")
             /**
              * الحل الثاني: استخدام IFTTT
              * ربط تلقائي بين الخدمات
+             */
+            /**
+             * ملاحظة: الدالة createIFTTTRecipe — وصف تلقائي موجز لوظيفتها.
+             * المدخلات: بدون
+             * المخرجات: راجع التنفيذ
              */
             createIFTTTRecipe() {
                 return `
@@ -213,6 +238,11 @@ print(f"📁 المسار الكامل: {filepath}")
             /**
              * إنشاء كود WebDAV
              */
+            /**
+             * ملاحظة: الدالة createWebDAVCode — وصف تلقائي موجز لوظيفتها.
+             * المدخلات: backupData
+             * المخرجات: راجع التنفيذ
+             */
             createWebDAVCode(backupData) {
                 const code = `
 // استخدام WebDAV للرفع إلى أي خدمة سحابية
@@ -222,6 +252,11 @@ const webdavUrl = 'https://your-service.com/remote.php/webdav/';
 const username = 'your-username';
 const password = 'your-password';
 
+/**
+ * ملاحظة: الدالة uploadFile — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: data, filename
+ * المخرجات: راجع التنفيذ
+ */
 const uploadFile = async (data, filename) => {
     const response = await fetch(webdavUrl + filename, {
         method: 'PUT',
@@ -262,6 +297,11 @@ const uploadFile = async (data, filename) => {
             /**
              * استخدام Zapier للمزامنة
              */
+            /**
+             * ملاحظة: الدالة createZapierFlow — وصف تلقائي موجز لوظيفتها.
+             * المدخلات: بدون
+             * المخرجات: راجع التنفيذ
+             */
             createZapierFlow() {
                 return `
                     <div class="alert alert-info">
@@ -283,6 +323,11 @@ const uploadFile = async (data, filename) => {
             /**
              * استخدام رابط مشاركة مؤقت
              */
+            /**
+             * ملاحظة: الدالة createTemporaryLink — وصف تلقائي موجز لوظيفتها.
+             * المدخلات: backupData
+             * المخرجات: راجع التنفيذ
+             */
             createTemporaryLink(backupData) {
                 // استخدام خدمة مثل file.io أو tmpfiles.org
                 return `
@@ -302,6 +347,11 @@ const uploadFile = async (data, filename) => {
 
         /**
          * عرض جميع الحلول المتاحة
+         */
+        /**
+         * ملاحظة: الدالة showAllSolutions — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: backupData, filename
+         * المخرجات: راجع التنفيذ
          */
         showAllSolutions(backupData, filename) {
             const modal = document.createElement('div');
@@ -370,6 +420,11 @@ const uploadFile = async (data, filename) => {
         /**
          * تنظيف HTML
          */
+        /**
+         * ملاحظة: الدالة escapeHtml — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: text
+         * المخرجات: راجع التنفيذ
+         */
         escapeHtml(text) {
             const map = {
                 '&': '&amp;',
@@ -383,6 +438,11 @@ const uploadFile = async (data, filename) => {
 
         /**
          * اختبار Webhook
+         */
+        /**
+         * ملاحظة: الدالة testWebhook — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: بدون
+         * المخرجات: راجع التنفيذ
          */
         async testWebhook() {
             showNotification('جاري اختبار الإرسال...', 'info');

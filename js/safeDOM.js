@@ -34,6 +34,11 @@
      * المدخلات: text
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة e — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: text
+     * المخرجات: راجع التنفيذ
+     */
     function e(text) {
         if (text == null) return '';
         const map = {
@@ -54,6 +59,11 @@
      * @param {Array} data - بيانات الخلايا
      * @param {Array} buttons - تكوينات الأزرار
      * @returns {HTMLTableRowElement} عنصر الصف
+     */
+    /**
+     * ملاحظة: الدالة createTableRow — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: data, buttons = []
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createTableRow — وصف تلقائي موجز لوظيفتها.
@@ -131,6 +141,11 @@
      * المدخلات: title, items
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة createInfoCard — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: title, items
+     * المخرجات: راجع التنفيذ
+     */
     function createInfoCard(title, items) {
         const card = document.createElement('div');
         card.className = 'info-card';
@@ -170,6 +185,11 @@
      * @param {Array} options - قائمة الخيارات
      * @param {string} defaultText - نص الخيار الافتراضي
      * @param {*} selectedValue - القيمة المحددة مسبقاً
+     */
+    /**
+     * ملاحظة: الدالة fillSelect — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: selectElement, options, defaultText = 'اختر...', selectedValue = null
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة fillSelect — وصف تلقائي موجز لوظيفتها.
@@ -217,6 +237,11 @@
      * المدخلات: elementId, content, isHtml = false
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة safeUpdate — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: elementId, content, isHtml = false
+     * المخرجات: راجع التنفيذ
+     */
     function safeUpdate(elementId, content, isHtml = false) {
         const element = document.getElementById(elementId);
         if (!element) return;
@@ -240,6 +265,11 @@
      * @param {*} content - المحتوى
      * @param {string} tag - نوع العنصر HTML
      * @returns {HTMLElement} العنصر المنشأ
+     */
+    /**
+     * ملاحظة: الدالة createDiv — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: className, content, tag = 'div'
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createDiv — وصف تلقائي موجز لوظيفتها.

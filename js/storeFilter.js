@@ -41,6 +41,11 @@ const QUICK_FILTERS = {
  * المدخلات: storeId
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة getActiveStoreFilter — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: storeId
+ * المخرجات: راجع التنفيذ
+ */
 function getActiveStoreFilter(storeId) {
   if (!storeFilters[storeId]) {
     // الفلترة الافتراضية: الدورة المالية الحالية
@@ -68,6 +73,11 @@ function getActiveStoreFilter(storeId) {
  * المدخلات: storeId, filter
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة setActiveStoreFilter — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: storeId, filter
+ * المخرجات: راجع التنفيذ
+ */
 function setActiveStoreFilter(storeId, filter) {
   storeFilters[storeId] = filter;
   // حفظ في localStorage للاستمرارية
@@ -83,6 +93,11 @@ function setActiveStoreFilter(storeId, filter) {
  * الدورة المالية: من آخر رصيد صفر إلى الرصيد الصفر التالي
  * @param {string} storeId - معرف المحل
  * @returns {Array} مصفوفة الدورات المالية
+ */
+/**
+ * ملاحظة: الدالة detectFinancialCycles — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: storeId
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة detectFinancialCycles — وصف تلقائي موجز لوظيفتها.
@@ -197,6 +212,11 @@ function detectFinancialCycles(storeId) {
  * المدخلات: storeId, filter = null
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة applyStoreFilter — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: storeId, filter = null
+ * المخرجات: راجع التنفيذ
+ */
 function applyStoreFilter(storeId, filter = null) {
   filter = filter || getActiveStoreFilter(storeId);
   
@@ -282,6 +302,11 @@ function applyStoreFilter(storeId, filter = null) {
  * المدخلات: items, startDate, endDate
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة filterByDateRange — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: items, startDate, endDate
+ * المخرجات: راجع التنفيذ
+ */
 function filterByDateRange(items, startDate, endDate) {
   return items.filter(item => {
     const itemDate = parseDate(item.date);
@@ -312,6 +337,11 @@ function filterByDateRange(items, startDate, endDate) {
  * الحصول على نطاق التاريخ للفلاتر السريعة
  * @param {string} filterId - معرف الفلتر السريع
  * @returns {Object} تاريخ البداية والنهاية
+ */
+/**
+ * ملاحظة: الدالة getDateRangeForQuickFilter — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: filterId
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة getDateRangeForQuickFilter — وصف تلقائي موجز لوظيفتها.
@@ -359,6 +389,11 @@ function getDateRangeForQuickFilter(filterId) {
  * @param {Array} transactions - العمليات للترتيب
  * @param {number} previousBalance - الرصيد السابق
  * @returns {Array} العمليات مرتبة بذكاء
+ */
+/**
+ * ملاحظة: الدالة applySmartOrdering — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: transactions, previousBalance = 0
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة applySmartOrdering — وصف تلقائي موجز لوظيفتها.
@@ -421,6 +456,11 @@ function applySmartOrdering(transactions, previousBalance = 0) {
  * تحليل التاريخ (نسخة مبسطة بدون moment)
  * @param {string} dateStr - نص التاريخ
  * @returns {Date|null} كائن Date أو null
+ */
+/**
+ * ملاحظة: الدالة parseDate — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: dateStr
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة parseDate — وصف تلقائي موجز لوظيفتها.

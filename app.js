@@ -26,6 +26,11 @@ let githubSettings = { token: '', gistId: '', fileName: 'network-cards.json', au
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة loadGithubSettings — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function loadGithubSettings() {
     try {
         // محاولة تحميل الإعدادات المشفرة
@@ -64,6 +69,11 @@ function loadGithubSettings() {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة saveGithubSettings — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function saveGithubSettings() {
     // حفظ مشفر إذا كان متاحاً
     if (window.DataEncryption && window.DataEncryption.saveEncrypted) {
@@ -92,6 +102,11 @@ function saveGithubSettings() {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة populateGithubModal — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function populateGithubModal() {
     const tokenEl = document.getElementById('githubToken');
     const gistIdEl = document.getElementById('githubGistId');
@@ -109,6 +124,11 @@ function populateGithubModal() {
  * يتطلب وجود التوكن، ويقوم بإنشاء Gist خاص يحتوي على بيانات التطبيق
  * يحفظ معرف Gist الناتج في الإعدادات
  * @returns {Promise<void>}
+ */
+/**
+ * ملاحظة: الدالة githubCreateGist — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 async function githubCreateGist() {
     if (!githubSettings.token) {
@@ -144,6 +164,11 @@ async function githubCreateGist() {
  * يستخدم PATCH لتحديث محتوى الملف في Gist
  * @returns {Promise<void>}
  */
+/**
+ * ملاحظة: الدالة githubUploadData — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 async function githubUploadData() {
     if (!githubSettings.token || !githubSettings.gistId) {
         if (typeof showNotification === 'function') showNotification('يجب إدخال التوكن و Gist ID أولاً', 'error');
@@ -171,6 +196,11 @@ async function githubUploadData() {
  * يتطلب معرف Gist (التوكن اختياري للـ Gist العام)
  * يقوم بتحليل البيانات وتحديث جميع الجداول والتقارير
  * @returns {Promise<void>}
+ */
+/**
+ * ملاحظة: الدالة githubDownloadData — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 async function githubDownloadData() {
     if (!githubSettings.gistId) {

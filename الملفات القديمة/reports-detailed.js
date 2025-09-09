@@ -29,6 +29,11 @@ const reportState = {
   debts: { search: '', sortKey: 'remaining', sortDir: 'desc', page: 1, pageSize: 10 }
 };
 
+/**
+ * ملاحظة: الدالة wirePageSizeControl — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: entity
+ * المخرجات: راجع التنفيذ
+ */
 function wirePageSizeControl(entity){
   const sel = document.getElementById(`${entity}ReportPageSize`);
   if (sel && !sel.dataset._wired) {
@@ -37,6 +42,11 @@ function wirePageSizeControl(entity){
   }
 }
 
+/**
+ * ملاحظة: الدالة applyReportSearchSortPaginate — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: entity, rows
+ * المخرجات: راجع التنفيذ
+ */
 function applyReportSearchSortPaginate(entity, rows) {
   const st = reportState[entity];
   const q = (st.search || '').toLowerCase();
@@ -48,6 +58,11 @@ function applyReportSearchSortPaginate(entity, rows) {
   return { pageItems: arr.slice(start, end), total, pages };
 }
 
+/**
+ * ملاحظة: الدالة wireReportControls — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: entity, total, pages
+ * المخرجات: راجع التنفيذ
+ */
 function wireReportControls(entity, total, pages) {
   const paginationEl = document.getElementById(`${entity}ReportPagination`);
   const paginationTopEl = document.getElementById(`${entity}ReportPaginationTop`);

@@ -43,6 +43,11 @@
      * المدخلات: salt = ''
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة deriveKey — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: salt = ''
+     * المخرجات: راجع التنفيذ
+     */
     function deriveKey(salt = '') {
         const baseKey = ENCRYPTION_KEY + salt;
         let hash = 0;
@@ -61,6 +66,11 @@
      * @param {string} text - النص المراد تشفيره
      * @param {string} key - مفتاح التشفير
      * @returns {string} النص المشفر بصيغة Base64
+     */
+    /**
+     * ملاحظة: الدالة simpleEncrypt — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: text, key
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة simpleEncrypt — وصف تلقائي موجز لوظيفتها.
@@ -93,6 +103,11 @@
      * @param {string} encryptedText - النص المشفر
      * @param {string} key - مفتاح فك التشفير
      * @returns {string} النص الأصلي
+     */
+    /**
+     * ملاحظة: الدالة simpleDecrypt — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: encryptedText, key
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة simpleDecrypt — وصف تلقائي موجز لوظيفتها.
@@ -134,6 +149,11 @@
      * المدخلات: obj, fieldsToEncrypt = []
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة encryptObject — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: obj, fieldsToEncrypt = []
+     * المخرجات: راجع التنفيذ
+     */
     function encryptObject(obj, fieldsToEncrypt = []) {
         if (!obj || typeof obj !== 'object') return obj;
         
@@ -149,6 +169,11 @@
             ...fieldsToEncrypt
         ];
         
+        /**
+         * ملاحظة: الدالة encryptFields — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: item
+         * المخرجات: راجع التنفيذ
+         */
         /**
          * ملاحظة: الدالة encryptFields — وصف تلقائي موجز لوظيفتها.
          * المدخلات: item
@@ -199,12 +224,22 @@
      * المدخلات: obj
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة decryptObject — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: obj
+     * المخرجات: راجع التنفيذ
+     */
     function decryptObject(obj) {
         if (!obj || typeof obj !== 'object') return obj;
         
         const key = deriveKey(new Date().toDateString());
         const decrypted = JSON.parse(JSON.stringify(obj)); // نسخة عميقة
         
+        /**
+         * ملاحظة: الدالة decryptFields — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: item
+         * المخرجات: راجع التنفيذ
+         */
         /**
          * ملاحظة: الدالة decryptFields — وصف تلقائي موجز لوظيفتها.
          * المدخلات: item
@@ -263,6 +298,11 @@
      * المدخلات: key, data
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة saveEncrypted — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: key, data
+     * المخرجات: راجع التنفيذ
+     */
     function saveEncrypted(key, data) {
         try {
             const encrypted = encryptObject(data);
@@ -290,6 +330,11 @@
      * يفك تشفير البيانات ويعيدها
      * @param {string} key - مفتاح التخزين
      * @returns {*} البيانات بعد فك التشفير أو null
+     */
+    /**
+     * ملاحظة: الدالة loadEncrypted — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: key
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة loadEncrypted — وصف تلقائي موجز لوظيفتها.
@@ -328,6 +373,11 @@
      * المدخلات: value
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة encryptValue — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: value
+     * المخرجات: راجع التنفيذ
+     */
     function encryptValue(value) {
         const key = deriveKey(new Date().toDateString());
         return simpleEncrypt(String(value), key);
@@ -338,6 +388,11 @@
      * يحول إلى رقم إذا كانت القيمة رقمية
      * @param {string} encryptedValue - القيمة المشفرة
      * @returns {*} القيمة بعد فك التشفير
+     */
+    /**
+     * ملاحظة: الدالة decryptValue — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: encryptedValue
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة decryptValue — وصف تلقائي موجز لوظيفتها.
@@ -361,6 +416,11 @@
      * التحقق من دعم التشفير في المتصفح
      * يختبر دوال btoa وatob المطلوبة للتشفير
      * @returns {boolean} true إذا كان التشفير مدعوماً
+     */
+    /**
+     * ملاحظة: الدالة isEncryptionSupported — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة isEncryptionSupported — وصف تلقائي موجز لوظيفتها.

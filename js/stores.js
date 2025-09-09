@@ -1068,8 +1068,14 @@ function showCustomDateFilter(storeId) {
 
 // تطبيق التاريخ المخصص
 function applyCustomDateFilter(storeId) {
-  const startDate = document.getElementById(`customStartDate_${storeId}`).value;
-  const endDate = document.getElementById(`customEndDate_${storeId}`).value;
+  const startEl = document.getElementById(`customStartDate_${storeId}`);
+  const endEl = document.getElementById(`customEndDate_${storeId}`);
+  if (!startEl || !endEl) {
+    if (typeof showNotification === 'function') showNotification('يرجى فتح الفلترة المخصصة أولاً', 'warning');
+    return;
+  }
+  const startDate = startEl.value;
+  const endDate = endEl.value;
   
   if (!startDate || !endDate) {
     showNotification('يرجى تحديد تاريخ البداية والنهاية', 'error');

@@ -165,8 +165,21 @@
       await new Promise((res,rej)=>{ const r = s.clear(); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });
       const dref = getDataRef();
       const list = (dref && Array.isArray(dref.expenses)) ? dref.expenses : [];
-      for (const exp of list) {
-        await new Promise((res,rej)=>{ const r = s.put(exp); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });
+      const useChunking = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('idbChunking'));
+      if (useChunking) {
+        const batchSize = 200;
+        for (let i = 0; i < list.length; i += batchSize) {
+          const batch = list.slice(i, i + batchSize);
+          for (const exp of batch) {
+            await new Promise((res,rej)=>{ const r = s.put(exp); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });
+          }
+          // منح المتصفح فرصة لتحديث الواجهة
+          await new Promise(res=> setTimeout(res, 0));
+        }
+      } else {
+        for (const exp of list) {
+          await new Promise((res,rej)=>{ const r = s.put(exp); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });
+        }
       }
       await new Promise((res,rej)=>{ tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); });
     } catch(_){}

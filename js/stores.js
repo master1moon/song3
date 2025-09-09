@@ -102,10 +102,11 @@ async function renderStoresList() {
       break;
   }
   
-  list.innerHTML = '';
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(list, ''); } else { list.innerHTML = ''; }
   
   if (filteredStores.length === 0) {
-    list.innerHTML = '<div class="text-center p-3 text-muted">لا توجد محلات مطابقة للبحث</div>';
+    const emptyHtml = '<div class="text-center p-3 text-muted">لا توجد محلات مطابقة للبحث</div>';
+    if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(list, emptyHtml); } else { list.innerHTML = emptyHtml; }
     return;
   }
   
@@ -336,7 +337,7 @@ function showStoreDetails(storeId) {
     console.error('عنصر storeHeader غير موجود');
     return;
   }
-  headerEl.innerHTML = `
+  const headerHtml = `
     <div class="d-flex justify-content-between align-items-center">
       <span>تفاصيل المحل: ${store.name}</span>
       <div>
@@ -348,6 +349,7 @@ function showStoreDetails(storeId) {
         </button>
       </div>
     </div>`;
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(headerEl, headerHtml); } else { headerEl.innerHTML = headerHtml; }
   
   const details = document.getElementById('storeDetails');
   const sales = data.sales.filter(s => s.storeId === storeId);
@@ -377,7 +379,7 @@ function showStoreDetails(storeId) {
       </div>
     </div>` : '';
   
-  details.innerHTML = `
+  const detailsHtml = `
     <!-- معلومات المحل الأساسية -->
     <div class="row mb-4">
       <div class="col-md-4">
@@ -587,7 +589,8 @@ function showStoreDetails(storeId) {
       <button type="button" class="btn btn-outline-primary export-btn" data-type="store" data-store="${storeId}" data-format="printpage"><i class="fas fa-file-alt me-2"></i>فتح صفحة التقرير</button>
       <button type="button" class="btn btn-outline-info export-btn" data-type="store" data-store="${storeId}" data-format="statement"><i class="fas fa-file-invoice me-2"></i>كشف حساب متحرك</button>
     </div>`;
-  const salesTable = document.getElementById('storeSalesTable'); salesTable.innerHTML = '';
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML('storeDetails', detailsHtml); } else { details.innerHTML = detailsHtml; }
+  const salesTable = document.getElementById('storeSalesTable'); if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(salesTable, ''); } else { salesTable.innerHTML = ''; }
   sales.forEach(sale => {
     const pkg = sale.packageId ? data.packages.find(p => p.id === sale.packageId) : null;
     const isCustom = sale.packageId === 'custom';
@@ -603,7 +606,7 @@ function showStoreDetails(storeId) {
       </td>`;
     salesTable.appendChild(row);
   });
-  const paymentsTable = document.getElementById('storePaymentsTable'); paymentsTable.innerHTML = '';
+  const paymentsTable = document.getElementById('storePaymentsTable'); if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(paymentsTable, ''); } else { paymentsTable.innerHTML = ''; }
   payments.forEach(payment => {
     const row = document.createElement('tr');
     row.innerHTML = `

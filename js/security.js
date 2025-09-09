@@ -149,16 +149,17 @@
     function sanitizeHtml(html) {
         // قائمة موسعة للعناصر المسموح بها لتجنب كسر الواجهة عند استخدام الجداول والأزرار
         const allowedTags = [
-            'b','i','u','em','strong','span','small','br','p','div','pre','code',
+            'b','i','u','em','strong','span','small','br','p','div','pre','code','label',
             'h1','h2','h3','h4','h5','h6',
-            'ul','ol','li','a','button',
+            'ul','ol','li','a','button','img',
+            'input','select','option',
             'table','thead','tbody','tr','th','td'
         ];
 
         // دالة التحقق من السمة المسموح بها
         function isAllowedAttribute(name) {
             const n = name.toLowerCase();
-            const basic = ['class','id','href','title','type','value','onclick','role'];
+            const basic = ['class','id','href','title','type','value','onclick','role','name','placeholder','for','min','max','step','checked','selected','disabled','src','alt','width','height','style'];
             if (basic.includes(n)) return true;
             if (n.startsWith('data-')) return true;
             if (n.startsWith('aria-')) return true;

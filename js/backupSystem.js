@@ -327,7 +327,7 @@
                 localStorage.setItem(key, JSON.stringify(data));
                 
                 // حفظ قائمة النسخ
-                let backupsList = JSON.parse(localStorage.getItem('backupsList') || '[]');
+                let backupsList = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('backupsList')||'[]', [])||[]) : JSON.parse(localStorage.getItem('backupsList') || '[]');
                 backupsList.push({
                     key: key,
                     timestamp: data.timestamp,
@@ -644,7 +644,7 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
                 showNotification('جاري استعادة النسخة الاحتياطية...', 'info');
                 
                 const text = await file.text();
-                let backupData = JSON.parse(text);
+                let backupData = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(text, {}) : JSON.parse(text);
                 
                 // التحقق من صحة البيانات
                 if (!backupData.version || !backupData.data) {
@@ -663,12 +663,12 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
                 
                 // فك الضغط إذا كان مضغوطاً
                 if (backupData.compressed) {
-                    backupData.data = JSON.parse(this.decompressData(backupData.data));
+                    backupData.data = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(this.decompressData(backupData.data), {}) : JSON.parse(this.decompressData(backupData.data));
                 }
                 
                 // استعادة البيانات
                 if (typeof backupData.data === 'string') {
-                    backupData.data = JSON.parse(backupData.data);
+                    backupData.data = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(backupData.data, {}) : JSON.parse(backupData.data);
                 }
                 
                 // تطبيق البيانات
@@ -707,7 +707,7 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
          * المخرجات: راجع التنفيذ
          */
         showBrowserBackups() {
-            const backupsList = JSON.parse(localStorage.getItem('backupsList') || '[]');
+            const backupsList = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('backupsList')||'[]', [])||[]) : JSON.parse(localStorage.getItem('backupsList') || '[]');
             
             if (backupsList.length === 0) {
                 showNotification('لا توجد نسخ احتياطية محفوظة', 'info');
@@ -785,7 +785,7 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
                     return;
                 }
                 
-                const backupData = JSON.parse(backupStr);
+                const backupData = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(backupStr, {}) : JSON.parse(backupStr);
                 const file = new File([JSON.stringify(backupData)], 'backup.json', { type: 'application/json' });
                 await this.restoreBackup(file);
                 
@@ -834,7 +834,7 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
                 localStorage.removeItem(key);
                 
                 // تحديث القائمة
-                let backupsList = JSON.parse(localStorage.getItem('backupsList') || '[]');
+                let backupsList = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('backupsList')||'[]', [])||[]) : JSON.parse(localStorage.getItem('backupsList') || '[]');
                 backupsList = backupsList.filter(b => b.key !== key);
                 localStorage.setItem('backupsList', JSON.stringify(backupsList));
                 

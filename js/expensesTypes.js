@@ -14,7 +14,7 @@
 
 // Expense Types Manager: CRUD with localStorage persistence
 (function(){
-  function loadSavedExpenseTypes(){ try { return JSON.parse(localStorage.getItem('expenseTypes')||'[]'); } catch { return []; } }
+  function loadSavedExpenseTypes(){ try { return (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('expenseTypes')||'[]', [])||[]) : JSON.parse(localStorage.getItem('expenseTypes')||'[]'); } catch { return []; } }
   function saveExpenseTypes(types){ localStorage.setItem('expenseTypes', JSON.stringify(Array.from(new Set(types)))); }
 
   /**

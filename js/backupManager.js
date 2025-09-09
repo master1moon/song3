@@ -109,7 +109,11 @@
    * المخرجات: راجع التنفيذ
    */
   function loadSettings(){
-    try { return Object.assign({}, defaultSettings, JSON.parse(localStorage.getItem('backupSettings')||'{}')); } catch { return Object.assign({}, defaultSettings); }
+    try {
+      const raw = localStorage.getItem('backupSettings')||'{}';
+      const parsed = (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(raw, {})||{}) : JSON.parse(raw);
+      return Object.assign({}, defaultSettings, parsed);
+    } catch { return Object.assign({}, defaultSettings); }
   }
   function saveSettings(s){ localStorage.setItem('backupSettings', JSON.stringify(s)); }
 

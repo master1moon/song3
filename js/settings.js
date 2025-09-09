@@ -280,7 +280,7 @@
         try {
             const saved = localStorage.getItem('appSettings');
             if (saved) {
-                const parsed = JSON.parse(saved);
+                const parsed = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(saved, {}) : JSON.parse(saved);
                 // دمج عميق للإعدادات المحفوظة مع الافتراضية
                 currentSettings = deepMerge(defaultSettings, parsed);
             } else {
@@ -994,7 +994,7 @@
         // حفظ نسخة من الإعدادات الحالية قبل التغيير (فقط إذا كانت القيمة مختلفة)
         if (oldValue !== value && settingsHistory.length > 0) {
             // التحقق من أن آخر حالة في التاريخ مختلفة عن الحالة الحالية
-            const lastHistory = JSON.parse(settingsHistory[settingsHistory.length - 1]);
+            const lastHistory = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(settingsHistory[settingsHistory.length - 1], currentSettings) : JSON.parse(settingsHistory[settingsHistory.length - 1]);
             if (JSON.stringify(lastHistory) !== JSON.stringify(currentSettings)) {
                 if (settingsHistory.length >= 10) {
                     settingsHistory.shift(); // الاحتفاظ بآخر 10 تغييرات فقط
@@ -1088,7 +1088,7 @@
     function undoSettings() {
         if (settingsHistory.length > 0) {
             const previous = settingsHistory.pop();
-            currentSettings = JSON.parse(previous);
+            currentSettings = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(previous, currentSettings) : JSON.parse(previous);
             applySettings(currentSettings);
             
             // حفظ بدون إضافة للتاريخ
@@ -1163,7 +1163,7 @@
      */
     function importSettings(jsonString) {
         try {
-            const importData = JSON.parse(jsonString);
+            const importData = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(jsonString, {}) : JSON.parse(jsonString);
             
             if (!importData.settings) {
                 throw new Error('ملف الإعدادات غير صالح');

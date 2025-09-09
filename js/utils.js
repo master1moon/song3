@@ -507,3 +507,84 @@ if (typeof window !== 'undefined') {
     };
   }
 }
+
+/**
+ * دالة مساعدة: قراءة JSON بأمان مع دعم علم safeJsonParse
+ * لا تغيّر السلوك الافتراضي إلا عند تفعيل العلم
+ */
+/**
+ * ملاحظة: الدالة safeJsonParse — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: text, fallback = null
+ * المخرجات: راجع التنفيذ
+ */
+function safeJsonParse(text, fallback = null) {
+  try {
+    if (text == null) return fallback;
+    if (typeof text !== 'string') return fallback;
+    return JSON.parse(text);
+  } catch (e) {
+    try {
+      if (typeof window !== 'undefined' && window.FeatureFlags && window.FeatureFlags.isEnabled('safeJsonParse')) {
+        console.warn('فشل تحليل JSON، سيتم استخدام قيمة بديلة:', e && e.message ? e.message : e);
+        return fallback;
+      }
+    } catch (_) {}
+    // السلوك الأصلي: إعادة رمي الخطأ
+    throw e;
+  }
+}
+
+/**
+ * دالة مساعدة: قراءة كائن JSON من localStorage بأمان
+ */
+/**
+ * ملاحظة: الدالة safeLocalGetJSON — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: key, fallback = null
+ * المخرجات: راجع التنفيذ
+ */
+function safeLocalGetJSON(key, fallback = null) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    if (typeof window !== 'undefined' && window.FeatureFlags && window.FeatureFlags.isEnabled('safeJsonParse')) {
+      return safeJsonParse(raw, fallback);
+    }
+    return JSON.parse(raw);
+  } catch (e) {
+    if (typeof window !== 'undefined' && window.FeatureFlags && window.FeatureFlags.isEnabled('safeJsonParse')) {
+      console.warn(`تعذر قراءة ${key} من localStorage، استخدام قيمة بديلة`);
+      return fallback;
+    }
+    throw e;
+  }
+}
+
+/**
+ * تعيين HTML مع احترام العلم safeDomRendering
+ */
+/**
+ * ملاحظة: الدالة setHTML — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: elementOrId, html
+ * المخرجات: راجع التنفيذ
+ */
+function setHTML(elementOrId, html) {
+  try {
+    let element = elementOrId;
+    if (typeof elementOrId === 'string') element = document.getElementById(elementOrId);
+    if (!element) return;
+    if (typeof window !== 'undefined' && window.FeatureFlags && window.FeatureFlags.isEnabled('safeDomRendering') && window.SecurityUtils && window.SecurityUtils.safeSetContent) {
+      window.SecurityUtils.safeSetContent(element, html, true);
+    } else {
+      element.innerHTML = html;
+    }
+  } catch (_) {
+    // تجاهل أي خطأ عرضي في الواجهة
+  }
+}
+
+// نشر الدوال المساعدة
+if (typeof window !== 'undefined') {
+  window.safeJsonParse = safeJsonParse;
+  window.safeLocalGetJSON = safeLocalGetJSON;
+  window.setHTML = setHTML;
+}

@@ -65,7 +65,7 @@
         const savedData = localStorage.getItem('networkCardsData');
         if (savedData) {
             try {
-                const parsed = JSON.parse(savedData);
+                const parsed = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(savedData, {}) : JSON.parse(savedData);
                 if (!parsed || typeof parsed !== 'object') {
                     throw new Error('بيانات غير صحيحة');
                 }

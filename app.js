@@ -45,7 +45,7 @@ function loadGithubSettings() {
         // التحميل العادي كـ fallback
         const saved = localStorage.getItem('githubSettings');
         if (saved) {
-            const parsed = JSON.parse(saved);
+            const parsed = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(saved, {}) : JSON.parse(saved);
             githubSettings = Object.assign(githubSettings, parsed);
             
             // ترحيل إلى التشفير
@@ -211,7 +211,12 @@ async function githubDownloadData() {
     if (githubSettings.token) headers['Authorization'] = `Bearer ${githubSettings.token}`;
     const metaRes = await fetch(`https://api.github.com/gists/${githubSettings.gistId}`, { headers });
     if (!metaRes.ok) {
-        if (typeof showNotification === 'function') showNotification('تعذر الوصول إلى الـ Gist', 'error');
+        if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('enhancedGithubErrors')) {
+            const msg = `تعذر الوصول إلى الـ Gist (HTTP ${metaRes.status})`;
+            if (typeof showNotification === 'function') showNotification(msg, 'error');
+        } else {
+            if (typeof showNotification === 'function') showNotification('تعذر الوصول إلى الـ Gist', 'error');
+        }
         return;
     }
     const meta = await metaRes.json();
@@ -223,12 +228,17 @@ async function githubDownloadData() {
     }
     const rawRes = await fetch(fileObj.raw_url);
     if (!rawRes.ok) {
-        if (typeof showNotification === 'function') showNotification('تعذر تنزيل محتوى الملف', 'error');
+        if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('enhancedGithubErrors')) {
+            const msg = `تعذر تنزيل محتوى الملف (HTTP ${rawRes.status})`;
+            if (typeof showNotification === 'function') showNotification(msg, 'error');
+        } else {
+            if (typeof showNotification === 'function') showNotification('تعذر تنزيل محتوى الملف', 'error');
+        }
         return;
     }
     const text = await rawRes.text();
     try {
-        const parsed = JSON.parse(text);
+        const parsed = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(text, {}) : JSON.parse(text);
         if (typeof data !== 'undefined') { data = parsed; } else { window.data = parsed; }
         localStorage.setItem('networkCardsData', JSON.stringify(parsed));
         if (typeof updateDashboard === 'function') updateDashboard();

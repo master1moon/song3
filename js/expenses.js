@@ -148,7 +148,7 @@ function saveExpense() {
   // حفظ نوع المصروف في قائمة الأنواع المحفوظة
   // يساعد على الإدخال السريع في المرات القادمة
   try {
-    const saved = JSON.parse(localStorage.getItem('expenseTypes') || '[]');
+    const saved = (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('expenseTypes')||'[]', [])||[]) : JSON.parse(localStorage.getItem('expenseTypes') || '[]');
     if (type && !saved.includes(type)) { saved.push(type); localStorage.setItem('expenseTypes', JSON.stringify(saved)); }
   } catch (_) {
     // تجاهل أخطاء التخزين
@@ -308,7 +308,7 @@ function renderExpensesControls(total, pages){
       if (!newType) { showNotification('اكتب النوع الجديد', 'error'); return; }
       data.expenses.forEach(e => { if (expensesSelection.has(e.id)) e.type = newType; });
       try {
-        const saved = JSON.parse(localStorage.getItem('expenseTypes') || '[]');
+        const saved = (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('expenseTypes')||'[]', [])||[]) : JSON.parse(localStorage.getItem('expenseTypes') || '[]');
         if (newType && !saved.includes(newType)) { saved.push(newType); localStorage.setItem('expenseTypes', JSON.stringify(saved)); }
       } catch(_){}
     }
@@ -500,7 +500,7 @@ function renderExpensesTable() {
 // إدارة chips لأنواع المصروفات
 (function () {
   const defaultExpenseTypes = ['كهرباء', 'انترنت ADSL', 'انترنت فايبر', 'انترنت ستار لينك', 'صيانة', 'سويتش', 'كيبل كهرباء', 'كيبل انترنت رئيسي', 'كيبل انترنت منزلي', 'مواصلات', 'عامل', 'ايجار سطوح'];
-  function loadSavedExpenseTypes() { try { return JSON.parse(localStorage.getItem('expenseTypes') || '[]'); } catch { return []; } }
+  function loadSavedExpenseTypes() { try { return (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('expenseTypes')||'[]', [])||[]) : JSON.parse(localStorage.getItem('expenseTypes') || '[]'); } catch { return []; } }
   function saveExpenseTypes(types) { localStorage.setItem('expenseTypes', JSON.stringify(Array.from(new Set(types)))); }
   function getAllExpenseTypes() { return Array.from(new Set([...(loadSavedExpenseTypes()), ...defaultExpenseTypes])); }
   /**

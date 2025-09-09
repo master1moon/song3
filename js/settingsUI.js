@@ -239,10 +239,121 @@
         // تبويب الأداء
         html += createPerformanceTab(settings.performance);
 
+        // تبويب الأعلام (الميزات التجريبية)
+        html += createFeatureFlagsTab(settings.advanced || {});
+
         container.innerHTML = html;
 
         // إعادة تحميل القيم
         loadSettingsToUI();
+    }
+
+    /**
+     * إنشاء تبويب الأعلام (Feature Flags)
+     */
+    /**
+     * ملاحظة: الدالة createFeatureFlagsTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: advanced
+     * المخرجات: راجع التنفيذ
+     */
+    /**
+     * ملاحظة: الدالة createFeatureFlagsTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: advanced
+     * المخرجات: راجع التنفيذ
+     */
+    function createFeatureFlagsTab(advanced) {
+        const exp = !!(advanced && advanced.experimentalFeatures);
+        const flags = (advanced && advanced.flags) || {};
+        return `
+            <div class="settings-tab" id="flags-settings" style="display:none;">
+                <h5 class="mb-4"><i class="fas fa-flask"></i> الميزات التجريبية (Feature Flags)</h5>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    هذه التحسينات لا تغيّر أي سلوك محاسبي. لن تُطبَّق الأعلام إلا بعد تفعيل خيار "الميزات التجريبية".
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <strong>التفعيل العام</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="setting-experimentalFeatures"
+                                   ${exp ? 'checked' : ''}
+                                   onchange="AppSettings.update('advanced.experimentalFeatures', this.checked)">
+                            <label class="form-check-label" for="setting-experimentalFeatures">
+                                تشغيل الميزات التجريبية (لا يغيّر سلوك الحسابات، يتيح فقط الأعلام أدناه)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <strong>أعلام التشغيل</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-safeJsonParse"
+                                           ${flags.safeJsonParse ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.safeJsonParse', this.checked)">
+                                    <label class="form-check-label" for="flag-safeJsonParse">
+                                        safeJsonParse — طبقة حراسة لـ JSON.parse لمنع الأعطال عند تلف البيانات
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-safeDomRendering"
+                                           ${flags.safeDomRendering ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.safeDomRendering', this.checked)">
+                                    <label class="form-check-label" for="flag-safeDomRendering">
+                                        safeDomRendering — تغليف العرض الآمن للـ DOM بدلاً من innerHTML المباشر
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-idbChunking"
+                                           ${flags.idbChunking ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.idbChunking', this.checked)">
+                                    <label class="form-check-label" for="flag-idbChunking">
+                                        idbChunking — مزامنة IndexedDB على دفعات لتجنب تجمّد الواجهة
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-enhancedGithubErrors"
+                                           ${flags.enhancedGithubErrors ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.enhancedGithubErrors', this.checked)">
+                                    <label class="form-check-label" for="flag-enhancedGithubErrors">
+                                        enhancedGithubErrors — رسائل أخطاء أوضح عند فشل مزامنة GitHub
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-strictDateNormalization"
+                                           ${flags.strictDateNormalization ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.strictDateNormalization', this.checked)">
+                                    <label class="form-check-label" for="flag-strictDateNormalization">
+                                        strictDateNormalization — تطبيع صارم للتواريخ قبل أي فلترة/حساب
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <small class="text-muted d-block mt-3">
+                    تلميح: يمكنك أيضاً إدارة الأعلام من الكونسول: FeatureFlags.enable('safeJsonParse') / FeatureFlags.disable('safeJsonParse').
+                </small>
+            </div>
+        `;
     }
 
     /**

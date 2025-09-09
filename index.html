@@ -5,7 +5,10 @@
     <meta name="theme-color" content="#2c3e50">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="./icons/icon-180.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./icons/icon-16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./icons/icon-32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="./icons/icon-64.png">
     <!-- تعطيل تحميل خط Amiri مؤقتاً لتفادي تحذير OTS -->
     <!-- <link rel="preload" as="font" type="font/woff2" href="./fonts/Amiri-Regular.woff2" crossorigin> -->
     <meta charset="UTF-8">
@@ -496,7 +499,6 @@
         body.dark-theme .data-table {
             background-color: #1a1f2e !important;
         }
-        
         body.dark-theme .data-table th {
             background-color: #0f141f !important;
             color: #ffffff !important;
@@ -993,7 +995,6 @@
             font-size: 0.8rem;
             height: 28px;
         }
-        
         body[data-density="ultra-compact"] .table td,
         body[data-density="ultra-compact"] .table th {
             padding: 0.25rem;
@@ -1492,7 +1493,6 @@
             width: 100%;
             z-index: 1000; /* إضافة z-index للعنصر الأب */
         }
-        
         /* إصلاح عرض الأزرار */
         .advanced-filter-section .btn-group {
             display: flex;
@@ -2225,7 +2225,6 @@
                     </div>
                 </div>
             </div>
-            
             <!-- قسم التقارير -->
             <div id="reports" class="section" style="display:none;">
                 <div class="section-content">
@@ -2705,7 +2704,6 @@
 
         </div>
     </div>
-
     <!-- Modal لإضافة باقة جديدة -->
     <div class="modal fade" id="packageModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -3473,7 +3471,6 @@
                 netProfitElement.className = netProfit >= 0 ? 'currency profit-positive' : 'currency profit-negative';
             }
         }
-        
         // توليد تقارير الشركاء
         function generatePartnerReports() {
             const container = document.getElementById('partnerReportsContainer');
@@ -3851,7 +3848,6 @@
                 list.appendChild(item);
             });
         }
-        
         // عرض تفاصيل المحل
         function showStoreDetails(storeId) {
             const store = data.stores.find(s => s.id === storeId);
@@ -4350,7 +4346,6 @@
             const modal = new bootstrap.Modal(document.getElementById('packageModal'));
             modal.show();
         }
-        
         // تحرير باقة موجودة
         function editPackage(id) {
             const pkg = data.packages.find(p => p.id === id);
@@ -5248,7 +5243,6 @@
                 }))
             ];
         }
-
         // استيراد البيانات
         function importData() {
             // التأكد من وجود كائن البيانات
@@ -5639,7 +5633,6 @@
             const modal = bootstrap.Modal.getInstance(document.querySelector('.modal'));
             if (modal) modal.hide();
         }
-        
         /**
          * مشاركة تقرير المحل عبر واتساب
          */
@@ -6138,7 +6131,6 @@
             }
         });
     </script>
-
     <script src="./js/security.js"></script>
     <script src="./js/encryption.js"></script>
     <script src="./js/safeDOM.js"></script>
@@ -6341,7 +6333,7 @@ with open(filepath, 'w', encoding='utf-8') as f:
     f.write(backup_data)
 
 print(f"✅ تم حفظ النسخة في: نجيب المقداد/{filename}")
-print(f"📁 المسار الكامل: {filepath}")`;
+print(f"📁 المسار الكامل: {filepath}`;
 
         // إنشاء نافذة HTML
         const modalHTML = `

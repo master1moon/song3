@@ -164,6 +164,8 @@ async function updateProfitReport() {
         
         // الحسابات المعقدة (تحدث مرة واحدة فقط)
         const filteredSales = (data.sales || []).filter(s => inPeriod(s.date, fromDate, toDate) && isStoreMatch(s));
+        const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+        const totalDiscounts = discountsEnabled ? filteredSales.reduce((sum, s)=>{ const d=s&&s.discount; if(!d) return sum; const t=Number(s.total)||0; const v=Number(d.value)||0; let dv=0; if(d.type==='percent') dv=Math.min(t*v/100,t); else if(d.type==='amount') dv=Math.min(v,t); return sum+dv; },0) : 0;
         const totalSales = filteredSales.reduce((sum, sale) => sum + (sale.total || 0), 0);
         
         const filteredPayments = (data.payments || []).filter(p => inPeriod(p.date, fromDate, toDate) && isStoreMatch(p));
@@ -176,7 +178,8 @@ async function updateProfitReport() {
           totalSales,
           totalPayments,
           totalExpenses,
-          netProfit: totalPayments - totalExpenses
+          totalDiscounts,
+          netProfit: (totalPayments - totalExpenses) - (discountsEnabled ? totalDiscounts : 0)
         };
       },
       10 * 60 * 1000 // كاش لمدة 10 دقائق
@@ -186,6 +189,8 @@ async function updateProfitReport() {
     console.warn('نظام الكاش غير متاح، استخدام الطريقة البطيئة');
     
     const filteredSales = (data.sales || []).filter(s => inPeriod(s.date, fromDate, toDate) && isStoreMatch(s));
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+    const totalDiscounts = discountsEnabled ? filteredSales.reduce((sum, s)=>{ const d=s&&s.discount; if(!d) return sum; const t=Number(s.total)||0; const v=Number(d.value)||0; let dv=0; if(d.type==='percent') dv=Math.min(t*v/100,t); else if(d.type==='amount') dv=Math.min(v,t); return sum+dv; },0) : 0;
     const totalSales = filteredSales.reduce((sum, sale) => sum + (sale.total || 0), 0);
     
     const filteredPayments = (data.payments || []).filter(p => inPeriod(p.date, fromDate, toDate) && isStoreMatch(p));
@@ -198,7 +203,8 @@ async function updateProfitReport() {
       totalSales,
       totalPayments,
       totalExpenses,
-      netProfit: totalPayments - totalExpenses
+      totalDiscounts,
+      netProfit: (totalPayments - totalExpenses) - (discountsEnabled ? totalDiscounts : 0)
     };
   }
   
@@ -241,6 +247,17 @@ function generatePartnerReports() {
   const byStore = x => true; // لا توجد فلاتر بعد الآن
   const pays = data.payments.filter(p=> inPeriod(p.date, fromDate, toDate) && byStore(p));
   const exps = data.expenses.filter(e=> inPeriod(e.date, fromDate, toDate) && byStore(e));
+  const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+  let totalDiscounts = 0;
+  if (discountsEnabled) {
+    const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate, toDate) && byStore(s));
+    totalDiscounts = salesInPeriod.reduce((sum, s)=>{
+      const d = s && s.discount; if (!d) return sum; let val = 0;
+      if (d.type === 'percent') { val = Math.min((Number(s.total)||0) * (Number(d.value)||0) / 100, (Number(s.total)||0)); }
+      else if (d.type === 'amount') { val = Math.min((Number(d.value)||0), (Number(s.total)||0)); }
+      return sum + (val||0);
+    }, 0);
+  }
   const totalPays = pays.reduce((s,x)=> s + (Number(x.amount)||0), 0);
   const totalExps = exps.reduce((s,x)=> s + (Number(x.amount)||0), 0);
   const net = totalPays - totalExps;
@@ -332,6 +349,7 @@ function generatePartnerReports() {
         <div class="summary-item"><div class="summary-value currency">${formatNumber(totalPays)}</div><div class="summary-label">إجمالي التسديدات</div></div>
         <div class="summary-item"><div class="summary-value currency">${formatNumber(totalExps)}</div><div class="summary-label">إجمالي المصروفات</div></div>
         <div class="summary-item"><div class="summary-value currency ${net<0?'profit-negative':''}">${formatNumber(net)}</div><div class="summary-label">صافي الأرباح</div></div>
+        ${discountsEnabled ? `<div class="summary-item"><div class="summary-value currency">${formatNumber(totalDiscounts||0)}</div><div class="summary-label">إجمالي الخصومات</div></div>` : ''}
         ${distribution==='percent' ? '' : `<div class="summary-item"><div class="summary-value currency">${formatNumber(partnersCount>0 ? (net/partnersCount) : net)}</div><div class="summary-label">صافي لكل شريك</div></div>`}
       </div>
       ${warnings.length ? `<div class="${net<0 ? 'alert alert-danger' : 'alert alert-warning'} mb-2 small"><ul class="mb-0 ps-3">${warnings.map(w=>`<li>${w}</li>`).join('')}</ul></div>` : ''}
@@ -867,10 +885,16 @@ function exportPartnerReport() {
   
   const { fromDate, toDate } = getPeriodRange();
   const sales = (data.sales || []).filter(s=> inPeriod(s.date, fromDate, toDate) && isStoreMatch(s));
+  const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+  const totalDiscounts = discountsEnabled ? sales.reduce((sum, s)=>{
+    const d = s && s.discount; if (!d) return sum; let val = 0; const t = Number(s.total)||0; const v = Number(d.value)||0;
+    if (d.type === 'percent') val = Math.min(t * v / 100, t); else if (d.type === 'amount') val = Math.min(v, t);
+    return sum + (val||0);
+  }, 0) : 0;
   const expenses = (data.expenses || []).filter(e=> inPeriod(e.date, fromDate, toDate) && isStoreMatch(e));
   const totalSales = sales.reduce((sum, sale) => sum + (sale.total || 0), 0);
   const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
-  const netProfit = totalSales - totalExpenses;
+  const netProfit = (totalSales - totalExpenses) - (discountsEnabled ? totalDiscounts : 0);
   const reportData = { fromDate, toDate, totalSales, totalExpenses, netProfit, sales, expenses };
   const filename = `تقرير_الشركاء_${moment().format('YYYYMMDD')}.json`;
   const dataStr = JSON.stringify(reportData, null, 2);

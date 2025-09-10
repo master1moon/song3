@@ -29,19 +29,25 @@
          */
         init: function() {
             if (this.isInitialized) return;
-            
             try {
-                // إنشاء سياق صوتي
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                this.audioContext = new AudioContext();
-                this.isInitialized = true;
-                
-                // تحميل الإعدادات
-                this.loadSettings();
-                
-                console.log('تم تهيئة نظام الصوت بنجاح');
+                // تأجيل إنشاء AudioContext حتى أول تفاعل لتجنّب التحذير
+                const createCtx = () => {
+                    if (this.isInitialized) return;
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    try {
+                        this.audioContext = new AC();
+                        this.isInitialized = true;
+                        this.loadSettings();
+                        console.log('تم تهيئة نظام الصوت بنجاح');
+                    } catch (e) {
+                        console.warn('تعذّر إنشاء AudioContext:', e);
+                        this.isEnabled = false;
+                    }
+                    ['click','keydown','touchstart'].forEach(ev=> document.removeEventListener(ev, createCtx));
+                };
+                ['click','keydown','touchstart'].forEach(ev=> document.addEventListener(ev, createCtx, { once: true }));
             } catch (error) {
-                console.error('خطأ في تهيئة نظام الصوت:', error);
+                console.error('خطأ في تهيئة مستمعات الصوت:', error);
                 this.isEnabled = false;
             }
         },

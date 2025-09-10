@@ -327,6 +327,11 @@ function generatePartnerReports() {
 
   const html = `
     <div class="partner-report-card">
+      <div class="d-flex justify-content-end gap-2 no-print">
+        <button id="exportPartnersPdf" class="btn btn-sm btn-outline-danger"><i class="fas fa-file-pdf"></i> PDF</button>
+        <button id="exportPartnersExcel" class="btn btn-sm btn-outline-success"><i class="fas fa-file-excel"></i> Excel</button>
+        <button id="openPartnersReport" class="btn btn-sm btn-outline-secondary"><i class="fas fa-print"></i> طباعة</button>
+      </div>
       <!-- 1) الملخص -->
       <div class="partner-report-summary d-flex flex-wrap gap-3 my-2">
         <div class="summary-item"><div class="summary-value currency">${formatNumber(totalPays)}</div><div class="summary-label">إجمالي التسديدات</div></div>
@@ -724,6 +729,9 @@ function buildPartnerReportHTML(periodText, partnersCount, paysList, expsList, t
   html += '<style>' + getReportStyles() + '</style></head>';
   html += '<body>';
   html += '<div class="actions"><button onclick="window.print()">حفظ التقرير كـ PDF</button></div>';
+  html += '<div class="no-print" style="text-align:right; margin:10px 0; display:flex; gap:8px; justify-content:flex-end;">'
+        + '<button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class=\"fas fa-print\"></i> طباعة</button>'
+        + '</div>';
   
   // رأس التقرير مع معلومات الشركة
   html += buildReportHeader('تقرير الشركاء');
@@ -1570,6 +1578,9 @@ function buildStoreReportHTML(store, periodText, mappedSalesForExport, mappedPay
   html += '<style>' + getReportStyles() + '</style></head>';
   html += '<body>';
   html += '<div class="actions"><button onclick="window.print()">حفظ التقرير كـ PDF</button></div>';
+  html += '<div class="no-print" style="text-align:right; margin:10px 0; display:flex; gap:8px; justify-content:flex-end;">'
+        + '<button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class=\"fas fa-print\"></i> طباعة</button>'
+        + '</div>';
   
   // رأس التقرير مع معلومات الشركة
   html += buildReportHeader('كشف حساب: ' + store.name);
@@ -1646,6 +1657,9 @@ function buildExpensesReportHTML(expensesRows, periodText) {
   html += '<style>' + getReportStyles() + '</style></head>';
   html += '<body>';
   html += '<div class="actions"><button onclick="window.print()">حفظ التقرير كـ PDF</button></div>';
+  html += '<div class="no-print" style="text-align:right; margin:10px 0; display:flex; gap:8px; justify-content:flex-end;">'
+        + '<button onclick="window.print()" class="btn btn-sm btn-outline-secondary"><i class=\"fas fa-print\"></i> طباعة</button>'
+        + '</div>';
   
   // رأس التقرير مع معلومات الشركة
   html += buildReportHeader('تقرير المصروفات');

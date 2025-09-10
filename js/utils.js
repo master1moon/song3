@@ -296,6 +296,7 @@ function switchSection(targetSection, labelText) {
   if (targetSection === 'reports') if (typeof generatePartnerReports === 'function') generatePartnerReports();
   if (targetSection === 'trash') if (typeof renderTrashTable === 'function') setTimeout(() => renderTrashTable(), 100);
   if (targetSection === 'settings') if (typeof SettingsUI !== 'undefined' && SettingsUI.init) SettingsUI.init();
+  if (targetSection === 'parityCheck') if (typeof ParityCheck !== 'undefined' && ParityCheck.render) ParityCheck.render();
 }
 
 /**

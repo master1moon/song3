@@ -1272,8 +1272,43 @@ function updateFilterSummary(storeId, filteredData) {
 
 // حساب الرصيد السابق للفترة
 function calculatePreviousBalance(storeId, filter) {
-  // TODO: حساب الرصيد قبل بداية الفترة المحددة
-  return 0;
+  try {
+    if (!storeId || !filter) return 0;
+    const allSales = (data.sales || []).filter(s => s.storeId === storeId);
+    const allPayments = (data.payments || []).filter(p => p.storeId === storeId);
+
+    let cutoffDate = null;
+    if (filter.type === window.storeFilter.FILTER_TYPES.TIME) {
+      const r = window.storeFilter.getDateRangeForQuickFilter(filter.id);
+      cutoffDate = r.startDate ? new Date(r.startDate) : null;
+    } else if (filter.type === window.storeFilter.FILTER_TYPES.CUSTOM) {
+      cutoffDate = filter.data && filter.data.startDate ? new Date(filter.data.startDate) : null;
+    } else if (filter.type === window.storeFilter.FILTER_TYPES.CYCLE) {
+      // في الدورات المالية يبدأ الرصيد من آخر تصفير، لذا الرصيد السابق = 0
+      return 0;
+    }
+
+    if (!cutoffDate) return 0;
+
+    // تصفية كل ما قبل تاريخ البداية (00:00)
+    const start = new Date(cutoffDate);
+    start.setHours(0,0,0,0);
+
+    const prevSales = allSales.filter(s => {
+      const d = new Date(s.date);
+      d.setHours(23,59,59,999);
+      return d < start;
+    });
+    const prevPayments = allPayments.filter(p => {
+      const d = new Date(p.date);
+      d.setHours(23,59,59,999);
+      return d < start;
+    });
+
+    const prevTotalSales = prevSales.reduce((sum, s) => sum + (Number(s.total)||0), 0);
+    const prevTotalPayments = prevPayments.reduce((sum, p) => sum + (Number(p.amount)||0), 0);
+    return prevTotalSales - prevTotalPayments;
+  } catch(_) { return 0; }
 }
 
 // تحديث جدول المبيعات

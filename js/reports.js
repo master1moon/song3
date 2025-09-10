@@ -2473,6 +2473,7 @@ function exportPartners(format){
   });
   if (format==='excel'){
     const wb = XLSX.utils.book_new();
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
     const meta = [{ المدة: text, عدد_الشركاء: partners, إجمالي_التسديدات: totalPays, إجمالي_المصروفات: totalExps, إجمالي_الخصومات: (discountsEnabled? totalDiscounts: 0), صافي_الأرباح: net, صافي_لكل_شريك: perPartner }];
     // ترتيب الأوراق: سحوبات الشركاء -> صافي الشركاء -> الملخص -> التسديدات -> المصروفات
     // الملخص أولاً
@@ -2496,6 +2497,7 @@ function exportPartners(format){
     let txt = `تقرير الشركاء\n\nالمدة: ${text}\nعدد الشركاء: ${partners}\n`;
     if (adjustments.length){ txt += '\n===== سحوبات الشركاء =====\n'; txt += ['الشريك','المبلغ','التاريخ','ملاحظات'].join('\t')+'\n'; const partnersMap = (partnersList||[]).reduce((m,p)=>{ m[p.id]=p.name||p.id; return m; },{}); adjustments.forEach(a=>{ txt += [(partnersMap[a.partnerId]||a.partnerId), a.amount, a.date, a.notes||''].join('\t')+'\n'; }); }
     if (partnerSharesRows.length){ txt += '\n===== صافي الشركاء =====\n'; txt += ['الشريك','التوزيع','النصيب الأساسي','السحوبات','الترحيل','الصافي','الوضع'].join('\t')+'\n'; partnerSharesRows.forEach(r=>{ txt += [r.الشريك, r.التوزيع, r.النصيب_الأساسي, r.السحوبات, r.الترحيل, r.الصافي, r.الوضع].join('\t')+'\n'; }); }
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
     txt += `\n===== الملخص =====\nإجمالي التسديدات:\t${totalPays}\nإجمالي المصروفات:\t${totalExps}\n${discountsEnabled?`إجمالي الخصومات:\t${totalDiscounts}\n`:''}صافي الأرباح:\t${net}\nصافي لكل شريك:\t${perPartner}\n`;
     if (listPays.length){ txt += '\n===== التسديدات =====\n'; txt += ['التاريخ','المحل','المبلغ','ملاحظات'].join('\t')+'\n'; listPays.forEach(r=>{ txt += [r.التاريخ, r.المحل, r.المبلغ, r.ملاحظات].join('\t')+'\n'; }); }
     if (listExps.length){ txt += '\n===== المصروفات =====\n'; txt += ['التاريخ','النوع','المبلغ','ملاحظات'].join('\t')+'\n'; listExps.forEach(r=>{ txt += [r.التاريخ, r.النوع, r.المبلغ, r.ملاحظات].join('\t')+'\n'; }); }

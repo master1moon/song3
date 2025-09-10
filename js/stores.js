@@ -1011,7 +1011,7 @@ function applyFilter(storeId, type, filterId) {
     type: type,
     id: filterId,
     data: {
-      includeTypes: getActiveFilterTypes(storeId)
+      includeTypes: (typeof getActiveFilterTypes === 'function') ? getActiveFilterTypes(storeId) : ['sale','payment']
     }
   };
   
@@ -1064,7 +1064,11 @@ function applyFilter(storeId, type, filterId) {
   updateFilterButton(storeId, filter);
   
   // تحديث العرض
-  updateStoreDetailsWithFilter(storeId);
+  if (typeof updateStoreDetailsWithFilter === 'function') {
+    updateStoreDetailsWithFilter(storeId);
+  } else {
+    try { showStoreDetails(storeId); } catch(_) {}
+  }
 }
 
 // عرض التاريخ المخصص

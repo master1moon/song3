@@ -252,6 +252,16 @@ function generatePartnerReports() {
   if (discountsEnabled) {
     const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate, toDate) && byStore(s));
     totalDiscounts = salesInPeriod.reduce((sum, s)=>{
+      const d = s && s.discount; if (!d) return sum; let val = 0; const t=Number(s.total)||0; const v=Number(d.value)||0;
+      if (d.type==='percent') val = Math.min(t*v/100, t); else if (d.type==='amount') val = Math.min(v, t);
+      return sum + (val||0);
+    }, 0);
+  }
+  const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+  let totalDiscounts = 0;
+  if (discountsEnabled) {
+    const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate, toDate) && byStore(s));
+    totalDiscounts = salesInPeriod.reduce((sum, s)=>{
       const d = s && s.discount; if (!d) return sum; let val = 0;
       if (d.type === 'percent') { val = Math.min((Number(s.total)||0) * (Number(d.value)||0) / 100, (Number(s.total)||0)); }
       else if (d.type === 'amount') { val = Math.min((Number(d.value)||0), (Number(s.total)||0)); }
@@ -260,7 +270,7 @@ function generatePartnerReports() {
   }
   const totalPays = pays.reduce((s,x)=> s + (Number(x.amount)||0), 0);
   const totalExps = exps.reduce((s,x)=> s + (Number(x.amount)||0), 0);
-  const net = totalPays - totalExps;
+  const net = (totalPays - totalExps) - (discountsEnabled ? totalDiscounts : 0);
 
   // إعدادات الشركاء من الإعدادات (اختياري)
   let partnersCfg = null;
@@ -1618,8 +1628,11 @@ function buildStoreReportHTML(store, periodText, mappedSalesForExport, mappedPay
   html += 'الفترة: ' + periodText + ' | تاريخ التصدير: ' + moment().format(settings.dateFormat);
   html += '</div>';
   
+  const showDiscBox = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+  const totalDiscountsBox = showDiscBox ? (function(){ try { return storeSales.reduce((s,x)=>{ const d=x&&x.discount; if(!d) return s; const t=Number(x.total)||0; const v=Number(d.value)||0; let dv=0; if(d.type==='percent') dv=Math.min(t*v/100,t); else if(d.type==='amount') dv=Math.min(v,t); return s+dv; },0);}catch(_){return 0;} })() : 0;
   html += '<div class="summary">' + 
     '<div class="box">إجمالي المبيعات: <span class="currency">' + formatNumber(totalSales || 0) + '</span></div>' + 
+    (showDiscBox ? ('<div class="box">إجمالي الخصومات: <span class="currency">' + formatNumber(totalDiscountsBox || 0) + '</span></div>') : '') +
     '<div class="box">إجمالي التسديدات: <span class="currency">' + formatNumber(totalPayments || 0) + '</span></div>' + 
     '<div class="box">المتبقي: <span class="currency">' + formatNumber(remaining || 0) + '</span></div>' + 
   '</div>';
@@ -2469,7 +2482,7 @@ function exportPartners(format){
   });
   if (format==='excel'){
     const wb = XLSX.utils.book_new();
-    const meta = [{ المدة: text, عدد_الشركاء: partners, إجمالي_التسديدات: totalPays, إجمالي_المصروفات: totalExps, صافي_الأرباح: net, صافي_لكل_شريك: perPartner }];
+    const meta = [{ المدة: text, عدد_الشركاء: partners, إجمالي_التسديدات: totalPays, إجمالي_المصروفات: totalExps, إجمالي_الخصومات: (discountsEnabled? totalDiscounts: 0), صافي_الأرباح: net, صافي_لكل_شريك: perPartner }];
     // ترتيب الأوراق: سحوبات الشركاء -> صافي الشركاء -> الملخص -> التسديدات -> المصروفات
     // الملخص أولاً
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(meta), 'الملخص');
@@ -2492,7 +2505,7 @@ function exportPartners(format){
     let txt = `تقرير الشركاء\n\nالمدة: ${text}\nعدد الشركاء: ${partners}\n`;
     if (adjustments.length){ txt += '\n===== سحوبات الشركاء =====\n'; txt += ['الشريك','المبلغ','التاريخ','ملاحظات'].join('\t')+'\n'; const partnersMap = (partnersList||[]).reduce((m,p)=>{ m[p.id]=p.name||p.id; return m; },{}); adjustments.forEach(a=>{ txt += [(partnersMap[a.partnerId]||a.partnerId), a.amount, a.date, a.notes||''].join('\t')+'\n'; }); }
     if (partnerSharesRows.length){ txt += '\n===== صافي الشركاء =====\n'; txt += ['الشريك','التوزيع','النصيب الأساسي','السحوبات','الترحيل','الصافي','الوضع'].join('\t')+'\n'; partnerSharesRows.forEach(r=>{ txt += [r.الشريك, r.التوزيع, r.النصيب_الأساسي, r.السحوبات, r.الترحيل, r.الصافي, r.الوضع].join('\t')+'\n'; }); }
-    txt += `\n===== الملخص =====\nإجمالي التسديدات:\t${totalPays}\nإجمالي المصروفات:\t${totalExps}\nصافي الأرباح:\t${net}\nصافي لكل شريك:\t${perPartner}\n`;
+    txt += `\n===== الملخص =====\nإجمالي التسديدات:\t${totalPays}\nإجمالي المصروفات:\t${totalExps}\n${discountsEnabled?`إجمالي الخصومات:\t${totalDiscounts}\n`:''}صافي الأرباح:\t${net}\nصافي لكل شريك:\t${perPartner}\n`;
     if (listPays.length){ txt += '\n===== التسديدات =====\n'; txt += ['التاريخ','المحل','المبلغ','ملاحظات'].join('\t')+'\n'; listPays.forEach(r=>{ txt += [r.التاريخ, r.المحل, r.المبلغ, r.ملاحظات].join('\t')+'\n'; }); }
     if (listExps.length){ txt += '\n===== المصروفات =====\n'; txt += ['التاريخ','النوع','المبلغ','ملاحظات'].join('\t')+'\n'; listExps.forEach(r=>{ txt += [r.التاريخ, r.النوع, r.المبلغ, r.ملاحظات].join('\t')+'\n'; }); }
     const blob = new Blob([txt], { type:'text/plain' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download=`تقرير_الشركاء_${moment().format('YYYYMMDD')}.txt`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);

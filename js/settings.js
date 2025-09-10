@@ -242,7 +242,8 @@
                 safeDomRendering: false,         // استخدام طرق عرض DOM آمنة بدلاً من innerHTML حيثما أمكن
                 idbChunking: false,              // تفريغ/مزامنة IndexedDB على دفعات لتجنب تجمّد الواجهة
                 enhancedGithubErrors: false,     // رسائل أخطاء تفصيلية لمزامنة GitHub
-                strictDateNormalization: false   // تطبيع تاريخ صارم قبل الفلترة/الحساب
+                strictDateNormalization: false,   // تطبيع تاريخ صارم قبل الفلترة/الحساب
+                discounts: false                  // تفعيل نظام الخصومات (تأثيره فقط عند وجود خصم في العملية)
             },
             telemetry: false,                    // إرسال بيانات الاستخدام
             errorReporting: true,                // تقارير الأخطاء

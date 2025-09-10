@@ -345,6 +345,16 @@
                                     </label>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-discounts"
+                                           ${flags.discounts ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.discounts', this.checked)">
+                                    <label class="form-check-label" for="flag-discounts">
+                                        discounts — تفعيل نظام الخصومات (السبب اختياري، التأثير فقط عند إدخال خصم)
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

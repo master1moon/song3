@@ -213,7 +213,7 @@
       const dref = getDataRef();
       if (dref) {
         if (Array.isArray(dref.expenses)) dref.expenses.forEach(e => { e.date = normalizeDate(e.date); });
-        if (Array.isArray(dref.sales)) dref.sales.forEach(s => { s.date = normalizeDate(s.date); });
+        if (Array.isArray(dref.sales)) dref.sales.forEach(s => { s.date = normalizeDate(s.date); if (!s.discount) s.discount = null; });
         if (Array.isArray(dref.payments)) dref.payments.forEach(p => { p.date = normalizeDate(p.date); });
         // persist back if any changed
         window.saveData();

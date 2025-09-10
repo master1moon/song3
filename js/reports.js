@@ -1555,12 +1555,16 @@ function buildStoreReportHTML(store, periodText, mappedSalesForExport, mappedPay
   function buildSalesRows() { 
     let rows = ''; 
     for (const s of mappedSalesForExport) { 
+      const showDisc = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+      const disc = (s.الخصم||0);
+      const net = (s.الصافي|| (s.الإجمالي||0));
       rows += '<tr>' + 
         '<td>' + s.التاريخ + '</td>' + 
         '<td>' + s.التفاصيل + '</td>' + 
         '<td>' + s.الباقة + '</td>' + 
         '<td>' + s.الكمية_أو_المبلغ + '</td>' + 
         '<td class="currency">' + formatNumber(s.الإجمالي || 0) + '</td>' + 
+        (showDisc ? ('<td class="currency">' + formatNumber(disc) + '</td><td class="currency">' + formatNumber(net) + '</td>') : '') +
       '</tr>'; 
     } 
     return rows; 
@@ -1611,7 +1615,7 @@ function buildStoreReportHTML(store, periodText, mappedSalesForExport, mappedPay
   
   html += '<h4>المبيعات</h4>';
   if (mappedSalesForExport.length > 0) 
-    html += '<table><thead><tr><th>التاريخ</th><th>التفاصيل</th><th>الباقة</th><th>الكمية/المبلغ</th><th>الإجمالي</th></tr></thead><tbody>' + buildSalesRows() + '</tbody></table>'; 
+    html += '<table><thead><tr><th>التاريخ</th><th>التفاصيل</th><th>الباقة</th><th>الكمية/المبلغ</th><th>الإجمالي</th>' + ((typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'))?'<th>الخصم</th><th>الصافي</th>':'') + '</tr></thead><tbody>' + buildSalesRows() + '</tbody></table>'; 
   else 
     html += '<div>لا توجد مبيعات ضمن الفترة</div>';
     
@@ -1809,13 +1813,19 @@ async function exportStoreData(storeId, format) {
               // استخدام formatDateEn إذا كانت متاحة، وإلا استخدام التاريخ كما هو
     const formatDate = (typeof formatDateEn === 'function') ? formatDateEn : (d => d || '');
     
-    const mappedSalesForExport = storeSales.map(s => ({
-      التاريخ: formatDate(s.date),
-      التفاصيل: s.reason || (s.packageId ? 'بيع باقة' : 'بيع مخصص'),
-      الباقة: s.packageId && s.packageId !== 'custom' ? (packageIdToName.get(s.packageId + '') || 'غير معروف') : 'مخصص',
-      الكمية_أو_المبلغ: s.packageId === 'custom' ? s.amount : s.quantity,
-      الإجمالي: s.total
-    }));
+    const mappedSalesForExport = storeSales.map(s => {
+      const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+      let disc = 0; let net = s.total||0; const d = s && s.discount; const t = Number(s.total)||0;
+      if (discountsEnabled && d) { const v = Number(d.value)||0; if (d.type==='percent') disc = Math.min(t*v/100, t); else if (d.type==='amount') disc = Math.min(v, t); net = Math.max(0, t - disc); }
+      const base = {
+        التاريخ: formatDate(s.date),
+        التفاصيل: s.reason || (s.packageId ? 'بيع باقة' : 'بيع مخصص'),
+        الباقة: s.packageId && s.packageId !== 'custom' ? (packageIdToName.get(s.packageId + '') || 'غير معروف') : 'مخصص',
+        الكمية_أو_المبلغ: s.packageId === 'custom' ? s.amount : s.quantity,
+        الإجمالي: s.total
+      };
+      return discountsEnabled ? Object.assign(base, { الخصم: disc, الصافي: net }) : base;
+    });
     const mappedPaymentsForExport = storePayments.map(p => ({ التاريخ: formatDate(p.date), المبلغ: p.amount, ملاحظات: p.notes || '' }));
     const filename = `تفاصيل_${store.name.replace(/\s+/g, '_')}_${moment().format('YYYYMMDD')}`;
     const periodText = `${formatDate(fromDate) || 'من البداية'} إلى ${formatDate(toDate) || 'حتى الآن'}`;

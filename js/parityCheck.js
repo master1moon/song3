@@ -69,7 +69,7 @@
         هذه الصفحة للعرض فقط ولا تغيّر أي بيانات حسابية. الهدف هو التأكد من التطابق صفر بالمئة بعد أي تحسينات.
       </div>
     `;
-    section.innerHTML = html;
+    if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(section, html); } else { section.innerHTML = html; }
     const saveBtn = document.getElementById('saveBaselineBtn');
     if (saveBtn) saveBtn.onclick = function(){ try{ localStorage.setItem('baseline_metrics', JSON.stringify(current)); showNotification('تم حفظ الأساس الحالي', 'success'); }catch(_){} };
     const recomputeBtn = document.getElementById('recomputeBtn');

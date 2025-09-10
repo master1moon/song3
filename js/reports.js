@@ -236,7 +236,7 @@ async function updateProfitReport() {
 function generatePartnerReports() {
   const container = document.getElementById('partnerReportsContainer');
   if (!container) return;
-  container.innerHTML = '';
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(container, ''); } else { container.innerHTML = ''; }
   const { fromDate, toDate, text } = getPartnersPeriodRange();
   const byStore = x => true; // لا توجد فلاتر بعد الآن
   const pays = data.payments.filter(p=> inPeriod(p.date, fromDate, toDate) && byStore(p));
@@ -408,7 +408,7 @@ function generatePartnerReports() {
       
       
     </div>`;
-  container.innerHTML = html;
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(container, html); } else { container.innerHTML = html; }
   // attach export handlers (ensure wired to recompute fresh data)
   wirePartnerExports();
   try { document.dispatchEvent(new CustomEvent('partners-report-rendered')); } catch(_) {}
@@ -908,7 +908,7 @@ function updateReportStores() {
 function generateDebtReport() {
   const table = document.getElementById('debtReportTable');
   if (!table) return;
-  table.innerHTML = '';
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(table, ''); } else { table.innerHTML = ''; }
   const { fromDate, toDate } = getPeriodRange('debts');
   let storesArr = data.stores.slice();
   const totalDebts = storesArr.reduce((sum, store) => {

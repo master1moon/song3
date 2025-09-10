@@ -587,4 +587,25 @@ if (typeof window !== 'undefined') {
   window.safeJsonParse = safeJsonParse;
   window.safeLocalGetJSON = safeLocalGetJSON;
   window.setHTML = setHTML;
+  // تهيئة شاشة الترحيب وحقوق النشر
+  document.addEventListener('DOMContentLoaded', function(){
+    try {
+      const splash = document.getElementById('splashScreen');
+      if (!splash) return;
+      // نص الحقوق من ملفات الحقوق في المشروع (مختصر جميل)
+      const rightsEl = document.getElementById('splashRights');
+      const year = new Date().getFullYear();
+      const rightsHtml = `
+        <div>جميع الحقوق محفوظة © ${year}</div>
+        <div>م / نجيب المقداد</div>
+        <div class="mt-2" style="font-size:12px; opacity:.8;">يُحظر النسخ أو التوزيع بدون إذن</div>
+      `;
+      if (typeof setHTML === 'function') { setHTML(rightsEl, rightsHtml); } else { rightsEl.innerHTML = rightsHtml; }
+      splash.style.display = 'flex';
+      // إخفاء بعد أول تفاعل أو بعد مهلة قصيرة
+      const hide = ()=> { splash.classList.add('fade-out'); setTimeout(()=>{ splash.style.display='none'; }, 600); document.removeEventListener('click', hide); };
+      setTimeout(hide, 1400);
+      document.addEventListener('click', hide);
+    } catch(_) {}
+  });
 }

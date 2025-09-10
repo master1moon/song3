@@ -475,6 +475,14 @@ function buildReportHeader(title = 'تقرير') {
   
   headerHTML += '<div class="report-header">';
   headerHTML += '<div class="company-section">';
+  // إضافة شعار الشركة إن توفّر من الإعدادات وإلا شعار التطبيق الافتراضي
+  try {
+    const settings = (typeof AppSettings!=='undefined') ? AppSettings.getAll() : null;
+    const logoSrc = (settings && settings.reports && settings.reports.companyLogo) ? settings.reports.companyLogo : './icons/icon-128.png';
+    headerHTML += `<div class="logo"><img src="${logoSrc}" alt="شعار" style="width:64px;height:64px;object-fit:contain;border-radius:8px;background:#ffffff22;padding:6px;"></div>`;
+  } catch(_) {
+    headerHTML += `<div class="logo"><img src="./icons/icon-128.png" alt="شعار" style="width:64px;height:64px;object-fit:contain;border-radius:8px;background:#ffffff22;padding:6px;"></div>`;
+  }
   
   // معلومات الشركة
   headerHTML += '<div class="company-info">';

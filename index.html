@@ -1866,8 +1866,25 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
       </style>
+    <!-- شاشة ترحيب (Splash) -->
+    <style>
+        #splashScreen { position: fixed; inset: 0; background: linear-gradient(180deg, var(--primary-color), #111); display: flex; align-items: center; justify-content: center; z-index: 20000; color: #fff; }
+        #splashCard { text-align: center; padding: 24px; border-radius: 16px; background: rgba(255,255,255,0.06); backdrop-filter: blur(6px); box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+        #splashLogo { width: 96px; height: 96px; object-fit: contain; border-radius: 16px; background: #ffffff22; padding: 8px; }
+        #splashTitle { margin: 10px 0 4px; font-weight: 700; }
+        #splashRights { font-size: 13px; opacity: 0.85; line-height: 1.5; }
+        .fade-out { animation: splashFade 600ms ease forwards; }
+        @keyframes splashFade { to { opacity: 0; visibility: hidden; } }
+    </style>
 </head>
 <body>
+    <div id="splashScreen" style="display:none;">
+        <div id="splashCard">
+            <img id="splashLogo" src="./icons/icon-128.png" alt="شعار التطبيق">
+            <div id="splashTitle">نظام كروت الشبكات</div>
+            <div id="splashRights"></div>
+        </div>
+    </div>
     <!-- شريط علوي للجوال مع زر القائمة -->
     <div class="w-100 d-flex d-md-none align-items-center px-3 py-2 mobile-topbar" style="background:#f8f9fa;position:sticky;top:0;z-index:3001;direction:ltr;">
         <div class="d-flex align-items-center flex-grow-1">

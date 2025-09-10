@@ -646,7 +646,6 @@
         body.dark-theme .btn .far {
             color: inherit;
         }
-        
         /* إصلاح حدود وخلفيات إضافية */
         body.dark-theme .border {
             border-color: #3a3f4e !important;
@@ -2855,7 +2854,6 @@
             </div>
         </div>
     </div>
-
     <!-- Modal لإضافة مصروف جديد -->
     <div class="modal fade" id="expenseModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -2925,7 +2923,7 @@
                                 <option value="custom">مخصص (مبلغ مباشر)</option>
                                 <!-- سيتم ملؤه بالبيانات -->
                             </select>
-                            <div class="form-text text-muted">اختياري - يمكنك إدخال سبب مخصص بدلاً من ذلك</div>
+                            <div class="form-text text-muted">اختياري - يمكنك إدخال سبب مخصص بدلًا من ذلك</div>
                         </div>
                         <div class="mb-3" id="customReasonGroup" style="display:none;">
                             <label class="form-label">السبب المخصص *</label>
@@ -2943,6 +2941,26 @@
                             <label class="form-label">تاريخ البيع</label>
                             <input type="date" id="saleDate" class="form-control">
                         </div>
+                        <!-- الخصم (يعمل عند تفعيل العلم discounts) -->
+                        <div class="row g-2" id="discountGroup">
+                            <div class="col-md-4">
+                                <label class="form-label">نوع الخصم</label>
+                                <select id="discountType" class="form-select">
+                                    <option value="none">بدون خصم</option>
+                                    <option value="percent">نسبة %</option>
+                                    <option value="amount">مبلغ ثابت</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">قيمة الخصم</label>
+                                <input type="text" id="discountValue" class="form-control formatted-input" placeholder="0">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">سبب الخصم (اختياري)</label>
+                                <input type="text" id="discountReason" class="form-control" placeholder="اختياري">
+                            </div>
+                        </div>
+                        <div class="mt-2 small text-muted" id="discountPreview" style="display:none;"></div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -4089,7 +4107,6 @@
             const modal = new bootstrap.Modal(document.getElementById('saleModal'));
             modal.show();
         }
-        
         // حفظ البيع
         function saveSale() {
             const id = document.getElementById('saleId').value;
@@ -4738,9 +4755,6 @@
             modal.hide();
             setTimeout(cleanupModalBackdrops, 300);
         }
-        
-
-
         // ربط تغييرات واجهة فترة المصروفات
         (function(){
             const sel = document.getElementById('expensesPeriod');

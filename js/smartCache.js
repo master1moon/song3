@@ -275,12 +275,22 @@ class StoreBalanceCache extends SmartCache {
         return await this.getOrCompute(
             `balance_${storeId}`,
             () => {
-                // الحساب الفعلي (المكلف)
-                const sales = data.sales.filter(s => s.storeId === storeId);
-                const payments = data.payments.filter(p => p.storeId === storeId);
-                const totalSales = sales.reduce((sum, sale) => sum + (sale.total || 0), 0);
-                const totalPayments = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
-                return totalSales - totalPayments;
+                // الحساب الفعلي (المكلف) مع خصم الخصومات عند تفعيل العلم
+                const sales = (data.sales || []).filter(s => s.storeId === storeId);
+                const payments = (data.payments || []).filter(p => p.storeId === storeId);
+                const totalSales = sales.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0);
+                const totalPayments = payments.reduce((sum, payment) => sum + (Number(payment.amount) || 0), 0);
+                const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+                let totalDiscounts = 0;
+                if (discountsEnabled) {
+                    totalDiscounts = sales.reduce((s, sale) => {
+                        const d = sale && sale.discount; if (!d) return s;
+                        const t = Number(sale.total) || 0; const v = Number(d.value) || 0; let dv = 0;
+                        if (d.type === 'percent') dv = Math.min(t * v / 100, t); else if (d.type === 'amount') dv = Math.min(v, t);
+                        return s + dv;
+                    }, 0);
+                }
+                return (totalSales - totalDiscounts) - totalPayments;
             }
         );
     }

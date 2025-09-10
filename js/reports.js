@@ -340,6 +340,27 @@ function generatePartnerReports() {
   // بناء تفاصيل المكونات التفصيلية
   const paysRows = pays.map(p=> `<tr><td>${formatDateEn(p.date)}</td><td>${(data.stores.find(s=>s.id===p.storeId)||{}).name||''}</td><td class="currency">${formatNumber(Number(p.amount)||0)}</td><td>${p.notes||''}</td></tr>`).join('');
   const expsRows = exps.map(e=> `<tr><td>${formatDateEn(e.date)}</td><td>${e.type||''}</td><td class="currency">${formatNumber(Number(e.amount)||0)}</td><td>${e.notes||''}</td></tr>`).join('');
+  // تفاصيل الخصومات
+  let discountsTableHtml = '';
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts')) {
+    try {
+      const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate, toDate));
+      const rows = salesInPeriod
+        .filter(s => s && s.discount && (Number(s.discount.value)||0) > 0)
+        .map(s => {
+          const storeName = (data.stores.find(st=>st.id===s.storeId)||{}).name || '';
+          const pkg = s.packageId ? (data.packages||[]).find(p=>p.id===s.packageId) : null;
+          const t = Number(s.total)||0; const v = Number(s.discount.value)||0; let disc = 0;
+          if (s.discount.type==='percent') disc = Math.min(t*v/100, t); else if (s.discount.type==='amount') disc = Math.min(v, t);
+          const net = Math.max(0, t - disc);
+          return { التاريخ: formatDateEn(s.date), المحل: storeName, الباقة: pkg ? (pkg.name||'') : (s.reason||''), الإجمالي: formatNumber(t), الخصم: formatNumber(disc), الصافي: formatNumber(net), السبب: (s.discount.reason||'') };
+        });
+      if (rows.length) {
+        const headers = ['التاريخ','المحل','الباقة','الإجمالي','الخصم','الصافي','السبب'];
+        discountsTableHtml = renderTable('تفاصيل الخصومات', headers, rows);
+      }
+    } catch(_) {}
+  }
 
   const html = `
     <div class="partner-report-card">
@@ -377,7 +398,10 @@ function generatePartnerReports() {
         </div>
       </div>` : ''}
 
-      <!-- 3) صافي الشركاء -->
+      <!-- 3) تفاصيل الخصومات -->
+      ${discountsTableHtml}
+
+      <!-- 4) صافي الشركاء -->
       <div class="table-responsive">
         <table class="table table-sm align-middle">
           <thead>
@@ -397,7 +421,7 @@ function generatePartnerReports() {
         </table>
       </div>
 
-      <!-- 4) التسديدات (إصدار واحد فقط) -->
+      <!-- 5) التسديدات (إصدار واحد فقط) -->
       <div class="card border-0 mt-3">
         <div class="card-header bg-light">تفاصيل التسديدات ضمن الفترة</div>
         <div class="card-body p-0">

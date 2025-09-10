@@ -963,33 +963,26 @@ function toggleFilterDropdown(storeId) {
   try {
     const dropdown = document.getElementById(`filterDropdown_${storeId}`);
     console.log('Dropdown element:', dropdown);
-    
     if (!dropdown) {
       console.error('القائمة المنسدلة غير موجودة:', `filterDropdown_${storeId}`);
-      // محاولة البحث عن العنصر بطريقة أخرى
       const allDropdowns = document.querySelectorAll('.filter-dropdown');
       console.log('All filter dropdowns found:', allDropdowns.length);
       return;
     }
-    
-    const currentDisplay = dropdown.style.display;
-    console.log('Current display:', currentDisplay);
-    
-    const isOpen = currentDisplay !== 'none' && currentDisplay !== '';
-    console.log('Is open:', isOpen);
-    
-    // إغلاق جميع القوائم
-    document.querySelectorAll('.filter-dropdown').forEach(d => d.style.display = 'none');
-    
-    // فتح/إغلاق القائمة الحالية
-    dropdown.style.display = isOpen ? 'none' : 'block';
-    console.log('New display:', dropdown.style.display);
-    
-    // تحديث حالة الزر
+    const wrapper = dropdown.closest('.filter-selector-wrapper') || dropdown.parentElement;
+    const currentlyOpen = wrapper && wrapper.dataset.open === '1';
+    // أغلق كل القوائم الأخرى
+    document.querySelectorAll('.filter-selector-wrapper').forEach(w => {
+      w.dataset.open = '0';
+    });
+    document.querySelectorAll('.filter-dropdown').forEach(d => { d.style.display = 'none'; });
+    // افتح/أغلق الحالية
+    const willOpen = !currentlyOpen;
+    if (wrapper) wrapper.dataset.open = willOpen ? '1' : '0';
+    dropdown.style.display = willOpen ? 'block' : 'none';
+    console.log('New display:', dropdown.style.display, 'openState:', (wrapper && wrapper.dataset.open));
     const btn = dropdown.previousElementSibling;
-    if (btn) {
-      btn.classList.toggle('active', !isOpen);
-    }
+    if (btn) btn.classList.toggle('active', willOpen);
   } catch (error) {
     console.error('خطأ في toggleFilterDropdown:', error);
     console.error('Stack:', error.stack);
@@ -998,10 +991,11 @@ function toggleFilterDropdown(storeId) {
 
 // إغلاق القوائم عند النقر خارجها
 document.addEventListener('click', function(e) {
-  if (!e.target.closest('.filter-selector-wrapper')) {
-    document.querySelectorAll('.filter-dropdown').forEach(d => d.style.display = 'none');
-    document.querySelectorAll('.filter-selector-btn').forEach(b => b.classList.remove('active'));
-  }
+  const inside = e.target.closest('.filter-selector-wrapper');
+  if (inside) return; // لا تغلق إذا كانت الضغطة داخل عنصر الفلترة
+  document.querySelectorAll('.filter-dropdown').forEach(d => d.style.display = 'none');
+  document.querySelectorAll('.filter-selector-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-selector-wrapper').forEach(w => { w.dataset.open = '0'; });
 });
 
 // تطبيق فلترة

@@ -1084,3 +1084,123 @@ function showCustomDateFilter(storeId) {
     sectionEl.style.display = 'block';
   }
 }
+
+// تخزين حالة فلترة المحل بشكل بسيط
+window.storeFilter = window.storeFilter || (function(){
+  const storeIdToFilter = new Map();
+  return {
+    setActiveStoreFilter: function(storeId, filter){ storeIdToFilter.set(storeId, filter); },
+    getActiveStoreFilter: function(storeId){ return storeIdToFilter.get(storeId) || null; }
+  };
+})();
+
+// أنواع العناصر المضمنة حسب الفلتر
+function getActiveFilterTypes(storeId){
+  const f = window.storeFilter && window.storeFilter.getActiveStoreFilter(storeId);
+  return (f && f.data && Array.isArray(f.data.includeTypes)) ? f.data.includeTypes : ['sale','payment'];
+}
+
+// تحديث زر الفلترة وملخصها
+function updateFilterButton(storeId, filter){
+  try {
+    const btn = document.querySelector(`.filter-selector-btn[data-store-id="${storeId}"]`);
+    if (btn) {
+      const titleEl = btn.querySelector('.filter-title');
+      const subEl = btn.querySelector('.filter-subtitle');
+      if (titleEl && filter && filter.description) titleEl.textContent = filter.description;
+      if (subEl) subEl.textContent = (filter && filter.subtitle) ? filter.subtitle : '';
+    }
+  } catch(_) {}
+  const summary = document.getElementById(`filterSummary_${storeId}`);
+  if (summary) {
+    const desc = (filter && filter.description) ? filter.description : 'الدورة المالية الحالية';
+    const sub = (filter && filter.subtitle) ? filter.subtitle : 'من آخر تصفير حتى الآن';
+    const html = `<div class="alert alert-secondary py-2 px-3 mb-0">الفلترة الحالية: <strong>${desc}</strong> <span class="text-muted">${sub}</span></div>`;
+    if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(summary, html); } else { summary.innerHTML = html; }
+  }
+}
+
+// تبديل العرض بين الجدول وكشف الحساب
+function switchView(storeId, view){
+  const tableView = document.getElementById(`tableViewContent_${storeId}`);
+  const timelineView = document.getElementById(`timelineViewContent_${storeId}`);
+  const btnTable = document.getElementById(`tableView_${storeId}`);
+  const btnTimeline = document.getElementById(`timelineView_${storeId}`);
+  if (!tableView || !timelineView) return;
+  const showTable = (view === 'table');
+  tableView.style.display = showTable ? 'block' : 'none';
+  timelineView.style.display = showTable ? 'none' : 'block';
+  if (btnTable && btnTimeline) {
+    btnTable.classList.toggle('active', showTable);
+    btnTimeline.classList.toggle('active', !showTable);
+  }
+  if (!showTable && typeof updateStoreDetailsWithFilter === 'function') {
+    updateStoreDetailsWithFilter(storeId);
+  }
+}
+
+// تبديل نوع العناصر (الكل/مبيعات/تسديدات)
+function toggleFilterType(storeId, type){
+  const current = window.storeFilter.getActiveStoreFilter(storeId) || { type:'cycle', id:'current_cycle', data:{ includeTypes:['sale','payment'] } };
+  if (type === 'all') current.data.includeTypes = ['sale','payment'];
+  else if (type === 'sales') current.data.includeTypes = ['sale'];
+  else if (type === 'payments') current.data.includeTypes = ['payment'];
+  window.storeFilter.setActiveStoreFilter(storeId, current);
+  updateFilterButton(storeId, current);
+  if (typeof updateStoreDetailsWithFilter === 'function') updateStoreDetailsWithFilter(storeId);
+}
+
+// إعادة بناء الجداول وفق الفلترة النشطة
+function updateStoreDetailsWithFilter(storeId){
+  const filter = window.storeFilter.getActiveStoreFilter(storeId) || { data:{ includeTypes:['sale','payment'] } };
+  const includeSales = filter.data.includeTypes.includes('sale');
+  const includePayments = filter.data.includeTypes.includes('payment');
+  const salesTBody = document.getElementById('storeSalesTable');
+  const paysTBody = document.getElementById('storePaymentsTable');
+  if (!salesTBody || !paysTBody) return;
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(salesTBody, ''); } else { salesTBody.innerHTML = ''; }
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(paysTBody, ''); } else { paysTBody.innerHTML = ''; }
+
+  const sales = (data.sales||[]).filter(s => s.storeId === storeId);
+  const payments = (data.payments||[]).filter(p => p.storeId === storeId);
+
+  if (includeSales) {
+    sales.forEach(sale => {
+      const pkg = sale.packageId ? data.packages.find(p => p.id === sale.packageId) : null;
+      const isCustom = sale.packageId === 'custom';
+      const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+      let discountAmount = 0; let net = sale.total||0;
+      if (discountsEnabled && sale.discount) {
+        const t = Number(sale.total)||0; const v = Number(sale.discount.value)||0;
+        if (sale.discount.type === 'percent') discountAmount = Math.min(t * v / 100, t); else if (sale.discount.type === 'amount') discountAmount = Math.min(v, t);
+        net = Math.max(0, t - discountAmount);
+      }
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${sale.date}</td>
+        <td>${sale.reason || (pkg ? pkg.name : 'غير معروف')}${(discountsEnabled && sale.discount) ? ' <span class="badge bg-warning text-dark">خصم</span>' : ''}</td>
+        <td>${isCustom ? ('<span class="currency">' + formatNumber(sale.amount) + '</span>') : formatNumber(sale.quantity, false)}</td>
+        <td class="currency">${formatNumber(sale.total)}${(discountsEnabled && sale.discount) ? ('<div class="small text-muted">خصم: ' + formatNumber(discountAmount) + ' | صافي: ' + formatNumber(net) + '</div>') : ''}</td>
+        <td class="action-buttons">
+          <button class="btn btn-sm btn-warning edit-sale" data-id="${sale.id}"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-sm btn-danger delete-sale" data-id="${sale.id}"><i class="fas fa-trash"></i></button>
+        </td>`;
+      salesTBody.appendChild(row);
+    });
+  }
+
+  if (includePayments) {
+    payments.forEach(payment => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${payment.date}</td>
+        <td class="currency">${formatNumber(payment.amount)}</td>
+        <td>${payment.notes || ''}</td>
+        <td class="action-buttons">
+          <button class="btn btn-sm btn-warning edit-payment" data-id="${payment.id}"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-sm btn-danger delete-payment" data-id="${payment.id}"><i class="fas fa-trash"></i></button>
+        </td>`;
+      paysTBody.appendChild(row);
+    });
+  }
+}

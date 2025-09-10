@@ -2441,9 +2441,20 @@ function exportPartners(format){
   const byStore = x => true; // لا توجد فلاتر بعد الآن
   const pays = data.payments.filter(p=> inPeriod(p.date, fromDate, toDate) && byStore(p));
   const exps = data.expenses.filter(e=> inPeriod(e.date, fromDate, toDate) && byStore(e));
+  const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+  let totalDiscounts = 0;
+  if (discountsEnabled) {
+    const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate, toDate) && byStore(s));
+    totalDiscounts = salesInPeriod.reduce((sum, s)=>{
+      const d = s && s.discount; if (!d) return sum; let val = 0;
+      const t = Number(s.total)||0; const v = Number(d.value)||0;
+      if (d.type === 'percent') val = Math.min(t * v / 100, t); else if (d.type === 'amount') val = Math.min(v, t);
+      return sum + (val||0);
+    }, 0);
+  }
   const totalPays = pays.reduce((s,x)=> s + (Number(x.amount)||0), 0);
   const totalExps = exps.reduce((s,x)=> s + (Number(x.amount)||0), 0);
-  const net = totalPays - totalExps;
+  const net = (totalPays - totalExps) - (discountsEnabled ? totalDiscounts : 0);
   const partners = getPartnersCount();
   const perPartner = net / partners;
   const listPays = pays.map(p=> ({ التاريخ: formatDateEn(p.date), المحل: (data.stores.find(s=>s.id===p.storeId)?.name)||'', المبلغ: Number(p.amount)||0, ملاحظات: p.notes||'' }));

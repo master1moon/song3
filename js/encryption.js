@@ -158,7 +158,7 @@
         if (!obj || typeof obj !== 'object') return obj;
         
         const key = deriveKey(new Date().toDateString());
-        const encrypted = JSON.parse(JSON.stringify(obj)); // نسخة عميقة
+        const encrypted = (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(JSON.stringify(obj), {}) : JSON.parse(JSON.stringify(obj)); // نسخة عميقة
         
         // قائمة الحقول الحساسة الافتراضية
         const sensitiveFields = [
@@ -233,7 +233,7 @@
         if (!obj || typeof obj !== 'object') return obj;
         
         const key = deriveKey(new Date().toDateString());
-        const decrypted = JSON.parse(JSON.stringify(obj)); // نسخة عميقة
+        const decrypted = (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(JSON.stringify(obj), {}) : JSON.parse(JSON.stringify(obj)); // نسخة عميقة
         
         /**
          * ملاحظة: الدالة decryptFields — وصف تلقائي موجز لوظيفتها.
@@ -346,7 +346,7 @@
             const stored = localStorage.getItem(key);
             if (!stored) return null;
             
-            const parsed = JSON.parse(stored);
+            const parsed = (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(stored, null) : JSON.parse(stored);
             
             // التحقق من التوقيع
             const expectedSignature = deriveKey(JSON.stringify(parsed.data));
@@ -445,7 +445,7 @@
             const existingData = localStorage.getItem('networkCardsData');
             if (existingData && !existingData.includes('"_encrypted"')) {
                 // البيانات غير مشفرة، قم بتشفيرها
-                const parsed = JSON.parse(existingData);
+                const parsed = (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(existingData, {}) : JSON.parse(existingData);
                 saveEncrypted('networkCardsData', parsed);
                 console.log('تم ترحيل البيانات إلى التشفير بنجاح');
             }

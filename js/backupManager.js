@@ -138,7 +138,7 @@
   async function createSnapshot(reason){
     const cur = getCurrentData();
     if (!cur) return null;
-    const content = JSON.parse(JSON.stringify(cur));
+    const content = (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(JSON.stringify(cur), {}) : JSON.parse(JSON.stringify(cur));
     const snap = {
       id: 'snap_'+Date.now(),
       createdAt: new Date().toISOString(),
@@ -167,7 +167,7 @@
   async function restoreSnapshot(id){
     const snap = await idbGet(STORE_SNAPSHOTS, id);
     if (!snap) { showNotification('تعذر العثور على النسخة', 'error'); return; }
-    setCurrentData(JSON.parse(JSON.stringify(snap.content)));
+    setCurrentData((typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(JSON.stringify(snap.content), {}) : JSON.parse(JSON.stringify(snap.content)));
     localStorage.setItem('networkCardsData', JSON.stringify(getCurrentData()));
     saveData();
     updateDashboard();

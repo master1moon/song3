@@ -66,7 +66,7 @@
                 id: 'trash_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                 section: section,
                 deletedAt: new Date().toISOString(),
-                item: JSON.parse(JSON.stringify(item)) // نسخة عميقة
+                item: ((typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(JSON.stringify(item), {}) : JSON.parse(JSON.stringify(item))) // نسخة عميقة
             };
             
             if (data && data.trash) {

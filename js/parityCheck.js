@@ -156,6 +156,49 @@
   }
 
   window.ParityCheck = { computeMetrics, render: renderParityPage, show: showParitySection };
+  
+  // صفحة مراجعة الخصومات - منطق مبسط داخل نفس الملف لتقليل الملفات
+  function renderDiscountsPage(){
+    if (!(typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('discounts'))) {
+      const tb = document.getElementById('discountsTable'); if (tb) tb.innerHTML = '<tr><td colspan="6" class="text-center text-muted">الميزة غير مفعلة</td></tr>';
+      return;
+    }
+    const dref = (typeof getDataRef==='function')?getDataRef():(window.data||{});
+    const sales = dref.sales||[]; const stores = dref.stores||[]; const storeMap = stores.reduce((m,s)=>{m[s.id]=s.name; return m;},{});
+    const from = document.getElementById('discFrom')?.value || '';
+    const to = document.getElementById('discTo')?.value || '';
+    const storeId = document.getElementById('discStore')?.value || '';
+    const reasonQ = (document.getElementById('discReason')?.value||'').trim();
+    // تعبئة قائمة المحلات مرة واحدة
+    try{ const sel = document.getElementById('discStore'); if (sel && sel.children.length<=1){ stores.forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=s.name; sel.appendChild(o); }); } }catch(_){ }
+    const inRange=(d)=>{ if (!from && !to) return true; const dd=new Date(d); if (from){const f=new Date(from); f.setHours(0,0,0,0); if (dd<f) return false;} if (to){const t=new Date(to); t.setHours(23,59,59,999); if (dd>t) return false;} return true; };
+    const filtered = sales.filter(s=> s.discount && inRange(s.date) && (!storeId || String(s.storeId)===String(storeId)) && (!reasonQ || (s.discount.reason||'').includes(reasonQ)) );
+    const rows = filtered.map(s=>{
+      const t=Number(s.total)||0; const d=s.discount; let disc=0; if (d.type==='percent'){disc=Math.min(t*(Number(d.value)||0)/100,t);} else if(d.type==='amount'){disc=Math.min(Number(d.value)||0,t);} const net=Math.max(0,t-disc);
+      return `<tr><td>${s.date}</td><td>${storeMap[s.storeId]||''}</td><td>${s.reason|| (s.packageId? 'بيع باقة':'بيع مخصص')}</td><td class="currency">${formatNumber(t)}</td><td class="currency">${formatNumber(disc)}</td><td class="currency">${formatNumber(net)}</td></tr>`;
+    }).join('');
+    const tb = document.getElementById('discountsTable'); if (tb) tb.innerHTML = rows || '<tr><td colspan="6" class="text-center text-muted">لا توجد خصومات مطابقة</td></tr>';
+  }
+  function exportDiscounts(format){
+    const dref = (typeof getDataRef==='function')?getDataRef():(window.data||{});
+    const sales = (dref.sales||[]).filter(s=> s.discount);
+    const stores = dref.stores||[]; const storeMap = stores.reduce((m,s)=>{m[s.id]=s.name; return m;},{});
+    const arr = sales.map(s=>{ const t=Number(s.total)||0; const d=s.discount; let disc=0; if(d.type==='percent') disc=Math.min(t*(Number(d.value)||0)/100,t); else if(d.type==='amount') disc=Math.min(Number(d.value)||0,t); const net=Math.max(0,t-disc); return { التاريخ:s.date, المحل:storeMap[s.storeId]||'', التفاصيل:s.reason|| (s.packageId? 'بيع باقة':'بيع مخصص'), الإجمالي:t, الخصم:disc, الصافي:net, سبب_الخصم:(d.reason||'') }; });
+    if (format==='json'){
+      const blob = new Blob([JSON.stringify(arr, null, 2)], {type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='discounts.json'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); return;
+    }
+    if (format==='excel'){
+      try{ const ws=XLSX.utils.json_to_sheet(arr); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'الخصومات'); XLSX.writeFile(wb, 'discounts.xlsx'); }catch(_){ showNotification('تعذر إنشاء Excel', 'error'); }
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', function(){
+    const ids=['discFrom','discTo','discStore','discReason']; ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change', renderDiscountsPage); });
+    const exJson=document.getElementById('exportDiscountsJson'); if (exJson) exJson.addEventListener('click', ()=> exportDiscounts('json'));
+    const exXls=document.getElementById('exportDiscountsExcel'); if (exXls) exXls.addEventListener('click', ()=> exportDiscounts('excel'));
+    // اظهر الصفحة عند التنقل
+    document.addEventListener('click', function(e){ const link=e.target.closest('[data-section="discounts"]'); if (!link) return; setTimeout(renderDiscountsPage, 50); }, true);
+  });
 
 })();
 

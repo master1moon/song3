@@ -257,17 +257,6 @@ function generatePartnerReports() {
       return sum + (val||0);
     }, 0);
   }
-  const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
-  let totalDiscounts = 0;
-  if (discountsEnabled) {
-    const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate, toDate) && byStore(s));
-    totalDiscounts = salesInPeriod.reduce((sum, s)=>{
-      const d = s && s.discount; if (!d) return sum; let val = 0;
-      if (d.type === 'percent') { val = Math.min((Number(s.total)||0) * (Number(d.value)||0) / 100, (Number(s.total)||0)); }
-      else if (d.type === 'amount') { val = Math.min((Number(d.value)||0), (Number(s.total)||0)); }
-      return sum + (val||0);
-    }, 0);
-  }
   const totalPays = pays.reduce((s,x)=> s + (Number(x.amount)||0), 0);
   const totalExps = exps.reduce((s,x)=> s + (Number(x.amount)||0), 0);
   const net = (totalPays - totalExps) - (discountsEnabled ? totalDiscounts : 0);
@@ -744,7 +733,7 @@ function getReportStyles() {
  * المدخلات: periodText, partnersCount, paysList, expsList, totalPays, totalExps, net, perPartner, adjustments = [], partnersList = [], partnerSharesRows = [], monthsData = []
  * المخرجات: راجع التنفيذ
  */
-function buildPartnerReportHTML(periodText, partnersCount, paysList, expsList, totalPays, totalExps, net, perPartner, adjustments = [], partnersList = [], partnerSharesRows = [], monthsData = []){
+function buildPartnerReportHTML(periodText, partnersCount, paysList, expsList, totalPays, totalExps, net, perPartner, adjustments = [], partnersList = [], partnerSharesRows = [], monthsData = [], totalDiscounts = 0){
   const settings = getReportSettings();
   let html='';
   html += '<!doctype html><html lang="ar" dir="rtl">';
@@ -780,9 +769,11 @@ function buildPartnerReportHTML(periodText, partnersCount, paysList, expsList, t
   }
   // 1) الملخص أولاً
   const hasPercent = Array.isArray(partnersList) && partnersList.length && partnersList.some(p=>p.sharePercent!=null);
+  const showDisc = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
   html += '<div class="summary">' +
     '<div class="box">إجمالي التسديدات: <span class="currency">' + formatNumber(totalPays||0) + '</span></div>' +
     '<div class="box">إجمالي المصروفات: <span class="currency">' + formatNumber(totalExps||0) + '</span></div>' +
+    (showDisc ? ('<div class="box">إجمالي الخصومات: <span class="currency">' + formatNumber(totalDiscounts||0) + '</span></div>') : '') +
     '<div class="box">صافي الأرباح: <span class="currency">' + formatNumber(net||0) + '</span></div>' +
     (hasPercent ? '' : ('<div class="box">صافي لكل شريك: <span class="currency">' + formatNumber(perPartner||0) + '</span></div>')) +
   '</div>';
@@ -2577,7 +2568,7 @@ function exportPartners(format){
           monthsData.push({ label, totalPays: mTotalPays, totalExps: mTotalExps, totalWithdrawals: mTotalWithdrawals, partnerShares: mPartnerShares, listPays: monthListPays, listExps: monthListExps, adjustments: o.adjs });
         });
       } catch(_) {}
-      const html = buildPartnerReportHTML(text, partners, listPays, listExps, totalPays, totalExps, net, perPartner, adjustments, partnersList, partnerSharesRows, monthsData);
+      const html = buildPartnerReportHTML(text, partners, listPays, listExps, totalPays, totalExps, net, perPartner, adjustments, partnersList, partnerSharesRows, monthsData, (discountsEnabled? totalDiscounts: 0));
       const win = window.open('', '_blank'); if (!win || !win.document) { showNotification('يمنع المتصفح النوافذ المنبثقة. الرجاء السماح بها.', 'error'); return; }
       win.document.open(); win.document.write(html); win.document.close();
       showNotification(format==='pdf' ? 'تم فتح صفحة الطباعة. اضغط حفظ كـ PDF.' : 'تم فتح صفحة التقرير.', 'success');

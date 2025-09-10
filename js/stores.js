@@ -1069,5 +1069,12 @@ function applyFilter(storeId, type, filterId) {
 
 // عرض التاريخ المخصص
 function showCustomDateFilter(storeId) {
-  document.getElementById(`filterDropdown_${storeId}`).style.display = 'none';
-  document.getElementById(`customDateSection_${storeId}`
+  const dropdownEl = document.getElementById(`filterDropdown_${storeId}`);
+  if (dropdownEl) {
+    dropdownEl.style.display = 'none';
+  }
+  const sectionEl = document.getElementById(`customDateSection_${storeId}`);
+  if (sectionEl) {
+    sectionEl.style.display = 'block';
+  }
+}

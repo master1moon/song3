@@ -14,6 +14,11 @@
         /**
          * إنشاء نسخة احتياطية وإرسالها بالبريد
          */
+        /**
+         * ملاحظة: الدالة createEmailBackup — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: بدون
+         * المخرجات: راجع التنفيذ
+         */
         async createEmailBackup() {
             try {
                 showNotification('جاري إنشاء النسخة الاحتياطية...', 'info');
@@ -36,6 +41,11 @@
 
         /**
          * عرض واجهة البريد الإلكتروني
+         */
+        /**
+         * ملاحظة: الدالة showEmailInterface — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: backupData, filename
+         * المخرجات: راجع التنفيذ
          */
         showEmailInterface(backupData, filename) {
             const modalHTML = `
@@ -148,6 +158,11 @@
          * @param {boolean} silent - إنشاء بدون رسائل
          * @returns {Promise<Object>} بيانات النسخة الاحتياطية
          */
+        /**
+         * ملاحظة: الدالة createBackup — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: silent = false
+         * المخرجات: راجع التنفيذ
+         */
         async createBackup(silent = false) {
             try {
                 if (!silent) {
@@ -222,6 +237,11 @@
          * @param {Object} backupData - بيانات النسخة
          * @param {string} location - مكان الحفظ
          */
+        /**
+         * ملاحظة: الدالة saveBackup — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: backupData, location = 'local'
+         * المخرجات: راجع التنفيذ
+         */
         async saveBackup(backupData, location = 'local') {
             const filename = `backup_${moment().format('YYYY-MM-DD_HH-mm-ss')}.json`;
             
@@ -272,6 +292,11 @@
          * @param {Object} data - البيانات
          * @param {string} filename - اسم الملف
          */
+        /**
+         * ملاحظة: الدالة downloadBackup — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: data, filename
+         * المخرجات: راجع التنفيذ
+         */
         downloadBackup(data, filename) {
             const jsonStr = JSON.stringify(data, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -290,6 +315,11 @@
          * حفظ في المتصفح
          * @param {Object} data - البيانات
          */
+        /**
+         * ملاحظة: الدالة saveToBrowser — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: data
+         * المخرجات: راجع التنفيذ
+         */
         saveToBrowser(data) {
             try {
                 // حفظ في localStorage
@@ -297,7 +327,7 @@
                 localStorage.setItem(key, JSON.stringify(data));
                 
                 // حفظ قائمة النسخ
-                let backupsList = JSON.parse(localStorage.getItem('backupsList') || '[]');
+                let backupsList = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('backupsList')||'[]', [])||[]) : JSON.parse(localStorage.getItem('backupsList') || '[]');
                 backupsList.push({
                     key: key,
                     timestamp: data.timestamp,
@@ -328,6 +358,11 @@
          * @param {string} service - نوع الخدمة
          * @param {Object} data - البيانات
          * @param {string} filename - اسم الملف
+         */
+        /**
+         * ملاحظة: الدالة showCloudInstructions — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: service, data, filename
+         * المخرجات: راجع التنفيذ
          */
         showCloudInstructions(service, data, filename) {
             // إنشاء كود Google Colab
@@ -492,6 +527,11 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
          * حفظ في GitHub
          * @param {Object} data - البيانات
          */
+        /**
+         * ملاحظة: الدالة saveToGithub — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: data
+         * المخرجات: راجع التنفيذ
+         */
         async saveToGithub(data) {
             if (typeof githubUploadData === 'function') {
                 try {
@@ -513,6 +553,11 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
          * @param {string} str - النص
          * @returns {string} النص المضغوط
          */
+        /**
+         * ملاحظة: الدالة compressData — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: str
+         * المخرجات: راجع التنفيذ
+         */
         compressData(str) {
             // استخدام ضغط بسيط (يمكن استبداله بمكتبة ضغط حقيقية)
             return btoa(encodeURIComponent(str));
@@ -523,6 +568,11 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
          * @param {string} str - النص المضغوط
          * @returns {string} النص الأصلي
          */
+        /**
+         * ملاحظة: الدالة decompressData — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: str
+         * المخرجات: راجع التنفيذ
+         */
         decompressData(str) {
             return decodeURIComponent(atob(str));
         },
@@ -532,6 +582,11 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
          * @param {string} data - البيانات
          * @param {string} password - كلمة المرور
          * @returns {string} البيانات المشفرة
+         */
+        /**
+         * ملاحظة: الدالة encryptData — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: data, password
+         * المخرجات: راجع التنفيذ
          */
         encryptData(data, password) {
             // استخدام تشفير بسيط (يُفضل استخدام مكتبة تشفير قوية)
@@ -547,6 +602,11 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
          * @param {string} password - كلمة المرور
          * @returns {string} البيانات الأصلية
          */
+        /**
+         * ملاحظة: الدالة decryptData — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: data, password
+         * المخرجات: راجع التنفيذ
+         */
         decryptData(data, password) {
             if (typeof simpleDecrypt === 'function') {
                 return simpleDecrypt(data, password);
@@ -557,6 +617,11 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
         /**
          * الحصول على كلمة المرور من المستخدم
          * @returns {Promise<string>} كلمة المرور
+         */
+        /**
+         * ملاحظة: الدالة getPassword — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: بدون
+         * المخرجات: راجع التنفيذ
          */
         async getPassword() {
             return new Promise((resolve) => {
@@ -569,12 +634,17 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
          * استعادة نسخة احتياطية
          * @param {File} file - ملف النسخة الاحتياطية
          */
+        /**
+         * ملاحظة: الدالة restoreBackup — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: file
+         * المخرجات: راجع التنفيذ
+         */
         async restoreBackup(file) {
             try {
                 showNotification('جاري استعادة النسخة الاحتياطية...', 'info');
                 
                 const text = await file.text();
-                let backupData = JSON.parse(text);
+                let backupData = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(text, {}) : JSON.parse(text);
                 
                 // التحقق من صحة البيانات
                 if (!backupData.version || !backupData.data) {
@@ -593,12 +663,12 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
                 
                 // فك الضغط إذا كان مضغوطاً
                 if (backupData.compressed) {
-                    backupData.data = JSON.parse(this.decompressData(backupData.data));
+                    backupData.data = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(this.decompressData(backupData.data), {}) : JSON.parse(this.decompressData(backupData.data));
                 }
                 
                 // استعادة البيانات
                 if (typeof backupData.data === 'string') {
-                    backupData.data = JSON.parse(backupData.data);
+                    backupData.data = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(backupData.data, {}) : JSON.parse(backupData.data);
                 }
                 
                 // تطبيق البيانات
@@ -631,8 +701,13 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
         /**
          * عرض قائمة النسخ المحفوظة في المتصفح
          */
+        /**
+         * ملاحظة: الدالة showBrowserBackups — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: بدون
+         * المخرجات: راجع التنفيذ
+         */
         showBrowserBackups() {
-            const backupsList = JSON.parse(localStorage.getItem('backupsList') || '[]');
+            const backupsList = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('backupsList')||'[]', [])||[]) : JSON.parse(localStorage.getItem('backupsList') || '[]');
             
             if (backupsList.length === 0) {
                 showNotification('لا توجد نسخ احتياطية محفوظة', 'info');
@@ -697,6 +772,11 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
          * استعادة نسخة من المتصفح
          * @param {string} key - مفتاح النسخة
          */
+        /**
+         * ملاحظة: الدالة restoreBrowserBackup — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: key
+         * المخرجات: راجع التنفيذ
+         */
         async restoreBrowserBackup(key) {
             try {
                 const backupStr = localStorage.getItem(key);
@@ -705,7 +785,7 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
                     return;
                 }
                 
-                const backupData = JSON.parse(backupStr);
+                const backupData = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(backupStr, {}) : JSON.parse(backupStr);
                 const file = new File([JSON.stringify(backupData)], 'backup.json', { type: 'application/json' });
                 await this.restoreBackup(file);
                 
@@ -722,6 +802,11 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
         /**
          * تنظيف HTML
          */
+        /**
+         * ملاحظة: الدالة escapeHtml — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: text
+         * المخرجات: راجع التنفيذ
+         */
         escapeHtml(text) {
             const map = {
                 '&': '&amp;',
@@ -737,6 +822,11 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
          * حذف نسخة من المتصفح
          * @param {string} key - مفتاح النسخة
          */
+        /**
+         * ملاحظة: الدالة deleteBrowserBackup — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: key
+         * المخرجات: راجع التنفيذ
+         */
         deleteBrowserBackup(key) {
             if (!confirm('هل أنت متأكد من حذف هذه النسخة؟')) return;
             
@@ -744,7 +834,7 @@ print(f"✅ تم حفظ النسخة في: {filename}")`;
                 localStorage.removeItem(key);
                 
                 // تحديث القائمة
-                let backupsList = JSON.parse(localStorage.getItem('backupsList') || '[]');
+                let backupsList = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('backupsList')||'[]', [])||[]) : JSON.parse(localStorage.getItem('backupsList') || '[]');
                 backupsList = backupsList.filter(b => b.key !== key);
                 localStorage.setItem('backupsList', JSON.stringify(backupsList));
                 

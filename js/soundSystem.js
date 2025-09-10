@@ -22,27 +22,43 @@
         /**
          * تهيئة نظام الصوت
          */
+        /**
+         * ملاحظة: الدالة init — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: بدون
+         * المخرجات: راجع التنفيذ
+         */
         init: function() {
             if (this.isInitialized) return;
-            
             try {
-                // إنشاء سياق صوتي
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                this.audioContext = new AudioContext();
-                this.isInitialized = true;
-                
-                // تحميل الإعدادات
-                this.loadSettings();
-                
-                console.log('تم تهيئة نظام الصوت بنجاح');
+                // تأجيل إنشاء AudioContext حتى أول تفاعل لتجنّب التحذير
+                const createCtx = () => {
+                    if (this.isInitialized) return;
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    try {
+                        this.audioContext = new AC();
+                        this.isInitialized = true;
+                        this.loadSettings();
+                        console.log('تم تهيئة نظام الصوت بنجاح');
+                    } catch (e) {
+                        console.warn('تعذّر إنشاء AudioContext:', e);
+                        this.isEnabled = false;
+                    }
+                    ['click','keydown','touchstart'].forEach(ev=> document.removeEventListener(ev, createCtx));
+                };
+                ['click','keydown','touchstart'].forEach(ev=> document.addEventListener(ev, createCtx, { once: true }));
             } catch (error) {
-                console.error('خطأ في تهيئة نظام الصوت:', error);
+                console.error('خطأ في تهيئة مستمعات الصوت:', error);
                 this.isEnabled = false;
             }
         },
 
         /**
          * تحميل إعدادات الصوت
+         */
+        /**
+         * ملاحظة: الدالة loadSettings — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: بدون
+         * المخرجات: راجع التنفيذ
          */
         loadSettings: function() {
             if (typeof AppSettings !== 'undefined') {
@@ -57,6 +73,11 @@
         /**
          * تشغيل صوت تنبيه
          * @param {string} type - نوع التنبيه (success, error, warning, info)
+         */
+        /**
+         * ملاحظة: الدالة playNotification — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: type = 'info'
+         * المخرجات: راجع التنفيذ
          */
         playNotification: function(type = 'info') {
             if (!this.isEnabled || !this.audioContext) return;
@@ -105,6 +126,11 @@
          * @param {number} frequency - التردد بالهرتز
          * @param {number} duration - المدة بالثواني
          */
+        /**
+         * ملاحظة: الدالة playTone — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: frequency, duration
+         * المخرجات: راجع التنفيذ
+         */
         playTone: function(frequency, duration) {
             if (!this.audioContext) return;
             
@@ -142,6 +168,11 @@
         /**
          * تشغيل صوت النقر
          */
+        /**
+         * ملاحظة: الدالة playClick — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: بدون
+         * المخرجات: راجع التنفيذ
+         */
         playClick: function() {
             if (!this.isEnabled || !this.audioContext) return;
             
@@ -154,6 +185,11 @@
          * @param {boolean} enabled - تفعيل/تعطيل الصوت
          * @param {number} volume - مستوى الصوت (0-100)
          */
+        /**
+         * ملاحظة: الدالة updateSettings — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: enabled, volume
+         * المخرجات: راجع التنفيذ
+         */
         updateSettings: function(enabled, volume) {
             this.isEnabled = enabled;
             this.volume = Math.max(0, Math.min(100, volume));
@@ -162,6 +198,11 @@
         /**
          * اختبار الصوت
          * @param {string} type - نوع الصوت للاختبار
+         */
+        /**
+         * ملاحظة: الدالة test — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: type = 'info'
+         * المخرجات: راجع التنفيذ
          */
         test: function(type = 'info') {
             const wasEnabled = this.isEnabled;

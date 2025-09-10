@@ -37,10 +37,20 @@
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة openDB — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function openDB(){
     if (dbPromise) return dbPromise;
     dbPromise = new Promise((resolve, reject) => {
       const req = indexedDB.open(DB_NAME, DB_VERSION);
+      /**
+       * ملاحظة: الدالة req.onupgradeneeded — وصف تلقائي موجز لوظيفتها.
+       * المدخلات: e
+       * المخرجات: راجع التنفيذ
+       */
       req.onupgradeneeded = function(e){
         const db = req.result;
         if (!db.objectStoreNames.contains('app')) db.createObjectStore('app');
@@ -72,6 +82,11 @@
    * @param {string} storeKey - مفتاح البيانات
    * @returns {Promise<any>} البيانات المخزنة
    */
+  /**
+   * ملاحظة: الدالة idbGet — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: storeKey
+   * المخرجات: راجع التنفيذ
+   */
   async function idbGet(storeKey){
     try{
       const db = await openDB();
@@ -90,6 +105,11 @@
    * @param {string} key - مفتاح التخزين
    * @param {any} value - البيانات للحفظ
    * @returns {Promise<boolean>} نجاح العملية
+   */
+  /**
+   * ملاحظة: الدالة idbSet — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: key, value
+   * المخرجات: راجع التنفيذ
    */
   async function idbSet(key, value){
     try{
@@ -114,6 +134,11 @@
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة getDataRef — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function getDataRef(){
     try {
       if (typeof window !== 'undefined' && typeof window.data !== 'undefined') return window.data;
@@ -127,6 +152,11 @@
    * ينظف ويعيد ملء مخزن المصروفات
    * يستخدم لتسريع عمليات البحث والفلترة
    */
+  /**
+   * ملاحظة: الدالة syncExpensesToIndexed — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   async function syncExpensesToIndexed(){
     try {
       const db = await openDB();
@@ -135,8 +165,21 @@
       await new Promise((res,rej)=>{ const r = s.clear(); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });
       const dref = getDataRef();
       const list = (dref && Array.isArray(dref.expenses)) ? dref.expenses : [];
-      for (const exp of list) {
-        await new Promise((res,rej)=>{ const r = s.put(exp); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });
+      const useChunking = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('idbChunking'));
+      if (useChunking) {
+        const batchSize = 200;
+        for (let i = 0; i < list.length; i += batchSize) {
+          const batch = list.slice(i, i + batchSize);
+          for (const exp of batch) {
+            await new Promise((res,rej)=>{ const r = s.put(exp); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });
+          }
+          // منح المتصفح فرصة لتحديث الواجهة
+          await new Promise(res=> setTimeout(res, 0));
+        }
+      } else {
+        for (const exp of list) {
+          await new Promise((res,rej)=>{ const r = s.put(exp); r.onsuccess=()=>res(); r.onerror=()=>rej(r.error); });
+        }
       }
       await new Promise((res,rej)=>{ tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); });
     } catch(_){}
@@ -152,6 +195,11 @@
    * يرسل حدث app-data-loaded عند الانتهاء
    * @returns {Promise<void>}
    */
+  /**
+   * ملاحظة: الدالة window.loadData — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   window.loadData = async function(){
     try{
       const stored = await idbGet('root');
@@ -165,7 +213,7 @@
       const dref = getDataRef();
       if (dref) {
         if (Array.isArray(dref.expenses)) dref.expenses.forEach(e => { e.date = normalizeDate(e.date); });
-        if (Array.isArray(dref.sales)) dref.sales.forEach(s => { s.date = normalizeDate(s.date); });
+        if (Array.isArray(dref.sales)) dref.sales.forEach(s => { s.date = normalizeDate(s.date); if (!s.discount) s.discount = null; });
         if (Array.isArray(dref.payments)) dref.payments.forEach(p => { p.date = normalizeDate(p.date); });
         // persist back if any changed
         window.saveData();
@@ -184,6 +232,11 @@
    * يحفظ في localStorage وIndexedDB
    * يزامن المصروفات مع مخزن منفصل
    * @returns {void}
+   */
+  /**
+   * ملاحظة: الدالة window.saveData — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
    */
   window.saveData = function(){
     const result = originalSaveData();

@@ -24,6 +24,11 @@
  * المدخلات: input
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة toEnglishDigits — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: input
+ * المخرجات: راجع التنفيذ
+ */
 function toEnglishDigits(input) {
   if (input === null || input === undefined) return '';
   return String(input)
@@ -36,6 +41,11 @@ function toEnglishDigits(input) {
  * يحول الأرقام إلى إنجليزية أولاً ثم يضيف الفواصل
  * @param {*} num - الرقم المراد تنسيقه
  * @returns {string} الرقم منسق بفواصل إنجليزية
+ */
+/**
+ * ملاحظة: الدالة formatNumber — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: num
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة formatNumber — وصف تلقائي موجز لوظيفتها.
@@ -59,6 +69,11 @@ function formatNumber(num) {
  * المدخلات: str
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة parseFormattedNumber — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: str
+ * المخرجات: راجع التنفيذ
+ */
 function parseFormattedNumber(str) {
   if (!str) return 0;
   const eng = toEnglishDigits(str);
@@ -71,6 +86,11 @@ function parseFormattedNumber(str) {
  * يدعم عدة صيغ للتاريخ المدخل
  * @param {string} dateStr - نص التاريخ
  * @returns {string} التاريخ بصيغة YYYY-MM-DD
+ */
+/**
+ * ملاحظة: الدالة formatDateEn — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: dateStr
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة formatDateEn — وصف تلقائي موجز لوظيفتها.
@@ -145,6 +165,11 @@ function formatDateEn(dateStr) {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة setupFormattedInputs — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function setupFormattedInputs() {
   document.querySelectorAll('.formatted-input').forEach(input => {
     input.addEventListener('focus', function () {
@@ -204,6 +229,11 @@ function setupFormattedInputs() {
  * المدخلات: message, type, options = {}
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة showNotification — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: message, type, options = {}
+ * المخرجات: راجع التنفيذ
+ */
 function showNotification(message, type, options = {}) {
   const notification = document.getElementById('notification');
   const notificationText = document.getElementById('notificationText');
@@ -249,6 +279,11 @@ function showNotification(message, type, options = {}) {
  * المدخلات: targetSection, labelText
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة switchSection — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: targetSection, labelText
+ * المخرجات: راجع التنفيذ
+ */
 function switchSection(targetSection, labelText) {
   const allLinks = document.querySelectorAll('.sidebar .nav-link, #mobileDrawer .nav-link');
   allLinks.forEach(l => l.classList.remove('active'));
@@ -261,6 +296,7 @@ function switchSection(targetSection, labelText) {
   if (targetSection === 'reports') if (typeof generatePartnerReports === 'function') generatePartnerReports();
   if (targetSection === 'trash') if (typeof renderTrashTable === 'function') setTimeout(() => renderTrashTable(), 100);
   if (targetSection === 'settings') if (typeof SettingsUI !== 'undefined' && SettingsUI.init) SettingsUI.init();
+  if (targetSection === 'parityCheck') if (typeof ParityCheck !== 'undefined' && ParityCheck.render) ParityCheck.render();
 }
 
 /**
@@ -305,6 +341,11 @@ document.addEventListener('DOMContentLoaded', function () {
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة openDrawer — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function openDrawer() {
     const drawer = document.getElementById('mobileDrawer');
     const backdrop = document.getElementById('drawerBackdrop');
@@ -312,6 +353,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (backdrop) backdrop.classList.add('show');
     document.body.classList.add('drawer-open');
   }
+  /**
+   * ملاحظة: الدالة closeDrawer — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة closeDrawer — وصف تلقائي موجز لوظيفتها.
    * المدخلات: بدون
@@ -365,6 +411,11 @@ function setTextSafe(el, text){ if (el) el.textContent = text; }
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة getTodayDate — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function getTodayDate() {
   const today = new Date();
   const year = today.getFullYear();
@@ -378,6 +429,11 @@ function getTodayDate() {
  * يحدث القوائم والجداول والتقارير بناءً على القسم النشط
  * يستخدم بعد أي عملية تعديل للبيانات لضمان ظهور التغييرات مباشرة
  * آمن للاستخدام - يتحقق من وجود الدوال قبل استدعائها
+ */
+/**
+ * ملاحظة: الدالة refreshCurrentView — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة refreshCurrentView — وصف تلقائي موجز لوظيفتها.
@@ -441,4 +497,116 @@ if (typeof window !== 'undefined') {
   window.switchSection = switchSection;
   window.getTodayDate = getTodayDate;
   window.refreshCurrentView = refreshCurrentView;
+  // واجهة برمجية صغيرة للأعلام ضمن النطاق العام (للاستخدام السريع في الكونسول)
+  if (typeof window.FeatureFlags === 'undefined' && typeof window.AppSettings !== 'undefined') {
+    // سيتم حقن FeatureFlags من settings.js بعد التحميل؛ هذا احتياطي فقط
+    window.FeatureFlags = {
+      isEnabled: () => false,
+      enable: () => false,
+      disable: () => false,
+      all: () => ({ experimentalFeatures: false })
+    };
+  }
+}
+
+/**
+ * دالة مساعدة: قراءة JSON بأمان مع دعم علم safeJsonParse
+ * لا تغيّر السلوك الافتراضي إلا عند تفعيل العلم
+ */
+/**
+ * ملاحظة: الدالة safeJsonParse — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: text, fallback = null
+ * المخرجات: راجع التنفيذ
+ */
+function safeJsonParse(text, fallback = null) {
+  try {
+    if (text == null) return fallback;
+    if (typeof text !== 'string') return fallback;
+    return JSON.parse(text);
+  } catch (e) {
+    try {
+      if (typeof window !== 'undefined' && window.FeatureFlags && window.FeatureFlags.isEnabled('safeJsonParse')) {
+        console.warn('فشل تحليل JSON، سيتم استخدام قيمة بديلة:', e && e.message ? e.message : e);
+        return fallback;
+      }
+    } catch (_) {}
+    // السلوك الأصلي: إعادة رمي الخطأ
+    throw e;
+  }
+}
+
+/**
+ * دالة مساعدة: قراءة كائن JSON من localStorage بأمان
+ */
+/**
+ * ملاحظة: الدالة safeLocalGetJSON — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: key, fallback = null
+ * المخرجات: راجع التنفيذ
+ */
+function safeLocalGetJSON(key, fallback = null) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    if (typeof window !== 'undefined' && window.FeatureFlags && window.FeatureFlags.isEnabled('safeJsonParse')) {
+      return safeJsonParse(raw, fallback);
+    }
+    return JSON.parse(raw);
+  } catch (e) {
+    if (typeof window !== 'undefined' && window.FeatureFlags && window.FeatureFlags.isEnabled('safeJsonParse')) {
+      console.warn(`تعذر قراءة ${key} من localStorage، استخدام قيمة بديلة`);
+      return fallback;
+    }
+    throw e;
+  }
+}
+
+/**
+ * تعيين HTML مع احترام العلم safeDomRendering
+ */
+/**
+ * ملاحظة: الدالة setHTML — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: elementOrId, html
+ * المخرجات: راجع التنفيذ
+ */
+function setHTML(elementOrId, html) {
+  try {
+    let element = elementOrId;
+    if (typeof elementOrId === 'string') element = document.getElementById(elementOrId);
+    if (!element) return;
+    if (typeof window !== 'undefined' && window.FeatureFlags && window.FeatureFlags.isEnabled('safeDomRendering') && window.SecurityUtils && window.SecurityUtils.safeSetContent) {
+      window.SecurityUtils.safeSetContent(element, html, true);
+    } else {
+      element.innerHTML = html;
+    }
+  } catch (_) {
+    // تجاهل أي خطأ عرضي في الواجهة
+  }
+}
+
+// نشر الدوال المساعدة
+if (typeof window !== 'undefined') {
+  window.safeJsonParse = safeJsonParse;
+  window.safeLocalGetJSON = safeLocalGetJSON;
+  window.setHTML = setHTML;
+  // تهيئة شاشة الترحيب وحقوق النشر
+  document.addEventListener('DOMContentLoaded', function(){
+    try {
+      const splash = document.getElementById('splashScreen');
+      if (!splash) return;
+      // نص الحقوق من ملفات الحقوق في المشروع (مختصر جميل)
+      const rightsEl = document.getElementById('splashRights');
+      const year = new Date().getFullYear();
+      const rightsHtml = `
+        <div>جميع الحقوق محفوظة © ${year}</div>
+        <div>م / نجيب المقداد</div>
+        <div class="mt-2" style="font-size:12px; opacity:.8;">يُحظر النسخ أو التوزيع بدون إذن</div>
+      `;
+      if (typeof setHTML === 'function') { setHTML(rightsEl, rightsHtml); } else { rightsEl.innerHTML = rightsHtml; }
+      splash.style.display = 'flex';
+      // إخفاء بعد أول تفاعل أو بعد مهلة قصيرة
+      const hide = ()=> { splash.classList.add('fade-out'); setTimeout(()=>{ splash.style.display='none'; }, 600); document.removeEventListener('click', hide); };
+      setTimeout(hide, 1400);
+      document.addEventListener('click', hide);
+    } catch(_) {}
+  });
 }

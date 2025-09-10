@@ -26,6 +26,11 @@
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة updateDashboardReports — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function updateDashboardReports() {
   try {
     const { fromDate, toDate } = getPeriodRange();
@@ -79,6 +84,11 @@ if (typeof window !== 'undefined') {
  * المدخلات: priceType
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة getPriceTypeName — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: priceType
+ * المخرجات: راجع التنفيذ
+ */
 function getPriceTypeName(priceType) {
   switch (priceType) {
     case 'retail': return 'تجزئة';
@@ -94,6 +104,11 @@ function getPriceTypeName(priceType) {
  * يمكن إعادة تفعيلها في المستقبل للفلترة حسب المحل
  * @param {Object} item - العنصر للتحقق منه
  * @returns {boolean} دائماً true حالياً
+ */
+/**
+ * ملاحظة: الدالة isStoreMatch — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: item
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة isStoreMatch — وصف تلقائي موجز لوظيفتها.
@@ -117,6 +132,11 @@ if (typeof window !== 'undefined') {
  * 
  * تحسين: يستخدم الآن نظام الكاش الذكي لتسريع عرض التقارير
  * التقرير يُحسب مرة واحدة ويُحفظ لمدة 10 دقائق
+ */
+/**
+ * ملاحظة: الدالة updateProfitReport — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 async function updateProfitReport() {
   // التأكد من وجود البيانات
@@ -144,6 +164,8 @@ async function updateProfitReport() {
         
         // الحسابات المعقدة (تحدث مرة واحدة فقط)
         const filteredSales = (data.sales || []).filter(s => inPeriod(s.date, fromDate, toDate) && isStoreMatch(s));
+        const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+        const totalDiscounts = discountsEnabled ? filteredSales.reduce((sum, s)=>{ const d=s&&s.discount; if(!d) return sum; const t=Number(s.total)||0; const v=Number(d.value)||0; let dv=0; if(d.type==='percent') dv=Math.min(t*v/100,t); else if(d.type==='amount') dv=Math.min(v,t); return sum+dv; },0) : 0;
         const totalSales = filteredSales.reduce((sum, sale) => sum + (sale.total || 0), 0);
         
         const filteredPayments = (data.payments || []).filter(p => inPeriod(p.date, fromDate, toDate) && isStoreMatch(p));
@@ -156,7 +178,8 @@ async function updateProfitReport() {
           totalSales,
           totalPayments,
           totalExpenses,
-          netProfit: totalPayments - totalExpenses
+          totalDiscounts,
+          netProfit: (totalPayments - totalExpenses) - (discountsEnabled ? totalDiscounts : 0)
         };
       },
       10 * 60 * 1000 // كاش لمدة 10 دقائق
@@ -166,6 +189,8 @@ async function updateProfitReport() {
     console.warn('نظام الكاش غير متاح، استخدام الطريقة البطيئة');
     
     const filteredSales = (data.sales || []).filter(s => inPeriod(s.date, fromDate, toDate) && isStoreMatch(s));
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+    const totalDiscounts = discountsEnabled ? filteredSales.reduce((sum, s)=>{ const d=s&&s.discount; if(!d) return sum; const t=Number(s.total)||0; const v=Number(d.value)||0; let dv=0; if(d.type==='percent') dv=Math.min(t*v/100,t); else if(d.type==='amount') dv=Math.min(v,t); return sum+dv; },0) : 0;
     const totalSales = filteredSales.reduce((sum, sale) => sum + (sale.total || 0), 0);
     
     const filteredPayments = (data.payments || []).filter(p => inPeriod(p.date, fromDate, toDate) && isStoreMatch(p));
@@ -178,7 +203,8 @@ async function updateProfitReport() {
       totalSales,
       totalPayments,
       totalExpenses,
-      netProfit: totalPayments - totalExpenses
+      totalDiscounts,
+      netProfit: (totalPayments - totalExpenses) - (discountsEnabled ? totalDiscounts : 0)
     };
   }
   
@@ -208,17 +234,32 @@ async function updateProfitReport() {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة generatePartnerReports — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function generatePartnerReports() {
   const container = document.getElementById('partnerReportsContainer');
   if (!container) return;
-  container.innerHTML = '';
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(container, ''); } else { container.innerHTML = ''; }
   const { fromDate, toDate, text } = getPartnersPeriodRange();
   const byStore = x => true; // لا توجد فلاتر بعد الآن
   const pays = data.payments.filter(p=> inPeriod(p.date, fromDate, toDate) && byStore(p));
   const exps = data.expenses.filter(e=> inPeriod(e.date, fromDate, toDate) && byStore(e));
+  const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+  let totalDiscounts = 0;
+  if (discountsEnabled) {
+    const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate, toDate) && byStore(s));
+    totalDiscounts = salesInPeriod.reduce((sum, s)=>{
+      const d = s && s.discount; if (!d) return sum; let val = 0; const t=Number(s.total)||0; const v=Number(d.value)||0;
+      if (d.type==='percent') val = Math.min(t*v/100, t); else if (d.type==='amount') val = Math.min(v, t);
+      return sum + (val||0);
+    }, 0);
+  }
   const totalPays = pays.reduce((s,x)=> s + (Number(x.amount)||0), 0);
   const totalExps = exps.reduce((s,x)=> s + (Number(x.amount)||0), 0);
-  const net = totalPays - totalExps;
+  const net = (totalPays - totalExps) - (discountsEnabled ? totalDiscounts : 0);
 
   // إعدادات الشركاء من الإعدادات (اختياري)
   let partnersCfg = null;
@@ -299,6 +340,27 @@ function generatePartnerReports() {
   // بناء تفاصيل المكونات التفصيلية
   const paysRows = pays.map(p=> `<tr><td>${formatDateEn(p.date)}</td><td>${(data.stores.find(s=>s.id===p.storeId)||{}).name||''}</td><td class="currency">${formatNumber(Number(p.amount)||0)}</td><td>${p.notes||''}</td></tr>`).join('');
   const expsRows = exps.map(e=> `<tr><td>${formatDateEn(e.date)}</td><td>${e.type||''}</td><td class="currency">${formatNumber(Number(e.amount)||0)}</td><td>${e.notes||''}</td></tr>`).join('');
+  // تفاصيل الخصومات
+  let discountsTableHtml = '';
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts')) {
+    try {
+      const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate || '0000-01-01', toDate || '9999-12-31'));
+      const rows = salesInPeriod
+        .filter(s => s && s.discount && (Number(s.discount.value)||0) > 0)
+        .map(s => {
+          const storeName = (data.stores.find(st=>st.id===s.storeId)||{}).name || '';
+          const pkg = s.packageId ? (data.packages||[]).find(p=>p.id===s.packageId) : null;
+          const t = Number(s.total)||0; const v = Number(s.discount.value)||0; let disc = 0;
+          if (s.discount.type==='percent') disc = Math.min(t*v/100, t); else if (s.discount.type==='amount') disc = Math.min(v, t);
+          const net = Math.max(0, t - disc);
+          return { التاريخ: formatDateEn(s.date), المحل: storeName, الباقة: pkg ? (pkg.name||'') : (s.reason||''), الإجمالي: formatNumber(t), الخصم: formatNumber(disc), الصافي: formatNumber(net), السبب: (s.discount.reason||'') };
+        });
+      if (rows.length) {
+        const headers = ['التاريخ','المحل','الباقة','الإجمالي','الخصم','الصافي','السبب'];
+        discountsTableHtml = renderTable('تفاصيل الخصومات', headers, rows);
+      }
+    } catch(err) { try { console.warn('PartnerReport discounts table build failed:', err); } catch(_) {} }
+  }
 
   const html = `
     <div class="partner-report-card">
@@ -307,6 +369,7 @@ function generatePartnerReports() {
         <div class="summary-item"><div class="summary-value currency">${formatNumber(totalPays)}</div><div class="summary-label">إجمالي التسديدات</div></div>
         <div class="summary-item"><div class="summary-value currency">${formatNumber(totalExps)}</div><div class="summary-label">إجمالي المصروفات</div></div>
         <div class="summary-item"><div class="summary-value currency ${net<0?'profit-negative':''}">${formatNumber(net)}</div><div class="summary-label">صافي الأرباح</div></div>
+        ${discountsEnabled ? `<div class="summary-item"><div class="summary-value currency">${formatNumber(totalDiscounts||0)}</div><div class="summary-label">إجمالي الخصومات</div></div>` : ''}
         ${distribution==='percent' ? '' : `<div class="summary-item"><div class="summary-value currency">${formatNumber(partnersCount>0 ? (net/partnersCount) : net)}</div><div class="summary-label">صافي لكل شريك</div></div>`}
       </div>
       ${warnings.length ? `<div class="${net<0 ? 'alert alert-danger' : 'alert alert-warning'} mb-2 small"><ul class="mb-0 ps-3">${warnings.map(w=>`<li>${w}</li>`).join('')}</ul></div>` : ''}
@@ -335,7 +398,10 @@ function generatePartnerReports() {
         </div>
       </div>` : ''}
 
-      <!-- 3) صافي الشركاء -->
+      <!-- 3) تفاصيل الخصومات -->
+      ${discountsTableHtml}
+
+      <!-- 4) صافي الشركاء -->
       <div class="table-responsive">
         <table class="table table-sm align-middle">
           <thead>
@@ -355,7 +421,7 @@ function generatePartnerReports() {
         </table>
       </div>
 
-      <!-- 4) التسديدات (إصدار واحد فقط) -->
+      <!-- 5) التسديدات (إصدار واحد فقط) -->
       <div class="card border-0 mt-3">
         <div class="card-header bg-light">تفاصيل التسديدات ضمن الفترة</div>
         <div class="card-body p-0">
@@ -383,7 +449,7 @@ function generatePartnerReports() {
       
       
     </div>`;
-  container.innerHTML = html;
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(container, html); } else { container.innerHTML = html; }
   // attach export handlers (ensure wired to recompute fresh data)
   wirePartnerExports();
   try { document.dispatchEvent(new CustomEvent('partners-report-rendered')); } catch(_) {}
@@ -392,6 +458,11 @@ function generatePartnerReports() {
 /**
  * الحصول على إعدادات التقارير
  * يستخدم الإعدادات المحفوظة أو القيم الافتراضية
+ */
+/**
+ * ملاحظة: الدالة getReportSettings — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة getReportSettings — وصف تلقائي موجز لوظيفتها.
@@ -434,12 +505,25 @@ function getReportSettings() {
  * المدخلات: title = 'تقرير'
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة buildReportHeader — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: title = 'تقرير'
+ * المخرجات: راجع التنفيذ
+ */
 function buildReportHeader(title = 'تقرير') {
   const settings = getReportSettings();
   let headerHTML = '';
   
   headerHTML += '<div class="report-header">';
   headerHTML += '<div class="company-section">';
+  // إضافة شعار الشركة إن توفّر من الإعدادات وإلا شعار التطبيق الافتراضي
+  try {
+    const settings = (typeof AppSettings!=='undefined') ? AppSettings.getAll() : null;
+    const logoSrc = (settings && settings.reports && settings.reports.companyLogo) ? settings.reports.companyLogo : './icons/icon-128.png';
+    headerHTML += `<div class="logo"><img src="${logoSrc}" alt="شعار" style="width:64px;height:64px;object-fit:contain;border-radius:8px;background:#ffffff22;padding:6px;"></div>`;
+  } catch(_) {
+    headerHTML += `<div class="logo"><img src="./icons/icon-128.png" alt="شعار" style="width:64px;height:64px;object-fit:contain;border-radius:8px;background:#ffffff22;padding:6px;"></div>`;
+  }
   
   // معلومات الشركة
   headerHTML += '<div class="company-info">';
@@ -481,6 +565,11 @@ function buildReportHeader(title = 'تقرير') {
 
 /**
  * بناء تذييل التقرير
+ */
+/**
+ * ملاحظة: الدالة buildReportFooter — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة buildReportFooter — وصف تلقائي موجز لوظيفتها.
@@ -530,6 +619,11 @@ function buildReportFooter() {
 
 /**
  * الحصول على أنماط CSS للتقارير
+ */
+/**
+ * ملاحظة: الدالة getReportStyles — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة getReportStyles — وصف تلقائي موجز لوظيفتها.
@@ -658,7 +752,12 @@ function getReportStyles() {
  * المدخلات: periodText, partnersCount, paysList, expsList, totalPays, totalExps, net, perPartner
  * المخرجات: راجع التنفيذ
  */
-function buildPartnerReportHTML(periodText, partnersCount, paysList, expsList, totalPays, totalExps, net, perPartner, adjustments = [], partnersList = [], partnerSharesRows = [], monthsData = []){
+/**
+ * ملاحظة: الدالة buildPartnerReportHTML — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: periodText, partnersCount, paysList, expsList, totalPays, totalExps, net, perPartner, adjustments = [], partnersList = [], partnerSharesRows = [], monthsData = []
+ * المخرجات: راجع التنفيذ
+ */
+function buildPartnerReportHTML(periodText, partnersCount, paysList, expsList, totalPays, totalExps, net, perPartner, adjustments = [], partnersList = [], partnerSharesRows = [], monthsData = [], totalDiscounts = 0, fromDate = null, toDate = null){
   const settings = getReportSettings();
   let html='';
   html += '<!doctype html><html lang="ar" dir="rtl">';
@@ -694,9 +793,11 @@ function buildPartnerReportHTML(periodText, partnersCount, paysList, expsList, t
   }
   // 1) الملخص أولاً
   const hasPercent = Array.isArray(partnersList) && partnersList.length && partnersList.some(p=>p.sharePercent!=null);
+  const showDisc = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
   html += '<div class="summary">' +
     '<div class="box">إجمالي التسديدات: <span class="currency">' + formatNumber(totalPays||0) + '</span></div>' +
     '<div class="box">إجمالي المصروفات: <span class="currency">' + formatNumber(totalExps||0) + '</span></div>' +
+    (showDisc ? ('<div class="box">إجمالي الخصومات: <span class="currency">' + formatNumber(totalDiscounts||0) + '</span></div>') : '') +
     '<div class="box">صافي الأرباح: <span class="currency">' + formatNumber(net||0) + '</span></div>' +
     (hasPercent ? '' : ('<div class="box">صافي لكل شريك: <span class="currency">' + formatNumber(perPartner||0) + '</span></div>')) +
   '</div>';
@@ -795,6 +896,11 @@ function buildPartnerReportHTML(periodText, partnersCount, paysList, expsList, t
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة exportPartnerReport — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function exportPartnerReport() {
   // التأكد من وجود البيانات
   if (!data || typeof data !== 'object') {
@@ -804,10 +910,16 @@ function exportPartnerReport() {
   
   const { fromDate, toDate } = getPeriodRange();
   const sales = (data.sales || []).filter(s=> inPeriod(s.date, fromDate, toDate) && isStoreMatch(s));
+  const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+  const totalDiscounts = discountsEnabled ? sales.reduce((sum, s)=>{
+    const d = s && s.discount; if (!d) return sum; let val = 0; const t = Number(s.total)||0; const v = Number(d.value)||0;
+    if (d.type === 'percent') val = Math.min(t * v / 100, t); else if (d.type === 'amount') val = Math.min(v, t);
+    return sum + (val||0);
+  }, 0) : 0;
   const expenses = (data.expenses || []).filter(e=> inPeriod(e.date, fromDate, toDate) && isStoreMatch(e));
   const totalSales = sales.reduce((sum, sale) => sum + (sale.total || 0), 0);
   const totalExpenses = expenses.reduce((sum, expense) => sum + (expense.amount || 0), 0);
-  const netProfit = totalSales - totalExpenses;
+  const netProfit = (totalSales - totalExpenses) - (discountsEnabled ? totalDiscounts : 0);
   const reportData = { fromDate, toDate, totalSales, totalExpenses, netProfit, sales, expenses };
   const filename = `تقرير_الشركاء_${moment().format('YYYYMMDD')}.json`;
   const dataStr = JSON.stringify(reportData, null, 2);
@@ -817,6 +929,11 @@ function exportPartnerReport() {
   showNotification('تم تصدير تقرير الشركاء', 'success');
 }
 
+/**
+ * ملاحظة: الدالة updateReportStores — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة updateReportStores — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -832,10 +949,15 @@ function updateReportStores() {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة generateDebtReport — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function generateDebtReport() {
   const table = document.getElementById('debtReportTable');
   if (!table) return;
-  table.innerHTML = '';
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(table, ''); } else { table.innerHTML = ''; }
   const { fromDate, toDate } = getPeriodRange('debts');
   let storesArr = data.stores.slice();
   const totalDebts = storesArr.reduce((sum, store) => {
@@ -870,6 +992,11 @@ function generateDebtReport() {
   });
 }
 
+/**
+ * ملاحظة: الدالة exportData — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة exportData — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -940,6 +1067,11 @@ function exportData() {
  * المدخلات: store, periodText, allTransactions, previousBalance = 0
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة buildAccountStatementHTML — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: store, periodText, allTransactions, previousBalance = 0
+ * المخرجات: راجع التنفيذ
+ */
 function buildAccountStatementHTML(store, periodText, allTransactions, previousBalance = 0) {
   const settings = getReportSettings();
   
@@ -950,18 +1082,29 @@ function buildAccountStatementHTML(store, periodText, allTransactions, previousB
   
   // حساب الرصيد المتحرك
   let runningBalance = previousBalance;
+  const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
   const transactionsWithBalance = allTransactions.map(t => {
+    let delta = 0;
     if (t.type === 'sale') {
-      runningBalance += t.amount;
+      // خصم اختياري لا يظهر إلا عند تفعيل العلم
+      let disc = 0; if (discountsEnabled && t.id) {
+        const s = (data.sales||[]).find(x=> x.id===t.id);
+        if (s && s.discount){ const tt=Number(s.total)||0; const v=Number(s.discount.value)||0; if (s.discount.type==='percent') disc=Math.min(tt*v/100, tt); else if (s.discount.type==='amount') disc=Math.min(v, tt); }
+      }
+      delta = t.amount - (disc||0);
+      runningBalance += delta;
+      return { ...t, discount: (disc||0), netAmount: delta, balance: runningBalance };
     } else if (t.type === 'payment') {
-      runningBalance -= t.amount;
+      delta = t.amount;
+      runningBalance -= delta;
+      return { ...t, balance: runningBalance };
     }
     return { ...t, balance: runningBalance };
   });
   
   // حساب الإجماليات
-  const totalDebits = allTransactions.filter(t => t.type === 'sale').reduce((sum, t) => sum + t.amount, 0);
-  const totalCredits = allTransactions.filter(t => t.type === 'payment').reduce((sum, t) => sum + t.amount, 0);
+  const totalDebits = transactionsWithBalance.filter(t => t.type === 'sale').reduce((sum, t) => sum + (discountsEnabled ? (t.netAmount||t.amount) : t.amount), 0);
+  const totalCredits = transactionsWithBalance.filter(t => t.type === 'payment').reduce((sum, t) => sum + t.amount, 0);
   
   // بناء HTML
   let html = `<!DOCTYPE html>
@@ -1321,7 +1464,7 @@ function buildAccountStatementHTML(store, periodText, allTransactions, previousB
                 <tr class="${rowClass}">
                     <td>${dayTransactionCount}</td>
                     <td>🛍️ بيع: ${packageName}${quantity > 1 ? ` (كمية: ${quantity})` : ''}</td>
-                    <td class="debit">${formatNumber(t.amount)}</td>
+                    <td class="debit">${formatNumber((typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts')) ? (t.netAmount || t.amount) : t.amount)}${(typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts') && t.discount) ? ('<div class="small text-muted">خصم: '+formatNumber(t.discount)+'</div>') : ''}</td>
                     <td>-</td>
                     <td class="${balanceClass}">${formatNumber(Math.abs(t.balance))} ${balanceText}</td>
                     <td>${t.notes || ''}</td>
@@ -1386,6 +1529,11 @@ function buildAccountStatementHTML(store, periodText, allTransactions, previousB
          * المدخلات: number
          * المخرجات: راجع التنفيذ
          */
+        /**
+         * ملاحظة: الدالة copyPhoneNumber — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: number
+         * المخرجات: راجع التنفيذ
+         */
         function copyPhoneNumber(number) {
             // نسخ الرقم إلى الحافظة
             navigator.clipboard.writeText(number).then(function() {
@@ -1422,6 +1570,11 @@ function buildAccountStatementHTML(store, periodText, allTransactions, previousB
  * المدخلات: store, periodText, mappedSalesForExport, mappedPaymentsForExport, totalSales, totalPayments, remaining
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة buildStoreReportHTML — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: store, periodText, mappedSalesForExport, mappedPaymentsForExport, totalSales, totalPayments, remaining
+ * المخرجات: راجع التنفيذ
+ */
 function buildStoreReportHTML(store, periodText, mappedSalesForExport, mappedPaymentsForExport, totalSales, totalPayments, remaining) {
   const settings = getReportSettings();
   
@@ -1430,20 +1583,34 @@ function buildStoreReportHTML(store, periodText, mappedSalesForExport, mappedPay
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة buildSalesRows — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function buildSalesRows() { 
     let rows = ''; 
     for (const s of mappedSalesForExport) { 
+      const showDisc = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+      const disc = (s.الخصم||0);
+      const net = (s.الصافي|| (s.الإجمالي||0));
       rows += '<tr>' + 
         '<td>' + s.التاريخ + '</td>' + 
         '<td>' + s.التفاصيل + '</td>' + 
         '<td>' + s.الباقة + '</td>' + 
         '<td>' + s.الكمية_أو_المبلغ + '</td>' + 
         '<td class="currency">' + formatNumber(s.الإجمالي || 0) + '</td>' + 
+        (showDisc ? ('<td class="currency">' + formatNumber(disc) + '</td><td class="currency">' + formatNumber(net) + '</td>') : '') +
       '</tr>'; 
     } 
     return rows; 
   }
   
+  /**
+   * ملاحظة: الدالة buildPaymentRows — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة buildPaymentRows — وصف تلقائي موجز لوظيفتها.
    * المدخلات: بدون
@@ -1476,15 +1643,18 @@ function buildStoreReportHTML(store, periodText, mappedSalesForExport, mappedPay
   html += 'الفترة: ' + periodText + ' | تاريخ التصدير: ' + moment().format(settings.dateFormat);
   html += '</div>';
   
+  const showDiscBox = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+  const totalDiscountsBox = showDiscBox ? (function(){ try { return storeSales.reduce((s,x)=>{ const d=x&&x.discount; if(!d) return s; const t=Number(x.total)||0; const v=Number(d.value)||0; let dv=0; if(d.type==='percent') dv=Math.min(t*v/100,t); else if(d.type==='amount') dv=Math.min(v,t); return s+dv; },0);}catch(_){return 0;} })() : 0;
   html += '<div class="summary">' + 
     '<div class="box">إجمالي المبيعات: <span class="currency">' + formatNumber(totalSales || 0) + '</span></div>' + 
+    (showDiscBox ? ('<div class="box">إجمالي الخصومات: <span class="currency">' + formatNumber(totalDiscountsBox || 0) + '</span></div>') : '') +
     '<div class="box">إجمالي التسديدات: <span class="currency">' + formatNumber(totalPayments || 0) + '</span></div>' + 
     '<div class="box">المتبقي: <span class="currency">' + formatNumber(remaining || 0) + '</span></div>' + 
   '</div>';
   
   html += '<h4>المبيعات</h4>';
   if (mappedSalesForExport.length > 0) 
-    html += '<table><thead><tr><th>التاريخ</th><th>التفاصيل</th><th>الباقة</th><th>الكمية/المبلغ</th><th>الإجمالي</th></tr></thead><tbody>' + buildSalesRows() + '</tbody></table>'; 
+    html += '<table><thead><tr><th>التاريخ</th><th>التفاصيل</th><th>الباقة</th><th>الكمية/المبلغ</th><th>الإجمالي</th>' + ((typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'))?'<th>الخصم</th><th>الصافي</th>':'') + '</tr></thead><tbody>' + buildSalesRows() + '</tbody></table>'; 
   else 
     html += '<div>لا توجد مبيعات ضمن الفترة</div>';
     
@@ -1506,10 +1676,20 @@ function buildStoreReportHTML(store, periodText, mappedSalesForExport, mappedPay
  * المدخلات: expensesRows, periodText
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة buildExpensesReportHTML — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: expensesRows, periodText
+ * المخرجات: راجع التنفيذ
+ */
 function buildExpensesReportHTML(expensesRows, periodText) {
   const settings = getReportSettings();
   const currentMonth = moment().format('YYYY-MM');
   
+  /**
+   * ملاحظة: الدالة getMonthKey — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: row
+   * المخرجات: راجع التنفيذ
+   */
   const getMonthKey = row => {
     const d = String(row['التاريخ'] || '').slice(0, 10);
     const m = moment(d, [moment.ISO_8601, 'YYYY-MM-DD', 'YYYY-M-D'], true);
@@ -1544,6 +1724,11 @@ function buildExpensesReportHTML(expensesRows, periodText) {
   
   html += '<div class="summary"><div class="box">إجمالي المصروفات المصدّرة: <span class="currency">' + formatNumber(overallTotal || 0) + '</span></div></div>';
 
+  /**
+   * ملاحظة: الدالة renderTable — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: rows
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة renderTable — وصف تلقائي موجز لوظيفتها.
    * المدخلات: rows
@@ -1587,6 +1772,11 @@ function buildExpensesReportHTML(expensesRows, periodText) {
   return html;
 }
 
+/**
+ * ملاحظة: الدالة exportStoreData — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: storeId, format
+ * المخرجات: راجع التنفيذ
+ */
 async function exportStoreData(storeId, format) {
   // التأكد من وجود البيانات
   if (!data || typeof data !== 'object') {
@@ -1628,9 +1818,19 @@ async function exportStoreData(storeId, format) {
    * المدخلات: d
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة parseDate — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: d
+   * المخرجات: راجع التنفيذ
+   */
   function parseDate(d) {
     if (!d) return null; const m = moment(d, [moment.ISO_8601, 'YYYY-MM-DD', 'YYYY-M-D', 'DD/MM/YYYY', 'D/M/YYYY'], true); if (m.isValid()) return m; const n = new Date(d); return isNaN(n.getTime()) ? null : moment(n);
   }
+  /**
+   * ملاحظة: الدالة inRange — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: d
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة inRange — وصف تلقائي موجز لوظيفتها.
    * المدخلات: d
@@ -1652,13 +1852,19 @@ async function exportStoreData(storeId, format) {
               // استخدام formatDateEn إذا كانت متاحة، وإلا استخدام التاريخ كما هو
     const formatDate = (typeof formatDateEn === 'function') ? formatDateEn : (d => d || '');
     
-    const mappedSalesForExport = storeSales.map(s => ({
-      التاريخ: formatDate(s.date),
-      التفاصيل: s.reason || (s.packageId ? 'بيع باقة' : 'بيع مخصص'),
-      الباقة: s.packageId && s.packageId !== 'custom' ? (packageIdToName.get(s.packageId + '') || 'غير معروف') : 'مخصص',
-      الكمية_أو_المبلغ: s.packageId === 'custom' ? s.amount : s.quantity,
-      الإجمالي: s.total
-    }));
+    const mappedSalesForExport = storeSales.map(s => {
+      const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+      let disc = 0; let net = s.total||0; const d = s && s.discount; const t = Number(s.total)||0;
+      if (discountsEnabled && d) { const v = Number(d.value)||0; if (d.type==='percent') disc = Math.min(t*v/100, t); else if (d.type==='amount') disc = Math.min(v, t); net = Math.max(0, t - disc); }
+      const base = {
+        التاريخ: formatDate(s.date),
+        التفاصيل: s.reason || (s.packageId ? 'بيع باقة' : 'بيع مخصص'),
+        الباقة: s.packageId && s.packageId !== 'custom' ? (packageIdToName.get(s.packageId + '') || 'غير معروف') : 'مخصص',
+        الكمية_أو_المبلغ: s.packageId === 'custom' ? s.amount : s.quantity,
+        الإجمالي: s.total
+      };
+      return discountsEnabled ? Object.assign(base, { الخصم: disc, الصافي: net }) : base;
+    });
     const mappedPaymentsForExport = storePayments.map(p => ({ التاريخ: formatDate(p.date), المبلغ: p.amount, ملاحظات: p.notes || '' }));
     const filename = `تفاصيل_${store.name.replace(/\s+/g, '_')}_${moment().format('YYYYMMDD')}`;
     const periodText = `${formatDate(fromDate) || 'من البداية'} إلى ${formatDate(toDate) || 'حتى الآن'}`;
@@ -1854,6 +2060,11 @@ async function exportStoreData(storeId, format) {
  * المدخلات: format
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة exportExpensesData — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: format
+ * المخرجات: راجع التنفيذ
+ */
 function exportExpensesData(format) {
   const filename = `المصروفات_${moment().format('YYYYMMDD')}`;
   const expList = (window.__getFilteredExpensesForExport ? window.__getFilteredExpensesForExport() : data.expenses);
@@ -1872,6 +2083,11 @@ function exportExpensesData(format) {
   const periodText = `${from} إلى ${to}`;
 
   const toEn = (s) => (typeof window.toEnglishDigits === 'function' ? window.toEnglishDigits(String(s || '')) : String(s || ''));
+  /**
+   * ملاحظة: الدالة normalizeDate — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: d
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة normalizeDate — وصف تلقائي موجز لوظيفتها.
    * المدخلات: d
@@ -1953,6 +2169,11 @@ function exportExpensesData(format) {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة generateDebtReportData — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function generateDebtReportData() {
   const { fromDate, toDate } = getPeriodRange();
   return [
@@ -1961,6 +2182,11 @@ function generateDebtReportData() {
   ];
 }
 
+/**
+ * ملاحظة: الدالة generateProfitReportData — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة generateProfitReportData — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -1982,6 +2208,11 @@ function generateProfitReportData(){
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة generatePartnerReportData — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function generatePartnerReportData() {
   const { fromDate, toDate } = getPeriodRange();
   return [
@@ -1990,6 +2221,11 @@ function generatePartnerReportData() {
   ];
 }
 
+/**
+ * ملاحظة: الدالة getPeriodRange — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: reportType
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة getPeriodRange — وصف تلقائي موجز لوظيفتها.
  * المدخلات: reportType
@@ -2023,11 +2259,21 @@ function getPeriodRange(reportType) {
  * المدخلات: dateStr, fromDate, toDate
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة inPeriod — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: dateStr, fromDate, toDate
+ * المخرجات: راجع التنفيذ
+ */
 function inPeriod(dateStr, fromDate, toDate){
   const d = formatDateEn(dateStr);
   return d >= fromDate && d <= toDate;
 }
 
+/**
+ * ملاحظة: الدالة renderQuickSummaries — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة renderQuickSummaries — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -2057,6 +2303,11 @@ function renderQuickSummaries(){
    * المدخلات: arr, getDate, getAmount
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة aggregateDaily — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: arr, getDate, getAmount
+   * المخرجات: راجع التنفيذ
+   */
   function aggregateDaily(arr, getDate, getAmount){
     const map = new Map(days.map(d=>[d,0]));
     for (const item of arr){
@@ -2075,6 +2326,11 @@ function renderQuickSummaries(){
   const qs = document.getElementById('quickSalesTotal'); if (qs) qs.textContent = formatNumber(totals.sales);
   const qp = document.getElementById('quickPaymentsTotal'); if (qp) qp.textContent = formatNumber(totals.payments);
   const qe = document.getElementById('quickExpensesTotal'); if (qe) qe.textContent = formatNumber(totals.expenses);
+  /**
+   * ملاحظة: الدالة drawSpark — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: canvas, series, color
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة drawSpark — وصف تلقائي موجز لوظيفتها.
    * المدخلات: canvas, series, color
@@ -2105,6 +2361,11 @@ function renderQuickSummaries(){
 // re-render quick summaries on relevant events
 window.addEventListener('resize', ()=>{ renderQuickSummaries(); });
 
+/**
+ * ملاحظة: الدالة renderComparisonReport — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة renderComparisonReport — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -2152,6 +2413,11 @@ function renderComparisonReport(){
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة getPartnersPeriodRange — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function getPartnersPeriodRange(){
   const sel = document.getElementById('partnersPeriod');
   const f = document.getElementById('partnersFromDate');
@@ -2189,14 +2455,30 @@ function getPartnersCount(){ try{ if (typeof AppSettings!=='undefined'){ const c
  * المدخلات: format
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة exportPartners — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: format
+ * المخرجات: راجع التنفيذ
+ */
 function exportPartners(format){
   const { fromDate, toDate, text } = getPartnersPeriodRange();
   const byStore = x => true; // لا توجد فلاتر بعد الآن
   const pays = data.payments.filter(p=> inPeriod(p.date, fromDate, toDate) && byStore(p));
   const exps = data.expenses.filter(e=> inPeriod(e.date, fromDate, toDate) && byStore(e));
+  const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+  let totalDiscounts = 0;
+  if (discountsEnabled) {
+    const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate, toDate) && byStore(s));
+    totalDiscounts = salesInPeriod.reduce((sum, s)=>{
+      const d = s && s.discount; if (!d) return sum; let val = 0;
+      const t = Number(s.total)||0; const v = Number(d.value)||0;
+      if (d.type === 'percent') val = Math.min(t * v / 100, t); else if (d.type === 'amount') val = Math.min(v, t);
+      return sum + (val||0);
+    }, 0);
+  }
   const totalPays = pays.reduce((s,x)=> s + (Number(x.amount)||0), 0);
   const totalExps = exps.reduce((s,x)=> s + (Number(x.amount)||0), 0);
-  const net = totalPays - totalExps;
+  const net = (totalPays - totalExps) - (discountsEnabled ? totalDiscounts : 0);
   const partners = getPartnersCount();
   const perPartner = net / partners;
   const listPays = pays.map(p=> ({ التاريخ: formatDateEn(p.date), المحل: (data.stores.find(s=>s.id===p.storeId)?.name)||'', المبلغ: Number(p.amount)||0, ملاحظات: p.notes||'' }));
@@ -2226,7 +2508,8 @@ function exportPartners(format){
   });
   if (format==='excel'){
     const wb = XLSX.utils.book_new();
-    const meta = [{ المدة: text, عدد_الشركاء: partners, إجمالي_التسديدات: totalPays, إجمالي_المصروفات: totalExps, صافي_الأرباح: net, صافي_لكل_شريك: perPartner }];
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+    const meta = [{ المدة: text, عدد_الشركاء: partners, إجمالي_التسديدات: totalPays, إجمالي_المصروفات: totalExps, إجمالي_الخصومات: (discountsEnabled? totalDiscounts: 0), صافي_الأرباح: net, صافي_لكل_شريك: perPartner }];
     // ترتيب الأوراق: سحوبات الشركاء -> صافي الشركاء -> الملخص -> التسديدات -> المصروفات
     // الملخص أولاً
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(meta), 'الملخص');
@@ -2249,7 +2532,8 @@ function exportPartners(format){
     let txt = `تقرير الشركاء\n\nالمدة: ${text}\nعدد الشركاء: ${partners}\n`;
     if (adjustments.length){ txt += '\n===== سحوبات الشركاء =====\n'; txt += ['الشريك','المبلغ','التاريخ','ملاحظات'].join('\t')+'\n'; const partnersMap = (partnersList||[]).reduce((m,p)=>{ m[p.id]=p.name||p.id; return m; },{}); adjustments.forEach(a=>{ txt += [(partnersMap[a.partnerId]||a.partnerId), a.amount, a.date, a.notes||''].join('\t')+'\n'; }); }
     if (partnerSharesRows.length){ txt += '\n===== صافي الشركاء =====\n'; txt += ['الشريك','التوزيع','النصيب الأساسي','السحوبات','الترحيل','الصافي','الوضع'].join('\t')+'\n'; partnerSharesRows.forEach(r=>{ txt += [r.الشريك, r.التوزيع, r.النصيب_الأساسي, r.السحوبات, r.الترحيل, r.الصافي, r.الوضع].join('\t')+'\n'; }); }
-    txt += `\n===== الملخص =====\nإجمالي التسديدات:\t${totalPays}\nإجمالي المصروفات:\t${totalExps}\nصافي الأرباح:\t${net}\nصافي لكل شريك:\t${perPartner}\n`;
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+    txt += `\n===== الملخص =====\nإجمالي التسديدات:\t${totalPays}\nإجمالي المصروفات:\t${totalExps}\n${discountsEnabled?`إجمالي الخصومات:\t${totalDiscounts}\n`:''}صافي الأرباح:\t${net}\nصافي لكل شريك:\t${perPartner}\n`;
     if (listPays.length){ txt += '\n===== التسديدات =====\n'; txt += ['التاريخ','المحل','المبلغ','ملاحظات'].join('\t')+'\n'; listPays.forEach(r=>{ txt += [r.التاريخ, r.المحل, r.المبلغ, r.ملاحظات].join('\t')+'\n'; }); }
     if (listExps.length){ txt += '\n===== المصروفات =====\n'; txt += ['التاريخ','النوع','المبلغ','ملاحظات'].join('\t')+'\n'; listExps.forEach(r=>{ txt += [r.التاريخ, r.النوع, r.المبلغ, r.ملاحظات].join('\t')+'\n'; }); }
     const blob = new Blob([txt], { type:'text/plain' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download=`تقرير_الشركاء_${moment().format('YYYYMMDD')}.txt`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
@@ -2321,7 +2605,7 @@ function exportPartners(format){
           monthsData.push({ label, totalPays: mTotalPays, totalExps: mTotalExps, totalWithdrawals: mTotalWithdrawals, partnerShares: mPartnerShares, listPays: monthListPays, listExps: monthListExps, adjustments: o.adjs });
         });
       } catch(_) {}
-      const html = buildPartnerReportHTML(text, partners, listPays, listExps, totalPays, totalExps, net, perPartner, adjustments, partnersList, partnerSharesRows, monthsData);
+      const html = buildPartnerReportHTML(text, partners, listPays, listExps, totalPays, totalExps, net, perPartner, adjustments, partnersList, partnerSharesRows, monthsData, (discountsEnabled? totalDiscounts: 0), fromDate, toDate);
       const win = window.open('', '_blank'); if (!win || !win.document) { showNotification('يمنع المتصفح النوافذ المنبثقة. الرجاء السماح بها.', 'error'); return; }
       win.document.open(); win.document.write(html); win.document.close();
       showNotification(format==='pdf' ? 'تم فتح صفحة الطباعة. اضغط حفظ كـ PDF.' : 'تم فتح صفحة التقرير.', 'success');
@@ -2333,6 +2617,11 @@ function exportPartners(format){
   }
 }
 
+/**
+ * ملاحظة: الدالة wirePartnerExports — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة wirePartnerExports — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -2357,6 +2646,11 @@ const renderedEntities = new Set();
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة renderReportsAccordingToSelection — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function renderReportsAccordingToSelection(){
   const sel = document.getElementById('reportsSectionFilter');
   const section = sel ? sel.value : 'payments';
@@ -2366,6 +2660,11 @@ function renderReportsAccordingToSelection(){
   console.log('تم اختيار القسم:', section);
 }
 
+/**
+ * ملاحظة: الدالة setupReportsLazyObserver — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة setupReportsLazyObserver — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -2382,6 +2681,11 @@ function setupReportsLazyObserver(){
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة __populateReportsStores — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function __populateReportsStores(){
 	// لا حاجة لهذه الدالة بعد حذف الفلاتر
 	return;
@@ -2392,11 +2696,21 @@ function __populateReportsStores(){
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة __syncReportsCustomVisibility — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function __syncReportsCustomVisibility(){
 	// لا حاجة لهذه الدالة بعد حذف الفلاتر
 	return;
 }
 
+/**
+ * ملاحظة: الدالة __reRenderReports — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة __reRenderReports — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -2417,6 +2731,11 @@ function __reRenderReports(){
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة initReportsControls — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function initReportsControls(){
 	// لا حاجة لمعالجات الأحداث بعد حذف الفلاتر
 	__reRenderReports();
@@ -2428,6 +2747,11 @@ function initReportsControls(){
  * يدعم: Excel, TXT, PDF (صفحة طباعة), Print
  * ملاحظة: PDF لا ينشئ ملف PDF حقيقي، بل يفتح صفحة HTML قابلة للطباعة
  * @param {string} format - صيغة التصدير المطلوبة
+ */
+/**
+ * ملاحظة: الدالة exportSummaries — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: format
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة exportSummaries — وصف تلقائي موجز لوظيفتها.
@@ -2481,6 +2805,11 @@ function exportSummaries(format) {
  * المدخلات: format
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة exportDebts — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: format
+ * المخرجات: راجع التنفيذ
+ */
 function exportDebts(format) {
   const { fromDate, toDate } = getPeriodRange('debts');
   const debtData = generateDebtReportDataForExport();
@@ -2502,6 +2831,11 @@ function exportDebts(format) {
   }
 }
 
+/**
+ * ملاحظة: الدالة exportProfit — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: format
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة exportProfit — وصف تلقائي موجز لوظيفتها.
  * المدخلات: format
@@ -2593,11 +2927,21 @@ function openSummariesPrintPage(fromDate, toDate, totalSales, totalPayments, tot
  * المدخلات: fromDate, toDate, debtData
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة openDebtsPrintPage — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: fromDate, toDate, debtData
+ * المخرجات: راجع التنفيذ
+ */
 function openDebtsPrintPage(fromDate, toDate, debtData) {
   const html = buildPrintPageHTML('تقرير الديون', `${fromDate} إلى ${toDate}`, debtData, 'debts');
   openPrintWindow(html);
 }
 
+/**
+ * ملاحظة: الدالة openProfitPrintPage — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: fromDate, toDate, profitData
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة openProfitPrintPage — وصف تلقائي موجز لوظيفتها.
  * المدخلات: fromDate, toDate, profitData
@@ -2617,6 +2961,11 @@ function openProfitPrintPage(fromDate, toDate, profitData) {
  * @param {Array|Object} data - بيانات التقرير
  * @param {string} type - نوع التقرير (debts, profit, إلخ)
  * @returns {string} كود HTML للصفحة
+ */
+/**
+ * ملاحظة: الدالة buildPrintPageHTML — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: title, period, data, type
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة buildPrintPageHTML — وصف تلقائي موجز لوظيفتها.
@@ -2746,6 +3095,11 @@ function generateDebtReportDataForExport() {
   return data;
 }
 
+/**
+ * ملاحظة: الدالة generateProfitReportDataForExport — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة generateProfitReportDataForExport — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -2923,6 +3277,11 @@ function editPaymentFromPartner(paymentId) {
  * المدخلات: paymentId
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة deletePaymentFromPartner — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: paymentId
+ * المخرجات: راجع التنفيذ
+ */
 function deletePaymentFromPartner(paymentId) {
   if (!confirm('هل أنت متأكد من حذف هذا التسديد؟')) return;
   
@@ -2947,6 +3306,11 @@ function deletePaymentFromPartner(paymentId) {
  * المدخلات: expenseId
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة editExpenseFromPartner — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: expenseId
+ * المخرجات: راجع التنفيذ
+ */
 function editExpenseFromPartner(expenseId) {
   const expense = data.expenses.find(e => e.id === expenseId);
   if (!expense) {
@@ -2962,6 +3326,11 @@ function editExpenseFromPartner(expenseId) {
   }
 }
 
+/**
+ * ملاحظة: الدالة deleteExpenseFromPartner — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: expenseId
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة deleteExpenseFromPartner — وصف تلقائي موجز لوظيفتها.
  * المدخلات: expenseId

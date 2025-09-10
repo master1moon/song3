@@ -26,6 +26,11 @@ let githubSettings = { token: '', gistId: '', fileName: 'network-cards.json', au
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة loadGithubSettings — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function loadGithubSettings() {
     try {
         // محاولة تحميل الإعدادات المشفرة
@@ -40,7 +45,7 @@ function loadGithubSettings() {
         // التحميل العادي كـ fallback
         const saved = localStorage.getItem('githubSettings');
         if (saved) {
-            const parsed = JSON.parse(saved);
+            const parsed = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(saved, {}) : JSON.parse(saved);
             githubSettings = Object.assign(githubSettings, parsed);
             
             // ترحيل إلى التشفير
@@ -58,6 +63,11 @@ function loadGithubSettings() {
  * حفظ إعدادات GitHub في التخزين المحلي
  * يحاول الحفظ بشكل مشفر أولاً، ثم يعود للحفظ العادي إذا فشل
  * يعرض إشعاراً بنجاح أو فشل العملية
+ */
+/**
+ * ملاحظة: الدالة saveGithubSettings — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة saveGithubSettings — وصف تلقائي موجز لوظيفتها.
@@ -92,6 +102,11 @@ function saveGithubSettings() {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة populateGithubModal — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function populateGithubModal() {
     const tokenEl = document.getElementById('githubToken');
     const gistIdEl = document.getElementById('githubGistId');
@@ -109,6 +124,11 @@ function populateGithubModal() {
  * يتطلب وجود التوكن، ويقوم بإنشاء Gist خاص يحتوي على بيانات التطبيق
  * يحفظ معرف Gist الناتج في الإعدادات
  * @returns {Promise<void>}
+ */
+/**
+ * ملاحظة: الدالة githubCreateGist — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 async function githubCreateGist() {
     if (!githubSettings.token) {
@@ -144,6 +164,11 @@ async function githubCreateGist() {
  * يستخدم PATCH لتحديث محتوى الملف في Gist
  * @returns {Promise<void>}
  */
+/**
+ * ملاحظة: الدالة githubUploadData — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 async function githubUploadData() {
     if (!githubSettings.token || !githubSettings.gistId) {
         if (typeof showNotification === 'function') showNotification('يجب إدخال التوكن و Gist ID أولاً', 'error');
@@ -172,6 +197,11 @@ async function githubUploadData() {
  * يقوم بتحليل البيانات وتحديث جميع الجداول والتقارير
  * @returns {Promise<void>}
  */
+/**
+ * ملاحظة: الدالة githubDownloadData — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 async function githubDownloadData() {
     if (!githubSettings.gistId) {
         if (typeof showNotification === 'function') showNotification('يرجى إدخال Gist ID أولاً', 'error');
@@ -181,7 +211,12 @@ async function githubDownloadData() {
     if (githubSettings.token) headers['Authorization'] = `Bearer ${githubSettings.token}`;
     const metaRes = await fetch(`https://api.github.com/gists/${githubSettings.gistId}`, { headers });
     if (!metaRes.ok) {
-        if (typeof showNotification === 'function') showNotification('تعذر الوصول إلى الـ Gist', 'error');
+        if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('enhancedGithubErrors')) {
+            const msg = `تعذر الوصول إلى الـ Gist (HTTP ${metaRes.status})`;
+            if (typeof showNotification === 'function') showNotification(msg, 'error');
+        } else {
+            if (typeof showNotification === 'function') showNotification('تعذر الوصول إلى الـ Gist', 'error');
+        }
         return;
     }
     const meta = await metaRes.json();
@@ -193,12 +228,17 @@ async function githubDownloadData() {
     }
     const rawRes = await fetch(fileObj.raw_url);
     if (!rawRes.ok) {
-        if (typeof showNotification === 'function') showNotification('تعذر تنزيل محتوى الملف', 'error');
+        if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('enhancedGithubErrors')) {
+            const msg = `تعذر تنزيل محتوى الملف (HTTP ${rawRes.status})`;
+            if (typeof showNotification === 'function') showNotification(msg, 'error');
+        } else {
+            if (typeof showNotification === 'function') showNotification('تعذر تنزيل محتوى الملف', 'error');
+        }
         return;
     }
     const text = await rawRes.text();
     try {
-        const parsed = JSON.parse(text);
+        const parsed = (typeof safeJsonParse === 'function' && typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(text, {}) : JSON.parse(text);
         if (typeof data !== 'undefined') { data = parsed; } else { window.data = parsed; }
         localStorage.setItem('networkCardsData', JSON.stringify(parsed));
         if (typeof updateDashboard === 'function') updateDashboard();

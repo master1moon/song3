@@ -16,6 +16,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة initSettingsUI — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function initSettingsUI() {
         // التحقق من وجود AppSettings
         if (typeof window.AppSettings === 'undefined') {
@@ -44,6 +49,11 @@
 
     /**
      * تحميل الإعدادات الحالية في عناصر الواجهة
+     */
+    /**
+     * ملاحظة: الدالة loadSettingsToUI — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة loadSettingsToUI — وصف تلقائي موجز لوظيفتها.
@@ -121,6 +131,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة setupEventListeners — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function setupEventListeners() {
         // مستمع لتبديل التبويبات
         const tabs = document.querySelectorAll('#settingsTabs .list-group-item');
@@ -146,6 +161,11 @@
 
     /**
      * تبديل التبويب النشط
+     */
+    /**
+     * ملاحظة: الدالة switchSettingsTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: tabName
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة switchSettingsTab — وصف تلقائي موجز لوظيفتها.
@@ -184,6 +204,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة createSettingsTabs — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function createSettingsTabs() {
         const container = document.getElementById('settingsContent');
         if (!container) return;
@@ -214,6 +239,9 @@
         // تبويب الأداء
         html += createPerformanceTab(settings.performance);
 
+        // تبويب الأعلام (الميزات التجريبية)
+        html += createFeatureFlagsTab(settings.advanced || {});
+
         container.innerHTML = html;
 
         // إعادة تحميل القيم
@@ -221,7 +249,130 @@
     }
 
     /**
+     * إنشاء تبويب الأعلام (Feature Flags)
+     */
+    /**
+     * ملاحظة: الدالة createFeatureFlagsTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: advanced
+     * المخرجات: راجع التنفيذ
+     */
+    /**
+     * ملاحظة: الدالة createFeatureFlagsTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: advanced
+     * المخرجات: راجع التنفيذ
+     */
+    function createFeatureFlagsTab(advanced) {
+        const exp = !!(advanced && advanced.experimentalFeatures);
+        const flags = (advanced && advanced.flags) || {};
+        return `
+            <div class="settings-tab" id="flags-settings" style="display:none;">
+                <h5 class="mb-4"><i class="fas fa-flask"></i> الميزات التجريبية (Feature Flags)</h5>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    هذه التحسينات لا تغيّر أي سلوك محاسبي. لن تُطبَّق الأعلام إلا بعد تفعيل خيار "الميزات التجريبية".
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-light">
+                        <strong>التفعيل العام</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="setting-experimentalFeatures"
+                                   ${exp ? 'checked' : ''}
+                                   onchange="AppSettings.update('advanced.experimentalFeatures', this.checked)">
+                            <label class="form-check-label" for="setting-experimentalFeatures">
+                                تشغيل الميزات التجريبية (لا يغيّر سلوك الحسابات، يتيح فقط الأعلام أدناه)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <strong>أعلام التشغيل</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-safeJsonParse"
+                                           ${flags.safeJsonParse ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.safeJsonParse', this.checked)">
+                                    <label class="form-check-label" for="flag-safeJsonParse">
+                                        safeJsonParse — طبقة حراسة لـ JSON.parse لمنع الأعطال عند تلف البيانات
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-safeDomRendering"
+                                           ${flags.safeDomRendering ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.safeDomRendering', this.checked)">
+                                    <label class="form-check-label" for="flag-safeDomRendering">
+                                        safeDomRendering — تغليف العرض الآمن للـ DOM بدلاً من innerHTML المباشر
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-idbChunking"
+                                           ${flags.idbChunking ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.idbChunking', this.checked)">
+                                    <label class="form-check-label" for="flag-idbChunking">
+                                        idbChunking — مزامنة IndexedDB على دفعات لتجنب تجمّد الواجهة
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-enhancedGithubErrors"
+                                           ${flags.enhancedGithubErrors ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.enhancedGithubErrors', this.checked)">
+                                    <label class="form-check-label" for="flag-enhancedGithubErrors">
+                                        enhancedGithubErrors — رسائل أخطاء أوضح عند فشل مزامنة GitHub
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-strictDateNormalization"
+                                           ${flags.strictDateNormalization ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.strictDateNormalization', this.checked)">
+                                    <label class="form-check-label" for="flag-strictDateNormalization">
+                                        strictDateNormalization — تطبيع صارم للتواريخ قبل أي فلترة/حساب
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="flag-discounts"
+                                           ${flags.discounts ? 'checked' : ''}
+                                           onchange="AppSettings.update('advanced.flags.discounts', this.checked)">
+                                    <label class="form-check-label" for="flag-discounts">
+                                        discounts — تفعيل نظام الخصومات (السبب اختياري، التأثير فقط عند إدخال خصم)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <small class="text-muted d-block mt-3">
+                    تلميح: يمكنك أيضاً إدارة الأعلام من الكونسول: FeatureFlags.enable('safeJsonParse') / FeatureFlags.disable('safeJsonParse').
+                </small>
+            </div>
+        `;
+    }
+
+    /**
      * إنشاء تبويب العرض والمظهر
+     */
+    /**
+     * ملاحظة: الدالة createDisplayTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: display
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createDisplayTab — وصف تلقائي موجز لوظيفتها.
@@ -348,6 +499,11 @@
      * المدخلات: financial
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة createFinancialTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: financial
+     * المخرجات: راجع التنفيذ
+     */
     function createFinancialTab(financial) {
         return `
             <div class="settings-tab" id="financial-settings" style="display:none;">
@@ -431,6 +587,11 @@
 
     /**
      * إنشاء تبويب التنبيهات
+     */
+    /**
+     * ملاحظة: الدالة createNotificationsTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: notifications
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createNotificationsTab — وصف تلقائي موجز لوظيفتها.
@@ -527,6 +688,11 @@
 
     /**
      * إنشاء تبويب النسخ الاحتياطي
+     */
+    /**
+     * ملاحظة: الدالة createBackupTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: backup
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createBackupTab — وصف تلقائي موجز لوظيفتها.
@@ -675,6 +841,11 @@
      * المدخلات: security
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة createSecurityTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: security
+     * المخرجات: راجع التنفيذ
+     */
     function createSecurityTab(security) {
         return `
             <div class="settings-tab" id="security-settings" style="display:none;">
@@ -767,6 +938,11 @@
 
     /**
      * إنشاء تبويب التقارير والطباعة
+     */
+    /**
+     * ملاحظة: الدالة createReportsTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: reports
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة createReportsTab — وصف تلقائي موجز لوظيفتها.
@@ -1021,6 +1197,11 @@
      * المدخلات: performance
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة createPerformanceTab — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: performance
+     * المخرجات: راجع التنفيذ
+     */
     function createPerformanceTab(performance) {
         return `
             <div class="settings-tab" id="performance-settings" style="display:none;">
@@ -1117,6 +1298,11 @@
      * المدخلات: id, value
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة setElementValue — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: id, value
+     * المخرجات: راجع التنفيذ
+     */
     function setElementValue(id, value) {
         const element = document.getElementById(id);
         if (element) {
@@ -1124,6 +1310,11 @@
         }
     }
 
+    /**
+     * ملاحظة: الدالة setElementChecked — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: id, checked
+     * المخرجات: راجع التنفيذ
+     */
     /**
      * ملاحظة: الدالة setElementChecked — وصف تلقائي موجز لوظيفتها.
      * المدخلات: id, checked
@@ -1196,6 +1387,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة exportSettings — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function exportSettings() {
         const jsonString = AppSettings.export();
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -1221,6 +1417,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة importSettings — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function importSettings() {
         const fileInput = document.getElementById('importSettingsFile');
         if (!fileInput || !fileInput.files.length) {
@@ -1233,6 +1434,11 @@
         const file = fileInput.files[0];
         const reader = new FileReader();
         
+        /**
+         * ملاحظة: الدالة reader.onload — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: e
+         * المخرجات: راجع التنفيذ
+         */
         reader.onload = function(e) {
             try {
                 const success = AppSettings.import(e.target.result);
@@ -1254,6 +1460,11 @@
     /**
      * معالجة رفع الشعار
      */
+    /**
+     * ملاحظة: الدالة window.handleLogoUpload — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: input
+     * المخرجات: راجع التنفيذ
+     */
     window.handleLogoUpload = function(input) {
         const file = input.files[0];
         if (!file) return;
@@ -1271,8 +1482,18 @@
         }
         
         const reader = new FileReader();
+        /**
+         * ملاحظة: الدالة reader.onload — وصف تلقائي موجز لوظيفتها.
+         * المدخلات: e
+         * المخرجات: راجع التنفيذ
+         */
         reader.onload = function(e) {
             const img = new Image();
+            /**
+             * ملاحظة: الدالة img.onload — وصف تلقائي موجز لوظيفتها.
+             * المدخلات: بدون
+             * المخرجات: راجع التنفيذ
+             */
             img.onload = function() {
                 // تحديد الحجم المناسب (200x200 كحد أقصى)
                 const maxSize = 200;
@@ -1325,6 +1546,11 @@
     /**
      * حذف الشعار
      */
+    /**
+     * ملاحظة: الدالة window.removeLogo — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     window.removeLogo = function() {
         AppSettings.update('reports.companyLogo', '');
         document.getElementById('logoPreview').innerHTML = '<i class="fas fa-image text-muted"></i>';
@@ -1341,6 +1567,11 @@
     /**
      * تحديث الهوامش
      */
+    /**
+     * ملاحظة: الدالة window.updateMargin — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: side, value
+     * المخرجات: راجع التنفيذ
+     */
     window.updateMargin = function(side, value) {
         const margins = AppSettings.getAll().reports.margins;
         margins[side] = parseInt(value) || 0;
@@ -1349,6 +1580,11 @@
 
     /**
      * معاينة إعدادات التقرير
+     */
+    /**
+     * ملاحظة: الدالة window.previewReportSettings — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     window.previewReportSettings = function() {
         const settings = AppSettings.getAll().reports;
@@ -1513,6 +1749,11 @@
 
     /**
      * اختبار إعدادات الطباعة
+     */
+    /**
+     * ملاحظة: الدالة window.testPrintSettings — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     window.testPrintSettings = function() {
         const w = previewReportSettings();

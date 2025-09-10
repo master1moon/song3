@@ -32,6 +32,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة ensureTrashExists — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function ensureTrashExists() {
         if (typeof data !== 'undefined' && data && !data.trash) {
             data.trash = [];
@@ -48,6 +53,11 @@
      * @param {Object} item - العنصر المحذوف
      * @returns {Promise<boolean>} true إذا تمت الإضافة بنجاح
      */
+    /**
+     * ملاحظة: الدالة addToTrash — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: section, item
+     * المخرجات: راجع التنفيذ
+     */
     async function addToTrash(section, item) {
         try {
             ensureTrashExists();
@@ -56,7 +66,7 @@
                 id: 'trash_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                 section: section,
                 deletedAt: new Date().toISOString(),
-                item: JSON.parse(JSON.stringify(item)) // نسخة عميقة
+                item: ((typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? safeJsonParse(JSON.stringify(item), {}) : JSON.parse(JSON.stringify(item))) // نسخة عميقة
             };
             
             if (data && data.trash) {
@@ -87,6 +97,11 @@
      * يطبق الفلترة والبحث والترتيب على العناصر
      * يعرض معلومات كل عنصر مع أزرار الاسترجاع والحذف النهائي
      * يستخدم الطريقة الآمنة لعرض البيانات
+     */
+    /**
+     * ملاحظة: الدالة renderTrashTable — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة renderTrashTable — وصف تلقائي موجز لوظيفتها.
@@ -229,6 +244,11 @@
      * المدخلات: section
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة getSectionName — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: section
+     * المخرجات: راجع التنفيذ
+     */
     function getSectionName(section) {
         const sectionNames = {
             'packages': 'الباقات',
@@ -247,6 +267,11 @@
      * @param {string} section - القسم الذي ينتمي إليه العنصر
      * @param {Object} item - العنصر المراد وصفه
      * @returns {string} وصف مختصر للعنصر
+     */
+    /**
+     * ملاحظة: الدالة getItemDescription — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: section, item
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة getItemDescription — وصف تلقائي موجز لوظيفتها.
@@ -278,6 +303,11 @@
      * يحذف العنصر من سلة المحذوفات
      * يحدث جميع الجداول والتقارير المتعلقة
      * @param {string} trashId - معرف العنصر في سلة المحذوفات
+     */
+    /**
+     * ملاحظة: الدالة restoreItem — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: trashId
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة restoreItem — وصف تلقائي موجز لوظيفتها.
@@ -328,6 +358,11 @@
      * المدخلات: trashId
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة deleteForever — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: trashId
+     * المخرجات: راجع التنفيذ
+     */
     function deleteForever(trashId) {
         if (!confirm('هل أنت متأكد من الحذف النهائي؟ لا يمكن التراجع عن هذا الإجراء.')) return;
         
@@ -353,6 +388,11 @@
      * المدخلات: بدون
      * المخرجات: راجع التنفيذ
      */
+    /**
+     * ملاحظة: الدالة updateAllSections — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     function updateAllSections() {
         // تحديث الجداول حسب القسم النشط
         if (typeof renderPackagesTable === 'function') renderPackagesTable();
@@ -369,6 +409,11 @@
      * يحذف جميع العناصر نهائياً
      * يطلب تأكيد من المستخدم قبل التفريغ
      * لا يمكن التراجع عن هذه العملية
+     */
+    /**
+     * ملاحظة: الدالة emptyTrash — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     /**
      * ملاحظة: الدالة emptyTrash — وصف تلقائي موجز لوظيفتها.

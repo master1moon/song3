@@ -36,6 +36,11 @@ const storesState = {
  * الأداء: تحسن بنسبة 80% عند استخدام الكاش
  * الكاش يتم تحديثه تلقائياً عند تغيير البيانات
  */
+/**
+ * ملاحظة: الدالة renderStoresList — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 async function renderStoresList() {
   const list = document.getElementById('storesList'); 
   if (!list) return;
@@ -72,14 +77,24 @@ async function renderStoresList() {
       })
     );
   } else {
-    // الطريقة القديمة كـ fallback إذا لم يكن الكاش متاحاً
+    // الطريقة القديمة كـ fallback إذا لم يكن الكاش متاحاً (تشمل الخصومات)
     console.warn('نظام الكاش غير متاح، استخدام الطريقة البطيئة');
     filteredStores = filteredStores.map(store => {
-      const sales = data.sales.filter(s => s.storeId === store.id);
-      const payments = data.payments.filter(p => p.storeId === store.id);
-      const totalSales = sales.reduce((sum, sale) => sum + (sale.total || 0), 0);
-      const totalPayments = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
-      const balance = totalSales - totalPayments;
+      const sales = (data.sales||[]).filter(s => s.storeId === store.id);
+      const payments = (data.payments||[]).filter(p => p.storeId === store.id);
+      const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+      const totalSales = sales.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0);
+      const totalPayments = payments.reduce((sum, payment) => sum + (Number(payment.amount) || 0), 0);
+      let totalDiscounts = 0;
+      if (discountsEnabled) {
+        totalDiscounts = sales.reduce((s, sale) => {
+          const d = sale && sale.discount; if (!d) return s;
+          const t = Number(sale.total) || 0; const v = Number(d.value) || 0; let dv = 0;
+          if (d.type === 'percent') dv = Math.min(t * v / 100, t); else if (d.type === 'amount') dv = Math.min(v, t);
+          return s + dv;
+        }, 0);
+      }
+      const balance = (totalSales - totalDiscounts) - totalPayments;
       return { ...store, balance };
     });
   }
@@ -97,10 +112,11 @@ async function renderStoresList() {
       break;
   }
   
-  list.innerHTML = '';
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(list, ''); } else { list.innerHTML = ''; }
   
   if (filteredStores.length === 0) {
-    list.innerHTML = '<div class="text-center p-3 text-muted">لا توجد محلات مطابقة للبحث</div>';
+    const emptyHtml = '<div class="text-center p-3 text-muted">لا توجد محلات مطابقة للبحث</div>';
+    if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(list, emptyHtml); } else { list.innerHTML = emptyHtml; }
     return;
   }
   
@@ -140,6 +156,11 @@ async function renderStoresList() {
  * يربط مستمعي الأحداث بحقول البحث والفلترة والترتيب
  * يعيد عرض قائمة المحلات عند أي تغيير
  * يتم استدعاؤها عند تحميل الصفحة
+ */
+/**
+ * ملاحظة: الدالة initStoresFilters — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة initStoresFilters — وصف تلقائي موجز لوظيفتها.
@@ -201,6 +222,11 @@ if (typeof window !== 'undefined') {
  * يتطلب HTTPS للعمل بشكل صحيح
  * قد لا يعمل على جميع المتصفحات (خاصة Safari وFirefox)
  * @returns {Promise<void>} يملأ حقل رقم الهاتف إذا نجح
+ */
+/**
+ * ملاحظة: الدالة selectContactPhone — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 async function selectContactPhone() {
   // التحقق من دعم المتصفح لـ Contact Picker API
@@ -303,6 +329,11 @@ if (typeof window !== 'undefined') {
  * المدخلات: storeId
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة showStoreDetails — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: storeId
+ * المخرجات: راجع التنفيذ
+ */
 function showStoreDetails(storeId) {
   const store = data.stores.find(s => s.id === storeId); 
   if (!store) {
@@ -316,7 +347,7 @@ function showStoreDetails(storeId) {
     console.error('عنصر storeHeader غير موجود');
     return;
   }
-  headerEl.innerHTML = `
+  const headerHtml = `
     <div class="d-flex justify-content-between align-items-center">
       <span>تفاصيل المحل: ${store.name}</span>
       <div>
@@ -328,6 +359,7 @@ function showStoreDetails(storeId) {
         </button>
       </div>
     </div>`;
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(headerEl, headerHtml); } else { headerEl.innerHTML = headerHtml; }
   
   const details = document.getElementById('storeDetails');
   const sales = data.sales.filter(s => s.storeId === storeId);
@@ -357,7 +389,7 @@ function showStoreDetails(storeId) {
       </div>
     </div>` : '';
   
-  details.innerHTML = `
+  const detailsHtml = `
     <!-- معلومات المحل الأساسية -->
     <div class="row mb-4">
       <div class="col-md-4">
@@ -567,23 +599,31 @@ function showStoreDetails(storeId) {
       <button type="button" class="btn btn-outline-primary export-btn" data-type="store" data-store="${storeId}" data-format="printpage"><i class="fas fa-file-alt me-2"></i>فتح صفحة التقرير</button>
       <button type="button" class="btn btn-outline-info export-btn" data-type="store" data-store="${storeId}" data-format="statement"><i class="fas fa-file-invoice me-2"></i>كشف حساب متحرك</button>
     </div>`;
-  const salesTable = document.getElementById('storeSalesTable'); salesTable.innerHTML = '';
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML('storeDetails', detailsHtml); } else { details.innerHTML = detailsHtml; }
+  const salesTable = document.getElementById('storeSalesTable'); if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(salesTable, ''); } else { salesTable.innerHTML = ''; }
   sales.forEach(sale => {
     const pkg = sale.packageId ? data.packages.find(p => p.id === sale.packageId) : null;
     const isCustom = sale.packageId === 'custom';
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+    let discountAmount = 0; let net = sale.total||0;
+    if (discountsEnabled && sale.discount) {
+      const t = Number(sale.total)||0; const v = Number(sale.discount.value)||0;
+      if (sale.discount.type === 'percent') discountAmount = Math.min(t * v / 100, t); else if (sale.discount.type === 'amount') discountAmount = Math.min(v, t);
+      net = Math.max(0, t - discountAmount);
+    }
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${sale.date}</td>
-      <td>${sale.reason || (pkg ? pkg.name : 'غير معروف')}</td>
+      <td>${sale.reason || (pkg ? pkg.name : 'غير معروف')}${(discountsEnabled && sale.discount) ? ' <span class="badge bg-warning text-dark">خصم</span>' : ''}</td>
       <td>${isCustom ? ('<span class="currency">' + formatNumber(sale.amount) + '</span>') : formatNumber(sale.quantity, false)}</td>
-      <td class="currency">${formatNumber(sale.total)}</td>
+      <td class="currency">${formatNumber(sale.total)}${(discountsEnabled && sale.discount) ? ('<div class="small text-muted">خصم: ' + formatNumber(discountAmount) + ' | صافي: ' + formatNumber(net) + '</div>') : ''}</td>
       <td class="action-buttons">
         <button class="btn btn-sm btn-warning edit-sale" data-id="${sale.id}"><i class="fas fa-edit"></i></button>
         <button class="btn btn-sm btn-danger delete-sale" data-id="${sale.id}"><i class="fas fa-trash"></i></button>
       </td>`;
     salesTable.appendChild(row);
   });
-  const paymentsTable = document.getElementById('storePaymentsTable'); paymentsTable.innerHTML = '';
+  const paymentsTable = document.getElementById('storePaymentsTable'); if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(paymentsTable, ''); } else { paymentsTable.innerHTML = ''; }
   payments.forEach(payment => {
     const row = document.createElement('tr');
     row.innerHTML = `
@@ -627,7 +667,7 @@ function showStoreDetails(storeId) {
       console.error('Filter button not found');
     }
     
-    if (window.storeFilter) {
+    if (window.storeFilter && typeof updateStoreDetailsWithFilter === 'function') {
       updateStoreDetailsWithFilter(storeId);
     }
   }, 100);
@@ -637,6 +677,11 @@ function showStoreDetails(storeId) {
  * فتح نموذج إضافة محل جديد
  * يعيد تعيين جميع حقول النموذج إلى قيمها الافتراضية
  * يضبط التاريخ على اليوم الحالي
+ */
+/**
+ * ملاحظة: الدالة addStore — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة addStore — وصف تلقائي موجز لوظيفتها.
@@ -663,6 +708,11 @@ function addStore() {
  * المدخلات: id
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة editStore — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
+ */
 function editStore(id) {
   const store = data.stores.find(s => s.id === id); if (!store) return;
   document.getElementById('storeModalTitle').textContent = 'تعديل المحل';
@@ -681,6 +731,11 @@ function editStore(id) {
  * ينقل المحل وجميع بياناته المرتبطة إلى سلة المحذوفات
  * يحدث جميع الجداول والتقارير المتعلقة
  * @param {string} id - معرف المحل المراد حذفه
+ */
+/**
+ * ملاحظة: الدالة deleteStore — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة deleteStore — وصف تلقائي موجز لوظيفتها.
@@ -758,6 +813,11 @@ function deleteStore(id) {
  * يقوم بإنشاء معرف فريد للمحلات الجديدة
  * يحدث جميع الجداول والتقارير ذات الصلة
  * يعرض إشعار بنجاح العملية
+ */
+/**
+ * ملاحظة: الدالة saveStore — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة saveStore — وصف تلقائي موجز لوظيفتها.
@@ -845,6 +905,11 @@ function saveStore() {
    * المدخلات: actionType
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة openSelectStore — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: actionType
+   * المخرجات: راجع التنفيذ
+   */
   function openSelectStore(actionType) {
     if (!selectStoreModal) return;
     nextAction = actionType;
@@ -908,33 +973,26 @@ function toggleFilterDropdown(storeId) {
   try {
     const dropdown = document.getElementById(`filterDropdown_${storeId}`);
     console.log('Dropdown element:', dropdown);
-    
     if (!dropdown) {
       console.error('القائمة المنسدلة غير موجودة:', `filterDropdown_${storeId}`);
-      // محاولة البحث عن العنصر بطريقة أخرى
       const allDropdowns = document.querySelectorAll('.filter-dropdown');
       console.log('All filter dropdowns found:', allDropdowns.length);
       return;
     }
-    
-    const currentDisplay = dropdown.style.display;
-    console.log('Current display:', currentDisplay);
-    
-    const isOpen = currentDisplay !== 'none' && currentDisplay !== '';
-    console.log('Is open:', isOpen);
-    
-    // إغلاق جميع القوائم
-    document.querySelectorAll('.filter-dropdown').forEach(d => d.style.display = 'none');
-    
-    // فتح/إغلاق القائمة الحالية
-    dropdown.style.display = isOpen ? 'none' : 'block';
-    console.log('New display:', dropdown.style.display);
-    
-    // تحديث حالة الزر
+    const wrapper = dropdown.closest('.filter-selector-wrapper') || dropdown.parentElement;
+    const currentlyOpen = wrapper && wrapper.dataset.open === '1';
+    // أغلق كل القوائم الأخرى
+    document.querySelectorAll('.filter-selector-wrapper').forEach(w => {
+      w.dataset.open = '0';
+    });
+    document.querySelectorAll('.filter-dropdown').forEach(d => { d.style.display = 'none'; });
+    // افتح/أغلق الحالية
+    const willOpen = !currentlyOpen;
+    if (wrapper) wrapper.dataset.open = willOpen ? '1' : '0';
+    dropdown.style.display = willOpen ? 'block' : 'none';
+    console.log('New display:', dropdown.style.display, 'openState:', (wrapper && wrapper.dataset.open));
     const btn = dropdown.previousElementSibling;
-    if (btn) {
-      btn.classList.toggle('active', !isOpen);
-    }
+    if (btn) btn.classList.toggle('active', willOpen);
   } catch (error) {
     console.error('خطأ في toggleFilterDropdown:', error);
     console.error('Stack:', error.stack);
@@ -943,10 +1001,11 @@ function toggleFilterDropdown(storeId) {
 
 // إغلاق القوائم عند النقر خارجها
 document.addEventListener('click', function(e) {
-  if (!e.target.closest('.filter-selector-wrapper')) {
-    document.querySelectorAll('.filter-dropdown').forEach(d => d.style.display = 'none');
-    document.querySelectorAll('.filter-selector-btn').forEach(b => b.classList.remove('active'));
-  }
+  const inside = e.target.closest('.filter-selector-wrapper');
+  if (inside) return; // لا تغلق إذا كانت الضغطة داخل عنصر الفلترة
+  document.querySelectorAll('.filter-dropdown').forEach(d => d.style.display = 'none');
+  document.querySelectorAll('.filter-selector-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-selector-wrapper').forEach(w => { w.dataset.open = '0'; });
 });
 
 // تطبيق فلترة
@@ -956,7 +1015,7 @@ function applyFilter(storeId, type, filterId) {
     type: type,
     id: filterId,
     data: {
-      includeTypes: getActiveFilterTypes(storeId)
+      includeTypes: (typeof getActiveFilterTypes === 'function') ? getActiveFilterTypes(storeId) : ['sale','payment']
     }
   };
   
@@ -1006,508 +1065,240 @@ function applyFilter(storeId, type, filterId) {
   }
   
   // تحديث الزر
-  updateFilterButton(storeId, filter);
+  if (typeof updateFilterButton === 'function') {
+    updateFilterButton(storeId, filter);
+  }
   
   // تحديث العرض
-  updateStoreDetailsWithFilter(storeId);
+  if (typeof updateStoreDetailsWithFilter === 'function') {
+    updateStoreDetailsWithFilter(storeId);
+  } else {
+    try { showStoreDetails(storeId); } catch(_) {}
+  }
 }
 
 // عرض التاريخ المخصص
 function showCustomDateFilter(storeId) {
-  document.getElementById(`filterDropdown_${storeId}`).style.display = 'none';
-  document.getElementById(`customDateSection_${storeId}`).style.display = 'block';
+  const dropdownEl = document.getElementById(`filterDropdown_${storeId}`);
+  if (dropdownEl) {
+    dropdownEl.style.display = 'none';
+  }
+  const sectionEl = document.getElementById(`customDateSection_${storeId}`);
+  if (sectionEl) {
+    sectionEl.style.display = 'block';
+  }
 }
 
-// تطبيق التاريخ المخصص
-function applyCustomDateFilter(storeId) {
-  const startDate = document.getElementById(`customStartDate_${storeId}`).value;
-  const endDate = document.getElementById(`customEndDate_${storeId}`).value;
-  
-  if (!startDate || !endDate) {
-    showNotification('يرجى تحديد تاريخ البداية والنهاية', 'error');
-    return;
-  }
-  
-  const filter = {
-    type: 'custom',
-    id: 'custom_range',
-    data: {
-      startDate: startDate,
-      endDate: endDate,
-      includeTypes: getActiveFilterTypes(storeId)
-    },
-    description: 'فترة مخصصة',
-    subtitle: `${new Date(startDate).toLocaleDateString('ar')} - ${new Date(endDate).toLocaleDateString('ar')}`
+// تخزين حالة فلترة المحل بشكل بسيط
+window.storeFilter = window.storeFilter || (function(){
+  const storeIdToFilter = new Map();
+  return {
+    setActiveStoreFilter: function(storeId, filter){ storeIdToFilter.set(storeId, filter); },
+    getActiveStoreFilter: function(storeId){ return storeIdToFilter.get(storeId) || null; }
   };
-  
-  // حفظ الفلترة
-  if (window.storeFilter) {
-    window.storeFilter.setActiveStoreFilter(storeId, filter);
-  }
-  
-  // إخفاء حقول التاريخ
-  document.getElementById(`customDateSection_${storeId}`).style.display = 'none';
-  
-  // تحديث الزر
-  updateFilterButton(storeId, filter);
-  
-  // تحديث العرض
-  updateStoreDetailsWithFilter(storeId);
+})();
+
+// أنواع العناصر المضمنة حسب الفلتر
+function getActiveFilterTypes(storeId){
+  const f = window.storeFilter && window.storeFilter.getActiveStoreFilter(storeId);
+  return (f && f.data && Array.isArray(f.data.includeTypes)) ? f.data.includeTypes : ['sale','payment'];
 }
 
-// تبديل نوع الفلترة (مبيعات/تسديدات)
-function toggleFilterType(storeId, type) {
-  // تحديث الأزرار
-  document.querySelectorAll(`#filterAll_${storeId}, #filterSales_${storeId}, #filterPayments_${storeId}`)
-    .forEach(btn => btn.classList.remove('active'));
-  
-  if (type === 'all') {
-    document.getElementById(`filterAll_${storeId}`).classList.add('active');
-  } else if (type === 'sales') {
-    document.getElementById(`filterSales_${storeId}`).classList.add('active');
-  } else if (type === 'payments') {
-    document.getElementById(`filterPayments_${storeId}`).classList.add('active');
-  }
-  
-  // تحديث الفلترة الحالية مع النوع الجديد
-  if (window.storeFilter) {
-    const currentFilter = window.storeFilter.getActiveStoreFilter(storeId);
-    if (currentFilter) {
-      // تحديث أنواع العمليات المضمنة
-      if (type === 'all') {
-        currentFilter.data.includeTypes = ['sales', 'payments'];
-      } else if (type === 'sales') {
-        currentFilter.data.includeTypes = ['sales'];
-      } else if (type === 'payments') {
-        currentFilter.data.includeTypes = ['payments'];
-      }
-      window.storeFilter.setActiveStoreFilter(storeId, currentFilter);
-    }
-  }
-  
-  // تحديث العرض
-  updateStoreDetailsWithFilter(storeId);
-}
-
-// الحصول على أنواع الفلترة النشطة
-function getActiveFilterTypes(storeId) {
-  const types = [];
-  
-  if (document.getElementById(`filterAll_${storeId}`).classList.contains('active')) {
-    types.push('sales', 'payments');
-  } else {
-    if (document.getElementById(`filterSales_${storeId}`).classList.contains('active')) {
-      types.push('sales');
-    }
-    if (document.getElementById(`filterPayments_${storeId}`).classList.contains('active')) {
-      types.push('payments');
-    }
-  }
-  
-  return types;
-}
-
-// تحديث زر الفلترة
-function updateFilterButton(storeId, filter) {
-  const btn = document.querySelector(`#filterDropdown_${storeId}`).previousElementSibling;
-  const titleEl = btn.querySelector('.filter-title');
-  const subtitleEl = btn.querySelector('.filter-subtitle');
-  const iconEl = btn.querySelector('.filter-icon');
-  
-  // تحديث النص
-  titleEl.textContent = filter.description;
-  subtitleEl.textContent = filter.subtitle;
-  
-  // تحديث الأيقونة
-  iconEl.className = 'filter-icon fas ';
-  if (filter.type === 'cycle') {
-    iconEl.className += 'fa-sync-alt';
-  } else if (filter.type === 'time') {
-    iconEl.className += 'fa-calendar';
-  } else if (filter.type === 'custom') {
-    iconEl.className += 'fa-calendar-plus';
-  }
-  
-  // تحديث الخيار النشط في القائمة
-  document.querySelectorAll(`#filterDropdown_${storeId} .filter-option`).forEach(opt => {
-    opt.classList.remove('active');
-  });
-}
-
-// تحديث عرض تفاصيل المحل مع الفلترة
-function updateStoreDetailsWithFilter(storeId) {
+// تحديث زر الفلترة وملخصها
+function updateFilterButton(storeId, filter){
   try {
-    if (!window.storeFilter) {
-      console.error('محرك الفلترة غير متوفر');
-      return;
+    const btn = document.querySelector(`.filter-selector-btn[data-store-id="${storeId}"]`);
+    if (btn) {
+      const titleEl = btn.querySelector('.filter-title');
+      const subEl = btn.querySelector('.filter-subtitle');
+      if (titleEl && filter && filter.description) titleEl.textContent = filter.description;
+      if (subEl) subEl.textContent = (filter && filter.subtitle) ? filter.subtitle : '';
     }
-    
-    // الحصول على البيانات المفلترة
-    const filteredData = window.storeFilter.applyStoreFilter(storeId);
-    const filter = filteredData.filter;
-    
-    // تحديث ملخص الفلترة
-    updateFilterSummary(storeId, filteredData);
-    
-    // تطبيق الترتيب الذكي
-    const allTransactions = [
-      ...filteredData.sales.map(s => ({ ...s, type: 'sale', amount: -s.total })),
-      ...filteredData.payments.map(p => ({ ...p, type: 'payment', amount: p.amount }))
-    ];
-    
-    // حساب الرصيد السابق
-    const previousBalance = calculatePreviousBalance(storeId, filter);
-    
-    // ترتيب العمليات
-    const orderedTransactions = window.storeFilter.applySmartOrdering(allTransactions, previousBalance);
-    
-    // تحديث الجداول
-    updateSalesTable(storeId, orderedTransactions.filter(t => t.type === 'sale'));
-    updatePaymentsTable(storeId, orderedTransactions.filter(t => t.type === 'payment'));
-    
-    // تحديث العرض الزمني إذا كان نشطاً
-    const timelineView = document.getElementById(`timelineViewContent_${storeId}`);
-    if (timelineView && timelineView.style.display !== 'none') {
-      updateTimelineView(storeId);
-    }
-  } catch (error) {
-    console.error('خطأ في updateStoreDetailsWithFilter:', error);
-    console.error('تفاصيل الخطأ:', error.stack);
+  } catch(_) {}
+  const summary = document.getElementById(`filterSummary_${storeId}`);
+  if (summary) {
+    const desc = (filter && filter.description) ? filter.description : 'الدورة المالية الحالية';
+    const sub = (filter && filter.subtitle) ? filter.subtitle : 'من آخر تصفير حتى الآن';
+    const html = `<div class="alert alert-secondary py-2 px-3 mb-0">الفلترة الحالية: <strong>${desc}</strong> <span class="text-muted">${sub}</span></div>`;
+    if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(summary, html); } else { summary.innerHTML = html; }
   }
 }
 
-// تحديث ملخص الفلترة
-function updateFilterSummary(storeId, filteredData) {
-  const summaryEl = document.getElementById(`filterSummary_${storeId}`);
-  
-  // حساب الإحصائيات
-  const totalSales = filteredData.sales.reduce((sum, s) => sum + s.total, 0);
-  const totalPayments = filteredData.payments.reduce((sum, p) => sum + p.amount, 0);
-  const balance = totalSales - totalPayments;
-  const transactionCount = filteredData.sales.length + filteredData.payments.length;
-  
-  // عرض الملخص
-  summaryEl.innerHTML = `
-    <div class="filter-summary-title">
-      <i class="fas fa-chart-line me-2"></i>
-      ${filteredData.filter.description}
-      <small class="ms-2 opacity-75">${filteredData.filter.subtitle}</small>
-    </div>
-    <div class="filter-summary-stats">
-      <div class="filter-summary-stat">
-        <div class="value">${formatNumber(totalSales)}</div>
-        <div class="label">إجمالي المبيعات</div>
-      </div>
-      <div class="filter-summary-stat">
-        <div class="value">${formatNumber(totalPayments)}</div>
-        <div class="label">إجمالي التسديدات</div>
-      </div>
-      <div class="filter-summary-stat">
-        <div class="value">${formatNumber(Math.abs(balance))}</div>
-        <div class="label">الرصيد ${balance >= 0 ? 'الدائن' : 'المدين'}</div>
-      </div>
-      <div class="filter-summary-stat">
-        <div class="value">${transactionCount}</div>
-        <div class="label">عدد العمليات</div>
-      </div>
-    </div>
-  `;
-  
-  summaryEl.classList.add('show');
-}
-
-// حساب الرصيد السابق للفترة
-function calculatePreviousBalance(storeId, filter) {
-  // TODO: حساب الرصيد قبل بداية الفترة المحددة
-  return 0;
-}
-
-// تحديث جدول المبيعات
-function updateSalesTable(storeId, sales) {
-  const tbody = document.getElementById('storeSalesTable');
-  tbody.innerHTML = '';
-  
-  sales.forEach(sale => {
-    // الحصول على اسم الباقة
-    let packageName = 'غير محدد';
-    if (sale.packageId === 'custom') {
-      packageName = sale.reason || 'مبلغ مخصص';
-    } else if (sale.packageId && data.packages) {
-      const pkg = data.packages.find(p => p.id === sale.packageId);
-      packageName = pkg ? pkg.name : 'باقة محذوفة';
-    }
-    
-    const row = tbody.insertRow();
-    row.innerHTML = `
-      <td>${formatDateEn(sale.date)}</td>
-      <td>${packageName}</td>
-      <td>${sale.quantity > 0 ? formatNumber(sale.quantity, false) : '<span class="currency">' + formatNumber(sale.amount) + '</span>'}</td>
-      <td class="currency">${formatNumber(sale.total)}</td>
-      <td>
-        <button class="btn btn-sm btn-warning" onclick="editSale('${sale.id}')">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn btn-sm btn-danger" onclick="deleteSale('${sale.id}')">
-          <i class="fas fa-trash"></i>
-        </button>
-      </td>
-    `;
-  });
-}
-
-// تحديث جدول التسديدات
-function updatePaymentsTable(storeId, payments) {
-  const tbody = document.getElementById('storePaymentsTable');
-  tbody.innerHTML = '';
-  
-  payments.forEach(payment => {
-    const row = tbody.insertRow();
-    row.innerHTML = `
-      <td>${formatDateEn(payment.date)}</td>
-      <td class="currency">${formatNumber(payment.amount)}</td>
-      <td>${payment.notes || '-'}</td>
-      <td>
-        <button class="btn btn-sm btn-warning" onclick="editPayment('${payment.id}')">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn btn-sm btn-danger" onclick="deletePayment('${payment.id}')">
-          <i class="fas fa-trash"></i>
-        </button>
-      </td>
-    `;
-  });
-}
-
-// تبديل نوع العرض (جدولي/زمني)
-function switchView(storeId, viewType) {
+// تبديل العرض بين الجدول وكشف الحساب
+function switchView(storeId, view){
   const tableView = document.getElementById(`tableViewContent_${storeId}`);
   const timelineView = document.getElementById(`timelineViewContent_${storeId}`);
-  const tableBtn = document.getElementById(`tableView_${storeId}`);
-  const timelineBtn = document.getElementById(`timelineView_${storeId}`);
-  
-  if (viewType === 'timeline') {
-    tableView.style.display = 'none';
-    timelineView.style.display = 'block';
-    tableBtn.classList.remove('active');
-    timelineBtn.classList.add('active');
-    
-    // تحديث العرض الزمني
-    updateTimelineView(storeId);
-  } else {
-    tableView.style.display = 'block';
-    timelineView.style.display = 'none';
-    tableBtn.classList.add('active');
-    timelineBtn.classList.remove('active');
+  const btnTable = document.getElementById(`tableView_${storeId}`);
+  const btnTimeline = document.getElementById(`timelineView_${storeId}`);
+  if (!tableView || !timelineView) return;
+  const showTable = (view === 'table');
+  tableView.style.display = showTable ? 'block' : 'none';
+  timelineView.style.display = showTable ? 'none' : 'block';
+  if (btnTable && btnTimeline) {
+    btnTable.classList.toggle('active', showTable);
+    btnTimeline.classList.toggle('active', !showTable);
+  }
+  if (!showTable && typeof updateStoreDetailsWithFilter === 'function') {
+    updateStoreDetailsWithFilter(storeId);
   }
 }
 
-// تحديث العرض الزمني (كشف حساب متحرك)
-function updateTimelineView(storeId) {
+// تبديل نوع العناصر (الكل/مبيعات/تسديدات)
+function toggleFilterType(storeId, type){
+  const current = window.storeFilter.getActiveStoreFilter(storeId) || { type:'cycle', id:'current_cycle', data:{ includeTypes:['sale','payment'] } };
+  if (type === 'all') current.data.includeTypes = ['sale','payment'];
+  else if (type === 'sales') current.data.includeTypes = ['sale'];
+  else if (type === 'payments') current.data.includeTypes = ['payment'];
+  window.storeFilter.setActiveStoreFilter(storeId, current);
+  updateFilterButton(storeId, current);
+  if (typeof updateStoreDetailsWithFilter === 'function') updateStoreDetailsWithFilter(storeId);
+}
+
+// إعادة بناء الجداول وفق الفلترة النشطة
+function updateStoreDetailsWithFilter(storeId){
+  const filter = window.storeFilter.getActiveStoreFilter(storeId) || { type:'cycle', id:'current_cycle', data:{ includeTypes:['sale','payment'] } };
+  const includeSales = filter.data.includeTypes.includes('sale');
+  const includePayments = filter.data.includeTypes.includes('payment');
+
+  // اشتقاق نطاق التاريخ من الفلتر
+  const { from, to, description, subtitle } = (function deriveRange(){
+    const today = (typeof moment!=='undefined') ? moment().format('YYYY-MM-DD') : getTodayDate();
+    let fromDate = null, toDate = null, desc = '', sub = '';
+    const parse = (d)=> (typeof formatDateEn==='function') ? formatDateEn(d) : d;
+    const salesAll = (data.sales||[]).filter(s=> s.storeId===storeId);
+    const paysAll = (data.payments||[]).filter(p=> p.storeId===storeId);
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+    const getDisc = (s)=>{ if(!discountsEnabled||!s||!s.discount) return 0; const t=Number(s.total)||0; const v=Number(s.discount.value)||0; return s.discount.type==='percent' ? Math.min(t*v/100, t) : Math.min(v,t); };
+    const tx = [];
+    salesAll.forEach(s=> tx.push({ type:'sale', date: parse(s.date), amount: Math.max(0,(Number(s.total)||0) - getDisc(s)), id:s.id }));
+    paysAll.forEach(p=> tx.push({ type:'payment', date: parse(p.date), amount: Number(p.amount)||0, id:p.id }));
+    tx.sort((a,b)=> a.date.localeCompare(b.date) || (a.type==='payment'?1:-1));
+    function findZeroIndices(){ let bal=0; const zeros=[]; for(let i=0;i<tx.length;i++){ const t=tx[i]; if(t.type==='sale') bal+=t.amount; else if(t.type==='payment') bal-=t.amount; if (Math.abs(bal) < 0.0000001) zeros.push(i); } return {zeros, lastBalance:bal}; }
+    if (filter.type==='cycle'){
+      const {zeros} = findZeroIndices();
+      if (filter.id==='current_cycle'){
+        const lastZero = zeros.length ? zeros[zeros.length-1] : -1;
+        fromDate = (lastZero>=0 && tx[lastZero+1]) ? tx[lastZero+1].date : (tx[0]?tx[0].date:today);
+        toDate = today; desc='الدورة المالية الحالية'; sub='من آخر تصفير حتى الآن';
+      } else if (filter.id==='previous_cycle'){
+        if (zeros.length>=2){
+          const lastZero = zeros[zeros.length-1];
+          const prevZero = zeros[zeros.length-2];
+          fromDate = (tx[prevZero+1]?tx[prevZero+1].date: (tx[0]?tx[0].date: today));
+          toDate = (tx[lastZero]?tx[lastZero].date: today);
+        } else {
+          fromDate = tx[0]?tx[0].date: today; toDate = today;
+        }
+        desc='الدورة السابقة'; sub='الدورة المالية المكتملة السابقة';
+      }
+    } else if (filter.type==='time'){
+      const id = filter.id;
+      if (id==='all_time'){ fromDate = tx[0]?tx[0].date: today; toDate = today; desc='من البداية'; sub='كل العمليات المسجلة'; }
+      else if (id==='today'){ fromDate = today; toDate = today; desc='اليوم'; sub=today; }
+      else if (id==='last_7_days'){ const s=(typeof moment!=='undefined')? moment(today).subtract(6,'days').format('YYYY-MM-DD') : today; fromDate=s; toDate=today; desc='آخر 7 أيام'; sub='آخر أسبوع'; }
+      else if (id==='last_30_days'){ const s=(typeof moment!=='undefined')? moment(today).subtract(29,'days').format('YYYY-MM-DD') : today; fromDate=s; toDate=today; desc='آخر 30 يوم'; sub='آخر شهر'; }
+      else if (id==='this_month'){ const s=(typeof moment!=='undefined')? moment().startOf('month').format('YYYY-MM-DD'): today; fromDate=s; toDate=today; desc='هذا الشهر'; sub='الشهر الحالي'; }
+      else if (id==='last_month'){ if (typeof moment!=='undefined'){ fromDate=moment().subtract(1,'month').startOf('month').format('YYYY-MM-DD'); toDate=moment().subtract(1,'month').endOf('month').format('YYYY-MM-DD'); } else { fromDate=today; toDate=today; } desc='الشهر السابق'; sub='الشهر الماضي'; }
+      else if (id==='custom'){ fromDate = parse(filter.data.from||today); toDate = parse(filter.data.to||today); desc='فترة مخصصة'; sub=`${fromDate} إلى ${toDate}`; }
+    }
+    return { from: fromDate, to: toDate, description: desc, subtitle: sub };
+  })();
+
+  const inPeriod = (d)=>{ if(!from && !to) return true; const x=(typeof formatDateEn==='function')? formatDateEn(d): d; return (!from || x>=from) && (!to || x<=to); };
+
+  const salesTBody = document.getElementById('storeSalesTable');
+  const paysTBody = document.getElementById('storePaymentsTable');
+  if (!salesTBody || !paysTBody) return;
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(salesTBody, ''); } else { salesTBody.innerHTML = ''; }
+  if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(paysTBody, ''); } else { paysTBody.innerHTML = ''; }
+
+  const salesAll = (data.sales||[]).filter(s => s.storeId === storeId && inPeriod(s.date));
+  const paymentsAll = (data.payments||[]).filter(p => p.storeId === storeId && inPeriod(p.date));
+
+  // تعبئة الجداول
+  if (includeSales) {
+    salesAll.forEach(sale => {
+      const pkg = sale.packageId ? data.packages.find(p => p.id === sale.packageId) : null;
+      const isCustom = sale.packageId === 'custom';
+      const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+      let discountAmount = 0; let net = sale.total||0;
+      if (discountsEnabled && sale.discount) {
+        const t = Number(sale.total)||0; const v = Number(sale.discount.value)||0;
+        if (sale.discount.type === 'percent') discountAmount = Math.min(t * v / 100, t); else if (sale.discount.type === 'amount') discountAmount = Math.min(v, t);
+        net = Math.max(0, t - discountAmount);
+      }
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${sale.date}</td>
+        <td>${sale.reason || (pkg ? pkg.name : 'غير معروف')}${(discountsEnabled && sale.discount) ? ' <span class="badge bg-warning text-dark">خصم</span>' : ''}</td>
+        <td>${isCustom ? ('<span class="currency">' + formatNumber(sale.amount) + '</span>') : formatNumber(sale.quantity, false)}</td>
+        <td class="currency">${formatNumber(sale.total)}${(discountsEnabled && sale.discount) ? ('<div class="small text-muted">خصم: ' + formatNumber(discountAmount) + ' | صافي: ' + formatNumber(net) + '</div>') : ''}</td>
+        <td class="action-buttons">
+          <button class="btn btn-sm btn-warning edit-sale" data-id="${sale.id}"><i class="fas را-edit"></i></button>
+          <button class="btn btn-sm btn-danger delete-sale" data-id="${sale.id}"><i class="fas fa-trash"></i></button>
+        </td>`;
+      salesTBody.appendChild(row);
+    });
+  }
+
+  if (includePayments) {
+    paymentsAll.forEach(payment => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${payment.date}</td>
+        <td class="currency">${formatNumber(payment.amount)}</td>
+        <td>${payment.notes || ''}</td>
+        <td class="action-buttons">
+          <button class="btn btn-sm btn-warning edit-payment" data-id="${payment.id}"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-sm btn-danger delete-payment" data-id="${payment.id}"><i class="fas fa-trash"></i></button>
+        </td>`;
+      paysTBody.appendChild(row);
+    });
+  }
+
+  // ملخص الفلترة
+  updateFilterButton(storeId, { description, subtitle });
+
+  // كشف حساب متحرك إذا كان العرض الزمني ظاهر
+  const timeline = document.getElementById(`timelineViewContent_${storeId}`);
   const container = document.getElementById(`timelineContainer_${storeId}`);
-  
-  if (!window.storeFilter) {
-    container.innerHTML = '<p class="text-center text-muted">محرك الفلترة غير متوفر</p>';
-    return;
+  if (timeline && container && timeline.style.display !== 'none') {
+    // حساب الرصيد السابق قبل from
+    const prevBal = (function(){
+      if (!from) return 0;
+      const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+      const salesPrev = (data.sales||[]).filter(s=> s.storeId===storeId && s.date < from);
+      const paysPrev = (data.payments||[]).filter(p=> p.storeId===storeId && p.date < from);
+      const sd = salesPrev.reduce((s,x)=>{ let disc=0; if(discountsEnabled && x.discount){ const t=Number(x.total)||0; const v=Number(x.discount.value)||0; disc = x.discount.type==='percent' ? Math.min(t*v/100,t) : Math.min(v,t);} return s + Math.max(0,(Number(x.total)||0)-disc); },0);
+      const pd = paysPrev.reduce((s,x)=> s + (Number(x.amount)||0), 0);
+      return sd - pd;
+    })();
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+    const tx = [];
+    if (includeSales) salesAll.forEach(s=>{ let disc=0; if(discountsEnabled&&s.discount){ const t=Number(s.total)||0; const v=Number(s.discount.value)||0; disc=s.discount.type==='percent'?Math.min(t*v/100,t):Math.min(v,t);} tx.push({type:'sale', date: (typeof formatDateEn==='function')?formatDateEn(s.date):s.date, amount: Number(s.total)||0, discount: disc, id:s.id}); });
+    if (includePayments) paymentsAll.forEach(p=> tx.push({type:'payment', date: (typeof formatDateEn==='function')?formatDateEn(p.date):p.date, amount: Number(p.amount)||0, id:p.id}));
+    tx.sort((a,b)=> a.date.localeCompare(b.date) || (a.type==='payment'?1:-1));
+    let running = prevBal; let html='';
+    html += `<div class="mb-2 small text-muted">الفترة: ${from||'—'} إلى ${to||'اليوم'} | الرصيد السابق: <strong class="currency">${formatNumber(running)}</strong></div>`;
+    html += '<div class="timeline">';
+    tx.forEach(t=>{
+      if (t.type==='sale'){ const net = (Number(t.amount)||0) - (Number(t.discount)||0); running += net; html += `<div class="timeline-item"><div class="ti-date">${t.date}</div><div class="ti-type text-danger">بيع</div><div class="ti-amount currency">${formatNumber(t.amount)}</div>${(discountsEnabled&&t.discount)?`<div class=\"ti-discount text-muted\">خصم: ${formatNumber(t.discount)} | صافي: ${formatNumber(net)}</div>`:''}<div class="ti-balance">الرصيد: <span class="currency">${formatNumber(running)}</span></div></div>`; }
+      else { running -= t.amount; html += `<div class="timeline-item"><div class="ti-date">${t.date}</div><div class="ti-type text-success">تسديد</div><div class="ti-amount currency">${formatNumber(t.amount)}</div><div class="ti-balance">الرصيد: <span class="currency">${formatNumber(running)}</span></div></div>`; }
+    });
+    html += '</div>';
+    if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(container, html); } else { container.innerHTML = html; }
   }
-  
-  // الحصول على البيانات المفلترة
-  const filteredData = window.storeFilter.applyStoreFilter(storeId);
-  const store = data.stores.find(s => s.id === storeId);
-  
-  // دمج وترتيب العمليات
-  const allTransactions = [
-    ...filteredData.sales.map(s => ({ 
-      ...s, 
-      type: 'sale',
-      displayAmount: s.total,
-      impact: -s.total 
-    })),
-    ...filteredData.payments.map(p => ({ 
-      ...p, 
-      type: 'payment',
-      displayAmount: p.amount,
-      impact: p.amount 
-    }))
-  ];
-  
-  // حساب الرصيد السابق
-  const previousBalance = calculatePreviousBalance(storeId, filteredData.filter);
-  
-  // ترتيب ذكي
-  const orderedTransactions = window.storeFilter.applySmartOrdering(allTransactions, previousBalance);
-  
-  // بناء كشف الحساب المتحرك
-  let html = `
-    <div class="account-statement-container">
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped account-statement-table">
-          <thead class="table-dark">
-            <tr>
-              <th width="5%">#</th>
-              <th width="12%">التاريخ</th>
-              <th width="30%">البيان</th>
-              <th width="13%">مدين</th>
-              <th width="13%">دائن</th>
-              <th width="14%">الرصيد</th>
-              <th width="13%">الإجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-  `;
-  
-  let runningBalance = previousBalance;
-  let rowNumber = 1;
-  let currentDate = '';
-  let dateSequence = 1;
-  
-  // إضافة الرصيد الافتتاحي إذا كان هناك رصيد سابق
-  if (previousBalance !== 0) {
-    html += `
-      <tr class="opening-balance-row">
-        <td class="text-center">${rowNumber++}</td>
-        <td>-</td>
-        <td><strong>رصيد سابق</strong></td>
-        <td class="text-center">-</td>
-        <td class="text-center">-</td>
-        <td class="text-center ${previousBalance >= 0 ? 'text-success' : 'text-danger'}">
-          <strong>${formatNumber(Math.abs(previousBalance))}</strong>
-          <small class="d-block">${previousBalance >= 0 ? 'دائن' : 'مدين'}</small>
-        </td>
-        <td>-</td>
-      </tr>
-    `;
-  }
-  
-  // معالجة العمليات
-  orderedTransactions.forEach((transaction, index) => {
-    const transDate = formatDateEn(transaction.date);
-    
-    // إضافة رأس التاريخ إذا تغير
-    if (transDate !== currentDate) {
-      currentDate = transDate;
-      dateSequence = 1;
-      html += `
-        <tr class="date-header-row">
-          <td colspan="7" class="text-center table-secondary">
-            <strong>${transDate}</strong>
-          </td>
-        </tr>
-      `;
-    }
-    
-    // حساب الرصيد الجديد
-    runningBalance += transaction.impact;
-    
-    const isSale = transaction.type === 'sale';
-    const rowClass = isSale ? 'sale-row' : 'payment-row';
-    
-    // بناء البيان
-    let description = '';
-    if (isSale) {
-      description = transaction.reason || getPackageDisplayName(transaction.packageId);
-      if (transaction.quantity > 0) {
-        description += ` <span class="badge bg-secondary">${transaction.quantity} كرت</span>`;
-      }
-    } else {
-      description = 'تسديد نقدي';
-      if (transaction.notes) {
-        description += ` - ${transaction.notes}`;
-      }
-    }
-    
-    html += `
-      <tr class="${rowClass}">
-        <td class="text-center">${rowNumber++}</td>
-        <td>
-          ${transDate}
-          <small class="text-muted d-block">(${dateSequence++})</small>
-        </td>
-        <td>
-          ${isSale ? '<i class="fas fa-shopping-cart text-danger me-2"></i>' : '<i class="fas fa-money-bill-wave text-success me-2"></i>'}
-          ${description}
-        </td>
-        <td class="text-center text-danger">
-          ${isSale ? formatNumber(transaction.displayAmount) : '-'}
-        </td>
-        <td class="text-center text-success">
-          ${!isSale ? formatNumber(transaction.displayAmount) : '-'}
-        </td>
-        <td class="text-center ${runningBalance >= 0 ? 'text-success' : 'text-danger'}">
-          <strong>${formatNumber(Math.abs(runningBalance))}</strong>
-          <small class="d-block">${runningBalance >= 0 ? 'دائن' : 'مدين'}</small>
-        </td>
-        <td class="text-center">
-          <div class="btn-group btn-group-sm" role="group">
-            <button class="btn btn-warning" onclick="edit${isSale ? 'Sale' : 'Payment'}('${transaction.id}')" title="تعديل">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-danger" onclick="delete${isSale ? 'Sale' : 'Payment'}('${transaction.id}')" title="حذف">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </td>
-      </tr>
-    `;
-  });
-  
-  // إضافة صف الإجمالي النهائي
-  if (orderedTransactions.length > 0) {
-    const totalSales = orderedTransactions.filter(t => t.type === 'sale').reduce((sum, t) => sum + t.displayAmount, 0);
-    const totalPayments = orderedTransactions.filter(t => t.type === 'payment').reduce((sum, t) => sum + t.displayAmount, 0);
-    
-    html += `
-      <tr class="table-dark total-row">
-        <td colspan="3" class="text-end"><strong>الإجمالي</strong></td>
-        <td class="text-center text-danger"><strong>${formatNumber(totalSales)}</strong></td>
-        <td class="text-center text-success"><strong>${formatNumber(totalPayments)}</strong></td>
-        <td class="text-center ${runningBalance >= 0 ? 'text-success' : 'text-danger'}">
-          <strong>${formatNumber(Math.abs(runningBalance))}</strong>
-          <small class="d-block">${runningBalance >= 0 ? 'دائن' : 'مدين'}</small>
-        </td>
-        <td>-</td>
-      </tr>
-    `;
-  }
-  
-  html += `
-          </tbody>
-        </table>
-      </div>
-    </div>
-  `;
-  
-  // إضافة رسالة إذا لم توجد عمليات
-  if (orderedTransactions.length === 0) {
-    html = `
-      <div class="text-center py-5">
-        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-        <p class="text-muted">لا توجد عمليات في الفترة المحددة</p>
-      </div>
-    `;
-  }
-  
-  container.innerHTML = html;
 }
 
-// الحصول على اسم الباقة للعرض
-function getPackageDisplayName(packageId) {
-  if (!packageId) return 'غير محدد';
-  if (packageId === 'custom') return 'مبلغ مخصص';
-  
-  const pkg = data.packages?.find(p => p.id === packageId);
-  return pkg ? pkg.name : 'باقة محذوفة';
+// فلترة مخصصة بالتاريخ من واجهة المستخدم
+function applyCustomDateFilter(storeId) {
+  const fromInput = document.getElementById(`customStartDate_${storeId}`);
+  const toInput = document.getElementById(`customEndDate_${storeId}`);
+  if (!fromInput || !toInput) { showNotification('يرجى فتح قسم التاريخ المخصص أولاً', 'warning'); return; }
+  const from = fromInput.value ? formatDateEn(fromInput.value) : '';
+  const to = toInput.value ? formatDateEn(toInput.value) : '';
+  const filter = { type:'time', id:'custom', data:{ from, to, includeTypes: getActiveFilterTypes(storeId) }, description:'فترة مخصصة', subtitle: `${from||'—'} إلى ${to||'—'}` };
+  window.storeFilter.setActiveStoreFilter(storeId, filter);
+  updateFilterButton(storeId, filter);
+  updateStoreDetailsWithFilter(storeId);
 }
-
-// استخراج الوقت من التاريخ
-function formatTime(dateStr) {
-  // يمكن إضافة منطق لاستخراج الوقت إذا كان متوفراً
-  return '';
-}
-
-// تصدير الدوال إلى النطاق العام للاستخدام من HTML
-window.toggleFilterDropdown = toggleFilterDropdown;
-window.applyFilter = applyFilter;
-window.showCustomDateFilter = showCustomDateFilter;
-window.applyCustomDateFilter = applyCustomDateFilter;
-window.toggleFilterType = toggleFilterType;
-window.switchView = switchView;

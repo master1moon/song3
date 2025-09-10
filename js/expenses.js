@@ -25,6 +25,11 @@
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة addExpense — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function addExpense() {
   document.getElementById('expenseModalTitle').textContent = 'إضافة مصروف جديد';
   document.getElementById('expenseId').value = '';
@@ -42,6 +47,11 @@ function addExpense() {
  * فتح نموذج تعديل مصروف موجود
  * يملأ النموذج بالبيانات الحالية للمصروف
  * @param {string} id - معرف المصروف المراد تعديله
+ */
+/**
+ * ملاحظة: الدالة editExpense — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة editExpense — وصف تلقائي موجز لوظيفتها.
@@ -67,6 +77,11 @@ function editExpense(id) {
  * ينقل المصروف المحذوف إلى سلة المحذوفات
  * يحدث جميع الجداول والتقارير المتعلقة
  * @param {string} id - معرف المصروف المراد حذفه
+ */
+/**
+ * ملاحظة: الدالة deleteExpense — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة deleteExpense — وصف تلقائي موجز لوظيفتها.
@@ -108,6 +123,11 @@ function deleteExpense(id) {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة saveExpense — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function saveExpense() {
   const id = document.getElementById('expenseId').value;
   const type = document.getElementById('expenseType').value;
@@ -128,7 +148,7 @@ function saveExpense() {
   // حفظ نوع المصروف في قائمة الأنواع المحفوظة
   // يساعد على الإدخال السريع في المرات القادمة
   try {
-    const saved = JSON.parse(localStorage.getItem('expenseTypes') || '[]');
+    const saved = (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('expenseTypes')||'[]', [])||[]) : JSON.parse(localStorage.getItem('expenseTypes') || '[]');
     if (type && !saved.includes(type)) { saved.push(type); localStorage.setItem('expenseTypes', JSON.stringify(saved)); }
   } catch (_) {
     // تجاهل أخطاء التخزين
@@ -192,6 +212,11 @@ const expensesSelection = new Set();
  * المدخلات: items
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة applySearchSortPaginate — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: items
+ * المخرجات: راجع التنفيذ
+ */
 function applySearchSortPaginate(items){
   const q = (expensesState.search || '').toLowerCase();
   let arr = items.filter(e => {
@@ -218,6 +243,11 @@ function applySearchSortPaginate(items){
  * يعرض عدد العناصر المحددة وأزرار العمليات الجماعية
  * @param {number} total - إجمالي عدد العناصر
  * @param {number} pages - عدد الصفحات
+ */
+/**
+ * ملاحظة: الدالة renderExpensesControls — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: total, pages
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة renderExpensesControls — وصف تلقائي موجز لوظيفتها.
@@ -256,6 +286,11 @@ function renderExpensesControls(total, pages){
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة applyBulk — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function applyBulk(){
     if (expensesSelection.size === 0) { showNotification('لم يتم تحديد سجلات', 'error'); return; }
     const ids = Array.from(expensesSelection);
@@ -273,7 +308,7 @@ function renderExpensesControls(total, pages){
       if (!newType) { showNotification('اكتب النوع الجديد', 'error'); return; }
       data.expenses.forEach(e => { if (expensesSelection.has(e.id)) e.type = newType; });
       try {
-        const saved = JSON.parse(localStorage.getItem('expenseTypes') || '[]');
+        const saved = (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('expenseTypes')||'[]', [])||[]) : JSON.parse(localStorage.getItem('expenseTypes') || '[]');
         if (newType && !saved.includes(newType)) { saved.push(newType); localStorage.setItem('expenseTypes', JSON.stringify(saved)); }
       } catch(_){}
     }
@@ -291,6 +326,11 @@ function renderExpensesControls(total, pages){
   footer.appendChild(left); footer.appendChild(right);
 }
 
+/**
+ * ملاحظة: الدالة startInlineEditExpense — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: tr, expense
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة startInlineEditExpense — وصف تلقائي موجز لوظيفتها.
  * المدخلات: tr, expense
@@ -330,6 +370,11 @@ function startInlineEditExpense(tr, expense){
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة getFilteredExpensesForExport — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function getFilteredExpensesForExport(){
   const periodSel = document.getElementById('expensesPeriod');
   const period = periodSel ? periodSel.value : 'from_start';
@@ -361,6 +406,11 @@ if (typeof window !== 'undefined') {
   window.deleteExpense = deleteExpense;
 }
 
+/**
+ * ملاحظة: الدالة renderExpensesTable — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 /**
  * ملاحظة: الدالة renderExpensesTable — وصف تلقائي موجز لوظيفتها.
  * المدخلات: بدون
@@ -450,9 +500,14 @@ function renderExpensesTable() {
 // إدارة chips لأنواع المصروفات
 (function () {
   const defaultExpenseTypes = ['كهرباء', 'انترنت ADSL', 'انترنت فايبر', 'انترنت ستار لينك', 'صيانة', 'سويتش', 'كيبل كهرباء', 'كيبل انترنت رئيسي', 'كيبل انترنت منزلي', 'مواصلات', 'عامل', 'ايجار سطوح'];
-  function loadSavedExpenseTypes() { try { return JSON.parse(localStorage.getItem('expenseTypes') || '[]'); } catch { return []; } }
+  function loadSavedExpenseTypes() { try { return (typeof safeJsonParse==='function' && typeof FeatureFlags!=='undefined' && FeatureFlags.isEnabled('safeJsonParse')) ? (safeJsonParse(localStorage.getItem('expenseTypes')||'[]', [])||[]) : JSON.parse(localStorage.getItem('expenseTypes') || '[]'); } catch { return []; } }
   function saveExpenseTypes(types) { localStorage.setItem('expenseTypes', JSON.stringify(Array.from(new Set(types)))); }
   function getAllExpenseTypes() { return Array.from(new Set([...(loadSavedExpenseTypes()), ...defaultExpenseTypes])); }
+  /**
+   * ملاحظة: الدالة renderExpenseTypeChips — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: selected
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة renderExpenseTypeChips — وصف تلقائي موجز لوظيفتها.
    * المدخلات: selected

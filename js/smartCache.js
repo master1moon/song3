@@ -17,6 +17,11 @@ class SmartCache {
      * @param {number} options.maxSize - الحد الأقصى لعدد العناصر (افتراضي: 100)
      * @param {boolean} options.autoClean - التنظيف التلقائي (افتراضي: true)
      */
+    /**
+     * ملاحظة: الدالة constructor — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: options = {}
+     * المخرجات: راجع التنفيذ
+     */
     constructor(options = {}) {
         this.cache = new Map();
         this.ttl = options.ttl || 5 * 60 * 1000; // 5 دقائق افتراضياً
@@ -37,6 +42,11 @@ class SmartCache {
      * @param {*} value - القيمة المراد حفظها
      * @param {number} customTTL - مدة صلاحية مخصصة (اختياري)
      */
+    /**
+     * ملاحظة: الدالة set — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: key, value, customTTL = null
+     * المخرجات: راجع التنفيذ
+     */
     set(key, value, customTTL = null) {
         // إذا وصلنا للحد الأقصى، احذف الأقدم
         if (this.cache.size >= this.maxSize) {
@@ -56,6 +66,11 @@ class SmartCache {
      * الحصول على قيمة من التخزين المؤقت
      * @param {string} key - مفتاح التخزين
      * @returns {*} القيمة المخزنة أو null
+     */
+    /**
+     * ملاحظة: الدالة get — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: key
+     * المخرجات: راجع التنفيذ
      */
     get(key) {
         const item = this.cache.get(key);
@@ -87,6 +102,11 @@ class SmartCache {
      * @param {number} customTTL - مدة صلاحية مخصصة
      * @returns {Promise<*>} القيمة
      */
+    /**
+     * ملاحظة: الدالة getOrCompute — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: key, computeFn, customTTL = null
+     * المخرجات: راجع التنفيذ
+     */
     async getOrCompute(key, computeFn, customTTL = null) {
         // محاولة الحصول من الكاش
         const cached = this.get(key);
@@ -106,6 +126,11 @@ class SmartCache {
     /**
      * إبطال (حذف) مفتاح محدد أو مجموعة مفاتيح
      * @param {string|RegExp|Function} pattern - النمط للبحث
+     */
+    /**
+     * ملاحظة: الدالة invalidate — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: pattern
+     * المخرجات: راجع التنفيذ
      */
     invalidate(pattern) {
         if (typeof pattern === 'string') {
@@ -131,6 +156,11 @@ class SmartCache {
     /**
      * مسح كل التخزين المؤقت
      */
+    /**
+     * ملاحظة: الدالة clear — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     clear() {
         this.cache.clear();
         this.hits = 0;
@@ -139,6 +169,11 @@ class SmartCache {
     
     /**
      * التنظيف التلقائي للعناصر المنتهية
+     */
+    /**
+     * ملاحظة: الدالة cleanup — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     cleanup() {
         const now = Date.now();
@@ -152,6 +187,11 @@ class SmartCache {
     /**
      * بدء التنظيف التلقائي الدوري
      */
+    /**
+     * ملاحظة: الدالة startAutoCleaning — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     startAutoCleaning() {
         // تنظيف كل دقيقة
         this.cleanupInterval = setInterval(() => {
@@ -161,6 +201,11 @@ class SmartCache {
     
     /**
      * إيقاف التنظيف التلقائي
+     */
+    /**
+     * ملاحظة: الدالة stopAutoCleaning — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     stopAutoCleaning() {
         if (this.cleanupInterval) {
@@ -172,6 +217,11 @@ class SmartCache {
     /**
      * الحصول على إحصائيات الأداء
      * @returns {Object} إحصائيات الكاش
+     */
+    /**
+     * ملاحظة: الدالة getStats — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     getStats() {
         const hitRate = this.hits + this.misses > 0 
@@ -199,6 +249,11 @@ class SmartCache {
  * يستخدم SmartCache مع تحسينات خاصة بالمحلات
  */
 class StoreBalanceCache extends SmartCache {
+    /**
+     * ملاحظة: الدالة constructor — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     constructor() {
         super({
             ttl: 10 * 60 * 1000, // 10 دقائق
@@ -211,16 +266,31 @@ class StoreBalanceCache extends SmartCache {
      * @param {string} storeId - معرف المحل
      * @returns {number} الرصيد
      */
+    /**
+     * ملاحظة: الدالة calculateBalance — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: storeId
+     * المخرجات: راجع التنفيذ
+     */
     async calculateBalance(storeId) {
         return await this.getOrCompute(
             `balance_${storeId}`,
             () => {
-                // الحساب الفعلي (المكلف)
-                const sales = data.sales.filter(s => s.storeId === storeId);
-                const payments = data.payments.filter(p => p.storeId === storeId);
-                const totalSales = sales.reduce((sum, sale) => sum + (sale.total || 0), 0);
-                const totalPayments = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
-                return totalSales - totalPayments;
+                // الحساب الفعلي (المكلف) مع خصم الخصومات عند تفعيل العلم
+                const sales = (data.sales || []).filter(s => s.storeId === storeId);
+                const payments = (data.payments || []).filter(p => p.storeId === storeId);
+                const totalSales = sales.reduce((sum, sale) => sum + (Number(sale.total) || 0), 0);
+                const totalPayments = payments.reduce((sum, payment) => sum + (Number(payment.amount) || 0), 0);
+                const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+                let totalDiscounts = 0;
+                if (discountsEnabled) {
+                    totalDiscounts = sales.reduce((s, sale) => {
+                        const d = sale && sale.discount; if (!d) return s;
+                        const t = Number(sale.total) || 0; const v = Number(d.value) || 0; let dv = 0;
+                        if (d.type === 'percent') dv = Math.min(t * v / 100, t); else if (d.type === 'amount') dv = Math.min(v, t);
+                        return s + dv;
+                    }, 0);
+                }
+                return (totalSales - totalDiscounts) - totalPayments;
             }
         );
     }
@@ -229,12 +299,22 @@ class StoreBalanceCache extends SmartCache {
      * إبطال رصيد محل عند تغيير بياناته
      * @param {string} storeId - معرف المحل
      */
+    /**
+     * ملاحظة: الدالة invalidateStore — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: storeId
+     * المخرجات: راجع التنفيذ
+     */
     invalidateStore(storeId) {
         this.invalidate(`balance_${storeId}`);
     }
     
     /**
      * إبطال جميع الأرصدة
+     */
+    /**
+     * ملاحظة: الدالة invalidateAll — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
      */
     invalidateAll() {
         this.invalidate(/^balance_/);
@@ -245,6 +325,11 @@ class StoreBalanceCache extends SmartCache {
  * نظام تخزين مؤقت للتقارير المعقدة
  */
 class ReportCache extends SmartCache {
+    /**
+     * ملاحظة: الدالة constructor — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: بدون
+     * المخرجات: راجع التنفيذ
+     */
     constructor() {
         super({
             ttl: 15 * 60 * 1000, // 15 دقيقة
@@ -255,12 +340,22 @@ class ReportCache extends SmartCache {
     /**
      * إنشاء مفتاح فريد للتقرير بناءً على المعاملات
      */
+    /**
+     * ملاحظة: الدالة generateKey — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: reportType, filters
+     * المخرجات: راجع التنفيذ
+     */
     generateKey(reportType, filters) {
         return `report_${reportType}_${JSON.stringify(filters)}`;
     }
     
     /**
      * الحصول على تقرير أو حسابه
+     */
+    /**
+     * ملاحظة: الدالة getReport — وصف تلقائي موجز لوظيفتها.
+     * المدخلات: reportType, filters, computeFn
+     * المخرجات: راجع التنفيذ
      */
     async getReport(reportType, filters, computeFn) {
         const key = this.generateKey(reportType, filters);

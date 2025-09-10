@@ -28,6 +28,11 @@
  * المدخلات: storeId
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة addSale — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: storeId
+ * المخرجات: راجع التنفيذ
+ */
 function addSale(storeId) {
   const select = document.getElementById('salePackage');
   select.innerHTML = '';
@@ -67,6 +72,11 @@ function addSale(storeId) {
  * المدخلات: بدون
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة saveSale — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
+ */
 function saveSale() {
   const id = document.getElementById('saleId').value;
   const storeId = document.getElementById('saleStoreId').value;
@@ -75,6 +85,20 @@ function saveSale() {
   const quantity = parseFormattedNumber(document.getElementById('saleQuantity').value) || 0;
   const amount = parseFormattedNumber(document.getElementById('saleAmount').value) || 0;
   const date = document.getElementById('saleDate').value ? formatDateEn(document.getElementById('saleDate').value) : getTodayDate();
+  // قراءة الخصم اختيارياً
+  let discount = null;
+  try {
+    if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts')) {
+      const dTypeEl = document.getElementById('discountType');
+      const dValEl = document.getElementById('discountValue');
+      const dReasonEl = document.getElementById('discountReason');
+      const dType = (dTypeEl && dTypeEl.value) || 'none';
+      const dVal = parseFormattedNumber(dValEl && dValEl.value || '0') || 0;
+      if (dType !== 'none' && dVal > 0) {
+        discount = { type: dType, value: dType==='percent' ? Math.min(dVal, (AppSettings.get('sales.maxDiscountPercent')||50)) : dVal, amountCalculated: 0, reason: dReasonEl ? dReasonEl.value||'' : '', createdAt: new Date().toISOString() };
+      }
+    }
+  } catch(_) {}
   if (!storeId || (!packageId && !reason)) { showNotification('يرجى ملء جميع الحقول المطلوبة', 'error'); return; }
   const isCustom = packageId === 'custom';
   const store = data.stores.find(s => s.id === storeId);
@@ -98,11 +122,14 @@ function saveSale() {
     if (sale) {
       if (sale.packageId && sale.packageId !== 'custom' && sale.quantity) { addToInventory(sale.packageId, sale.quantity); }
       sale.packageId = packageId; sale.reason = reason; sale.quantity = quantity; sale.amount = amount; sale.pricePerUnit = pricePerUnit; sale.total = total; sale.date = date;
+      if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts')) { sale.discount = discount || null; }
     }
     showNotification('تم تحديث البيع بنجاح', 'success');
   } else {
     const newId = 'sale_' + Date.now();
-    data.sales.push({ id: newId, storeId, packageId, reason, quantity, amount, pricePerUnit, total, date });
+    const newSale = { id: newId, storeId, packageId, reason, quantity, amount, pricePerUnit, total, date };
+    if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts')) { newSale.discount = discount || null; }
+    data.sales.push(newSale);
     showNotification('تم إضافة البيع بنجاح', 'success');
   }
   if (!isCustom && packageId) { checkLowStockForPackage(packageId); }
@@ -151,6 +178,11 @@ function saveSale() {
  * المدخلات: id
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة editSale — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
+ */
 function editSale(id) {
   const sale = data.sales.find(s => s.id === id); if (!sale) return;
   const select = document.getElementById('salePackage');
@@ -159,6 +191,15 @@ function editSale(id) {
   select.innerHTML += '<option value="custom">مخصص (مبلغ مباشر)</option>';
   data.packages.forEach(pkg => { const option = document.createElement('option'); option.value = pkg.id; option.textContent = pkg.name; option.selected = pkg.id === sale.packageId; select.appendChild(option); });
   const isCustom = sale.packageId === 'custom'; if (isCustom) { select.value = 'custom'; }
+  // تعبئة حقول الخصم إن وُجد
+  try {
+    if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts')) {
+      const d = sale.discount || null;
+      document.getElementById('discountType').value = d ? d.type : 'none';
+      document.getElementById('discountValue').value = d ? (d.type==='percent' ? d.value : d.value) : '';
+      document.getElementById('discountReason').value = d ? (d.reason||'') : '';
+    }
+  } catch(_) {}
   select.addEventListener('change', function () {
     const isCustom = this.value === 'custom';
     document.getElementById('customReasonGroup').style.display = isCustom ? 'block' : 'none';
@@ -188,6 +229,11 @@ function editSale(id) {
  * ينقل البيع المحذوف إلى سلة المحذوفات إذا كانت متاحة
  * يحدث جميع الجداول والتقارير المتعلقة
  * @param {string} id - معرف البيع المراد حذفه
+ */
+/**
+ * ملاحظة: الدالة deleteSale — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة deleteSale — وصف تلقائي موجز لوظيفتها.

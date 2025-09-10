@@ -1,0 +1,1828 @@
+{
+  "version": "2.0",
+  "timestamp": "2025-09-09T21:01:57.671Z",
+  "app": "نظام إدارة كروت الشبكات",
+  "data": {
+    "stores": [
+      {
+        "id": "store_1753586210152",
+        "name": "محمد قاسم",
+        "priceType": "wholesale",
+        "createdAt": "٢٠٢٥-٠٨-٢٦",
+        "phone": "779497802"
+      },
+      {
+        "id": "store_1753586220564",
+        "name": "منير الشرعبي",
+        "priceType": "wholesale",
+        "createdAt": "٢٠٢٥-٠٨-٢٦",
+        "phone": "730620779"
+      },
+      {
+        "id": "store_1753586235724",
+        "name": "محمد شمسي",
+        "priceType": "wholesale",
+        "createdAt": "٢٠٢٥-٠٨-٢٧",
+        "phone": "777135380"
+      },
+      {
+        "id": "store_1753586249977",
+        "name": "الحجه العربية",
+        "priceType": "wholesale",
+        "createdAt": "2025-07-22"
+      },
+      {
+        "id": "store_1753586260622",
+        "name": "عبدالجبار الدباشي",
+        "priceType": "wholesale",
+        "createdAt": "٢٠٢٥-٠٨-٢٦",
+        "phone": "773323335"
+      },
+      {
+        "id": "store_1753586271939",
+        "name": "عبدالله الشرعبي",
+        "priceType": "distributor",
+        "createdAt": "٢٠٢٥-٠٨-٢٦",
+        "phone": "771020603"
+      },
+      {
+        "id": "store_1753983581309",
+        "name": "مهند",
+        "priceType": "retail",
+        "createdAt": "٢٠٢٥-٠٨-٢٦",
+        "phone": "733392592"
+      },
+      {
+        "id": "store_1754586303482",
+        "name": "خالي عبدالكريم",
+        "priceType": "wholesale",
+        "createdAt": "٢٠٢٥-٠٨-٢٧",
+        "phone": "772725502"
+      },
+      {
+        "id": "store_1754586350290",
+        "name": "محمد مهيوب ابو علوش",
+        "priceType": "wholesale",
+        "createdAt": "٢٠٢٥-٠٨-٢٧",
+        "phone": "734552327"
+      },
+      {
+        "id": "store_1756491464020",
+        "name": "عائدة ",
+        "priceType": "wholesale",
+        "phone": "",
+        "createdAt": "٢٠٢٥-٠٨-٢٩"
+      },
+      {
+        "id": "store_1756566655741",
+        "name": "العامري",
+        "priceType": "wholesale",
+        "phone": "737533486",
+        "createdAt": "2025-08-30"
+      }
+    ],
+    "packages": [
+      {
+        "id": "pkg_1753586105318",
+        "name": "100",
+        "retailPrice": 100,
+        "wholesalePrice": 90,
+        "distributorPrice": 80,
+        "createdAt": "٢٠٢٥-٠٧-٢٧",
+        "image": ""
+      },
+      {
+        "id": "pkg_1753586124436",
+        "name": "200",
+        "retailPrice": 200,
+        "wholesalePrice": 180,
+        "distributorPrice": 160,
+        "createdAt": "٢٠٢٥-٠٧-٢٧",
+        "image": ""
+      },
+      {
+        "id": "pkg_1753586144449",
+        "name": "500",
+        "retailPrice": 500,
+        "wholesalePrice": 450,
+        "distributorPrice": 400,
+        "createdAt": "٢٠٢٥-٠٧-٢٧",
+        "image": ""
+      }
+    ],
+    "inventory": [
+      {
+        "id": "inv_1753819488060",
+        "packageId": "pkg_1753586105318",
+        "quantity": 1470,
+        "createdAt": "٢٠٢٥-٠٧-٢٩"
+      },
+      {
+        "id": "inv_1753819495873",
+        "packageId": "pkg_1753586124436",
+        "quantity": 1145,
+        "createdAt": "٢٠٢٥-٠٨-١٠"
+      },
+      {
+        "id": "inv_1753819503367",
+        "packageId": "pkg_1753586144449",
+        "quantity": 668,
+        "createdAt": "٢٠٢٥-٠٨-١٠"
+      }
+    ],
+    "sales": [
+      {
+        "id": "sale_1753588761854",
+        "storeId": "store_1753586199593",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 600,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 108000,
+        "date": "٢٠٢٥-٠٧-٢٧"
+      },
+      {
+        "id": "sale_1753588905455",
+        "storeId": "store_1753586210152",
+        "packageId": "custom",
+        "reason": "الحساب السابق لما وصل 40 الف ",
+        "quantity": 0,
+        "amount": 81000,
+        "pricePerUnit": 81000,
+        "total": 81000,
+        "date": "٢٠٢٥-٠٧-٢٧"
+      },
+      {
+        "id": "sale_1753589053606",
+        "storeId": "store_1753586235724",
+        "packageId": "pkg_1753586105318",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 90,
+        "total": 9000,
+        "date": "٢٠٢٥-٠٧-١١"
+      },
+      {
+        "id": "sale_1753589062891",
+        "storeId": "store_1753586235724",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 18000,
+        "date": "٢٠٢٥-٠٧-١١"
+      },
+      {
+        "id": "sale_1753589072114",
+        "storeId": "store_1753586235724",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 45000,
+        "date": "٢٠٢٥-٠٧-١١"
+      },
+      {
+        "id": "sale_1753589181629",
+        "storeId": "store_1753586249977",
+        "packageId": "custom",
+        "reason": "الحساب السابق",
+        "quantity": 0,
+        "amount": 24500,
+        "pricePerUnit": 24500,
+        "total": 24500,
+        "date": "٢٠٢٥-٠٧-٢٢"
+      },
+      {
+        "id": "sale_1753589320335",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 200,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 36000,
+        "date": "٢٠٢٥-٠٧-٠٥"
+      },
+      {
+        "id": "sale_1753589336775",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 30,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 13500,
+        "date": "٢٠٢٥-٠٧-٠٥"
+      },
+      {
+        "id": "sale_1753589354686",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586105318",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 90,
+        "total": 9000,
+        "date": "٢٠٢٥-٠٧-١٤"
+      },
+      {
+        "id": "sale_1753589378410",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 200,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 36000,
+        "date": "٢٠٢٥-٠٧-١٤"
+      },
+      {
+        "id": "sale_1753589391663",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 40,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 18000,
+        "date": "٢٠٢٥-٠٨-٠١"
+      },
+      {
+        "id": "sale_1753589524251",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 200,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 36000,
+        "date": "٢٠٢٥-٠٧-٢٧"
+      },
+      {
+        "id": "sale_1754069266077",
+        "storeId": "store_1753586220564",
+        "packageId": "pkg_1753586105318",
+        "reason": "",
+        "quantity": 200,
+        "amount": 0,
+        "pricePerUnit": 90,
+        "total": 18000,
+        "date": "٢٠٢٥-٠٨-٠١"
+      },
+      {
+        "id": "sale_1754069274984",
+        "storeId": "store_1753586220564",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 500,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 90000,
+        "date": "٢٠٢٥-٠٨-٠١"
+      },
+      {
+        "id": "sale_1754069437327",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 30,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 13500,
+        "date": "٢٠٢٥-٠٨-٠١"
+      },
+      {
+        "id": "sale_1754586329442",
+        "storeId": "store_1754586303482",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 600,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 108000,
+        "date": "٢٠٢٥-٠٨-٠٧"
+      },
+      {
+        "id": "sale_1754586338393",
+        "storeId": "store_1754586303482",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 45000,
+        "date": "٢٠٢٥-٠٨-٠٧"
+      },
+      {
+        "id": "sale_1754586361210",
+        "storeId": "store_1754586350290",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 400,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 72000,
+        "date": "٢٠٢٥-٠٨-٠٧"
+      },
+      {
+        "id": "sale_1754586369137",
+        "storeId": "store_1754586350290",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 70,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 31500,
+        "date": "٢٠٢٥-٠٨-٠٧"
+      },
+      {
+        "id": "sale_1754586728141",
+        "storeId": "store_1753586249977",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 18000,
+        "date": "٢٠٢٥-٠٨-٠٧"
+      },
+      {
+        "id": "sale_1754586958064",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 200,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 36000,
+        "date": "٢٠٢٥-٠٨-٠٧"
+      },
+      {
+        "id": "sale_1754587093864",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 30,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 13500,
+        "date": "٢٠٢٥-٠٨-٠٧"
+      },
+      {
+        "id": "sale_1754682710352",
+        "storeId": "store_1754586350290",
+        "packageId": "custom",
+        "reason": "اربعة اشتراكات",
+        "quantity": 0,
+        "amount": 12000,
+        "pricePerUnit": 0,
+        "total": 12000,
+        "date": "٢٠٢٥-٠٨-١٤"
+      },
+      {
+        "id": "sale_1755282958151",
+        "storeId": "store_1753586220564",
+        "packageId": "pkg_1753586105318",
+        "reason": "",
+        "quantity": 200,
+        "amount": 0,
+        "pricePerUnit": 90,
+        "total": 18000,
+        "date": "٢٠٢٥-٠٨-١٥"
+      },
+      {
+        "id": "sale_1755282967481",
+        "storeId": "store_1753586220564",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 500,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 90000,
+        "date": "٢٠٢٥-٠٨-١٥"
+      },
+      {
+        "id": "sale_1755282973648",
+        "storeId": "store_1753586220564",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 45000,
+        "date": "٢٠٢٥-٠٨-١٥"
+      },
+      {
+        "id": "sale_1755287953368",
+        "storeId": "store_1753983581309",
+        "packageId": "custom",
+        "reason": "كرت شهري",
+        "quantity": 0,
+        "amount": 3000,
+        "pricePerUnit": 0,
+        "total": 3000,
+        "date": "٢٠٢٥-٠٨-١٥"
+      },
+      {
+        "id": "sale_1755288176703",
+        "storeId": "store_1754586350290",
+        "packageId": "custom",
+        "reason": "كرت شهري",
+        "quantity": 0,
+        "amount": 3000,
+        "pricePerUnit": 0,
+        "total": 3000,
+        "date": "٢٠٢٥-٠٨-١٥"
+      },
+      {
+        "id": "sale_1755705588826",
+        "storeId": "store_1753586271939",
+        "packageId": "pkg_1753586105318",
+        "reason": "",
+        "quantity": 30,
+        "amount": 0,
+        "pricePerUnit": 80,
+        "total": 2400,
+        "date": "٢٠٢٥-٠٨-٢٠"
+      },
+      {
+        "id": "sale_1755705617058",
+        "storeId": "store_1753586271939",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 30,
+        "amount": 0,
+        "pricePerUnit": 160,
+        "total": 4800,
+        "date": "٢٠٢٥-٠٨-٢٠"
+      },
+      {
+        "id": "sale_1755705646273",
+        "storeId": "store_1753586271939",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 22,
+        "amount": 0,
+        "pricePerUnit": 400,
+        "total": 8800,
+        "date": "٢٠٢٥-٠٨-٢٠"
+      },
+      {
+        "id": "sale_1755799877774",
+        "storeId": "store_1754586350290",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 45000,
+        "date": "٢٠٢٥-٠٨-٢١"
+      },
+      {
+        "id": "sale_1755799885282",
+        "storeId": "store_1754586350290",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 300,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 54000,
+        "date": "٢٠٢٥-٠٨-٢١"
+      },
+      {
+        "id": "sale_1755800228875",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586105318",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 90,
+        "total": 9000,
+        "date": "٢٠٢٥-٠٨-٢١"
+      },
+      {
+        "id": "sale_1755800235817",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 200,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 36000,
+        "date": "٢٠٢٥-٠٨-٢١"
+      },
+      {
+        "id": "sale_1755800245439",
+        "storeId": "store_1753586260622",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 50,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 22500,
+        "date": "٢٠٢٥-٠٨-٢١"
+      },
+      {
+        "id": "sale_1756050957924",
+        "storeId": "store_1753586220564",
+        "packageId": "custom",
+        "reason": "اثنين اشتراكات",
+        "quantity": 0,
+        "amount": 6000,
+        "pricePerUnit": 0,
+        "total": 6000,
+        "date": "٢٠٢٥-٠٨-١٢"
+      },
+      {
+        "id": "sale_1756094066287",
+        "storeId": "store_1753586271939",
+        "packageId": "custom",
+        "reason": "3 كروت شهري",
+        "quantity": 0,
+        "amount": 9000,
+        "pricePerUnit": 0,
+        "total": 9000,
+        "date": "٢٠٢٥-٠٨-٢٥"
+      },
+      {
+        "id": "sale_1756312246280",
+        "storeId": "store_1753586235724",
+        "packageId": "pkg_1753586105318",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 90,
+        "total": 9000,
+        "date": "٢٠٢٥-٠٨-٢٧"
+      },
+      {
+        "id": "sale_1756312253124",
+        "storeId": "store_1753586235724",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 18000,
+        "date": "٢٠٢٥-٠٨-٢٧"
+      },
+      {
+        "id": "sale_1756312262729",
+        "storeId": "store_1753586235724",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 80,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 36000,
+        "date": "٢٠٢٥-٠٨-٢٧"
+      },
+      {
+        "id": "sale_1756505955707",
+        "storeId": "store_1753983581309",
+        "packageId": "custom",
+        "reason": "شهري",
+        "quantity": 0,
+        "amount": 3000,
+        "pricePerUnit": 0,
+        "total": 3000,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756566143733",
+        "storeId": "store_1754586350290",
+        "packageId": "pkg_1753586105318",
+        "reason": "",
+        "quantity": 200,
+        "amount": 0,
+        "pricePerUnit": 90,
+        "total": 18000,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756566150827",
+        "storeId": "store_1754586350290",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 200,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 36000,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756566159651",
+        "storeId": "store_1754586350290",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 45000,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756566487541",
+        "storeId": "store_1756491464020",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 18000,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756566494903",
+        "storeId": "store_1756491464020",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 30,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 13500,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756566501988",
+        "storeId": "store_1756491464020",
+        "packageId": "pkg_1753586105318",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 90,
+        "total": 9000,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756566675215",
+        "storeId": "store_1756566655741",
+        "packageId": "pkg_1753586105318",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 90,
+        "total": 9000,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756566681780",
+        "storeId": "store_1756566655741",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 500,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 90000,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756566687614",
+        "storeId": "store_1756566655741",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 45000,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756566941073",
+        "storeId": "store_1753586249977",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 30,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 13500,
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "sale_1756791821290",
+        "storeId": "store_1753586271939",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 160,
+        "total": 16000,
+        "date": "٢٠٢٥-٠٩-٠٢"
+      },
+      {
+        "id": "sale_1757006927578",
+        "storeId": "store_1753586220564",
+        "packageId": "pkg_1753586124436",
+        "reason": "",
+        "quantity": 500,
+        "amount": 0,
+        "pricePerUnit": 180,
+        "total": 90000,
+        "date": "٢٠٢٥-٠٩-٠٤"
+      },
+      {
+        "id": "sale_1757006936705",
+        "storeId": "store_1753586220564",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 100,
+        "amount": 0,
+        "pricePerUnit": 450,
+        "total": 45000,
+        "date": "٢٠٢٥-٠٩-٠٤"
+      },
+      {
+        "id": "sale_1757266191413",
+        "storeId": "store_1753586271939",
+        "packageId": "pkg_1753586144449",
+        "reason": "",
+        "quantity": 50,
+        "amount": 0,
+        "pricePerUnit": 400,
+        "total": 20000,
+        "date": "٢٠٢٥-٠٩-٠٧"
+      }
+    ],
+    "payments": [
+      {
+        "id": "payment_1753589127681",
+        "storeId": "store_1753586235724",
+        "amount": 20000,
+        "notes": "واصل من يد ابوه",
+        "date": "٢٠٢٥-٠٧-٢٣"
+      },
+      {
+        "id": "payment_1753589508584",
+        "storeId": "store_1753586260622",
+        "amount": 22000,
+        "notes": "ايداع للحساب",
+        "date": "٢٠٢٥-٠٧-٢١"
+      },
+      {
+        "id": "payment_1753639339309",
+        "storeId": "store_1753586260622",
+        "amount": 16500,
+        "notes": "",
+        "date": "٢٠٢٥-٠٧-٢٧"
+      },
+      {
+        "id": "payment_1753723765268",
+        "storeId": "store_1753586249977",
+        "amount": 6000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٧-٢٨"
+      },
+      {
+        "id": "payment_1753723991325",
+        "storeId": "store_1753586260622",
+        "amount": 30000,
+        "notes": "20 الف الحساب و 10 الف نقد",
+        "date": "٢٠٢٥-٠٧-٢٨"
+      },
+      {
+        "id": "payment_1753987895835",
+        "storeId": "store_1753586260622",
+        "amount": 20000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٧-٣١"
+      },
+      {
+        "id": "payment_1754586481232",
+        "storeId": "store_1754586350290",
+        "amount": 30500,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٠٧"
+      },
+      {
+        "id": "payment_1754586744603",
+        "storeId": "store_1753586249977",
+        "amount": 10000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٠٧"
+      },
+      {
+        "id": "payment_1754586964403",
+        "storeId": "store_1753586260622",
+        "amount": 20000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٠٧"
+      },
+      {
+        "id": "payment_1754802095459",
+        "storeId": "store_1753586260622",
+        "amount": 23000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٠٩"
+      },
+      {
+        "id": "payment_1754850942014",
+        "storeId": "store_1754586303482",
+        "amount": 50000,
+        "notes": "مدفوعه حق الكهرباء",
+        "date": "٢٠٢٥-٠٨-١٠"
+      },
+      {
+        "id": "payment_1754931603023",
+        "storeId": "store_1754586350290",
+        "amount": 12000,
+        "notes": "حق اربعة اشتراكات",
+        "date": "٢٠٢٥-٠٨-١٤"
+      },
+      {
+        "id": "payment_1754931635031",
+        "storeId": "store_1754586350290",
+        "amount": 32500,
+        "notes": "واصل ",
+        "date": "٢٠٢٥-٠٨-١٤"
+      },
+      {
+        "id": "payment_1754932029799",
+        "storeId": "store_1753586249977",
+        "amount": 6500,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١١"
+      },
+      {
+        "id": "payment_1754932233790",
+        "storeId": "store_1753586235724",
+        "amount": 20000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١١"
+      },
+      {
+        "id": "payment_1755025414777",
+        "storeId": "store_1753586260622",
+        "amount": 20000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١٢"
+      },
+      {
+        "id": "payment_1755172489972",
+        "storeId": "store_1754586350290",
+        "amount": 15000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١٤"
+      },
+      {
+        "id": "payment_1755282951021",
+        "storeId": "store_1753586220564",
+        "amount": 108000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١٥"
+      },
+      {
+        "id": "payment_1755362159649",
+        "storeId": "store_1754586350290",
+        "amount": 28500,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١٦"
+      },
+      {
+        "id": "payment_1755362248758",
+        "storeId": "store_1753586260622",
+        "amount": 15000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١٦"
+      },
+      {
+        "id": "payment_1755538724786",
+        "storeId": "store_1753586260622",
+        "amount": 5000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١٨"
+      },
+      {
+        "id": "payment_1755538889921",
+        "storeId": "store_1753586249977",
+        "amount": 5000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١٨"
+      },
+      {
+        "id": "payment_1755615007158",
+        "storeId": "store_1753586260622",
+        "amount": 20000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١٩"
+      },
+      {
+        "id": "payment_1755799943260",
+        "storeId": "store_1754586350290",
+        "amount": 20000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢١"
+      },
+      {
+        "id": "payment_1755882572383",
+        "storeId": "store_1753586249977",
+        "amount": 5000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٢"
+      },
+      {
+        "id": "payment_1755883178706",
+        "storeId": "store_1754586303482",
+        "amount": 33000,
+        "notes": "حق كهرباء",
+        "date": "٢٠٢٥-٠٨-٢٢"
+      },
+      {
+        "id": "payment_1755883350367",
+        "storeId": "store_1754586303482",
+        "amount": 22000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٢"
+      },
+      {
+        "id": "payment_1755883369066",
+        "storeId": "store_1754586303482",
+        "amount": 18000,
+        "notes": "من محمد مهيوب",
+        "date": "٢٠٢٥-٠٨-٢٥"
+      },
+      {
+        "id": "payment_1756050984189",
+        "storeId": "store_1753586220564",
+        "amount": 6000,
+        "notes": "حق الاشتراكات",
+        "date": "٢٠٢٥-٠٨-١٢"
+      },
+      {
+        "id": "payment_1756056101947",
+        "storeId": "store_1754586350290",
+        "amount": 2000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٥"
+      },
+      {
+        "id": "payment_1756094231341",
+        "storeId": "store_1753586199593",
+        "amount": 78000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٧-١٤"
+      },
+      {
+        "id": "payment_1756128034987",
+        "storeId": "store_1754586303482",
+        "amount": 10000,
+        "notes": "حق عشاء ",
+        "date": "٢٠٢٥-٠٨-٢٥"
+      },
+      {
+        "id": "payment_1756138540097",
+        "storeId": "store_1753586260622",
+        "amount": 27500,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٥"
+      },
+      {
+        "id": "payment_1756139715095",
+        "storeId": "store_1754586303482",
+        "amount": 2000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٥"
+      },
+      {
+        "id": "payment_1756304142763",
+        "storeId": "store_1754586303482",
+        "amount": 30000,
+        "notes": "حساب سابق",
+        "date": "٢٠٢٥-٠٨-٢٧"
+      },
+      {
+        "id": "payment_1756311960379",
+        "storeId": "store_1754586350290",
+        "amount": 35000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٧"
+      },
+      {
+        "id": "payment_1756312283420",
+        "storeId": "store_1753586235724",
+        "amount": 22000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٧"
+      },
+      {
+        "id": "payment_1756491503539",
+        "storeId": "store_1756491464020",
+        "amount": 31500,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٩"
+      },
+      {
+        "id": "payment_1756491549066",
+        "storeId": "store_1754586350290",
+        "amount": 22000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٩"
+      },
+      {
+        "id": "payment_1756566133906",
+        "storeId": "store_1754586350290",
+        "amount": 20000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "payment_1756566511193",
+        "storeId": "store_1756491464020",
+        "amount": 9000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "payment_1756566929282",
+        "storeId": "store_1753586249977",
+        "amount": 10000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٣٠"
+      },
+      {
+        "id": "payment_1756791875350",
+        "storeId": "store_1753586271939",
+        "amount": 25000,
+        "notes": "مع خليل",
+        "date": "٢٠٢٥-٠٩-٠٢"
+      },
+      {
+        "id": "payment_1756832326829",
+        "storeId": "store_1754586350290",
+        "amount": 39000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٩-٠٢"
+      },
+      {
+        "id": "payment_1756832902324",
+        "storeId": "store_1753586220564",
+        "amount": 100000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٩-٠٢"
+      },
+      {
+        "id": "payment_1756833106289",
+        "storeId": "store_1753586210152",
+        "amount": 25000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٩-٠٢"
+      },
+      {
+        "id": "payment_1756833188791",
+        "storeId": "store_1753586235724",
+        "amount": 31000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٩-٠٢"
+      },
+      {
+        "id": "payment_1757006724939",
+        "storeId": "store_1754586350290",
+        "amount": 20000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٩-٠٤"
+      },
+      {
+        "id": "payment_1757006962954",
+        "storeId": "store_1753586220564",
+        "amount": 53000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٩-٠٤"
+      },
+      {
+        "id": "payment_1757179659381",
+        "storeId": "store_1754586350290",
+        "amount": 20000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٩-٠٦"
+      },
+      {
+        "id": "payment_1757261896355",
+        "storeId": "store_1756566655741",
+        "amount": 27000,
+        "notes": "حق كهرباء",
+        "date": "٢٠٢٥-٠٩-٠٧"
+      }
+    ],
+    "expenses": [
+      {
+        "id": "exp_1754797201512",
+        "type": "انترنت ADSL",
+        "amount": 180000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٧-٣٠",
+        "addLater": false
+      },
+      {
+        "id": "exp_1754850896671",
+        "type": "كهرباء",
+        "amount": 50000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١١",
+        "addLater": false
+      },
+      {
+        "id": "exp_1754859129077",
+        "type": "اصلاح محول الكهرباء بالجمهوري",
+        "amount": 20000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٧-٣٠",
+        "addLater": false
+      },
+      {
+        "id": "exp_1754859153340",
+        "type": "كيبل انترنت منزلي",
+        "amount": 16000,
+        "notes": "زبون جنب بيت العاقل",
+        "date": "٢٠٢٥-٠٧-٣٠",
+        "addLater": false
+      },
+      {
+        "id": "exp_1754859181780",
+        "type": "كيبل انترنت رئيسي",
+        "amount": 83000,
+        "notes": "كيبل برتقالي للصحن الرئيسي ببيت الصباحي",
+        "date": "٢٠٢٥-٠٧-٣٠",
+        "addLater": false
+      },
+      {
+        "id": "exp_1754859201386",
+        "type": "كيبل انترنت منزلي",
+        "amount": 15000,
+        "notes": "زبون عند بيت سامي",
+        "date": "٢٠٢٥-٠٧-٣٠",
+        "addLater": false
+      },
+      {
+        "id": "exp_1755462507625",
+        "type": "كيبل انترنت منزلي + اكسس",
+        "amount": 13000,
+        "notes": "زبون بيت الصومالي \n17000 اكسس\n5000 كيبل \nجاب 10000",
+        "date": "٢٠٢٥-٠٨-١٧",
+        "addLater": false
+      },
+      {
+        "id": "exp_1755463364276",
+        "type": "انترنت ADSL",
+        "amount": 120000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-١٧",
+        "addLater": false
+      },
+      {
+        "id": "exp_1756001243128",
+        "type": "انترنت ADSL",
+        "amount": 60000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٠٢",
+        "addLater": false
+      },
+      {
+        "id": "exp_1756001469517",
+        "type": "كهرباء",
+        "amount": 33000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٢",
+        "addLater": false
+      },
+      {
+        "id": "exp_1756061017094",
+        "type": "كيبل انترنت منزلي",
+        "amount": 7000,
+        "notes": "30 متر لبيت احمد ناجي + مواصلات ",
+        "date": "٢٠٢٥-٠٨-٢٤",
+        "addLater": false
+      },
+      {
+        "id": "exp_1756352718670",
+        "type": "إيجار + استراحة",
+        "amount": 35000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٨",
+        "addLater": false
+      },
+      {
+        "id": "exp_1756445338792",
+        "type": "انترنت ADSL",
+        "amount": 60000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٨-٢٩",
+        "addLater": false
+      },
+      {
+        "id": "exp_1757261921346",
+        "type": "كهرباء",
+        "amount": 27000,
+        "notes": "",
+        "date": "٢٠٢٥-٠٩-٠٧",
+        "addLater": false
+      }
+    ],
+    "trash": [
+      {
+        "id": "trash_1755145262225_sjtlc10yt",
+        "section": "expenses",
+        "deletedAt": "2025-08-14T04:21:02.225Z",
+        "item": {
+          "id": "exp_1753644527798",
+          "type": "كهرباء",
+          "amount": 40000,
+          "notes": "",
+          "date": "٢٠٢٥-٠٨-١٤",
+          "addLater": false
+        }
+      },
+      {
+        "id": "trash_1755172534959_kbpbtanc4",
+        "section": "payments",
+        "deletedAt": "2025-08-14T11:55:34.959Z",
+        "item": {
+          "id": "payment_1754931619231",
+          "storeId": "store_1754586350290",
+          "amount": 2500,
+          "notes": "حق الفاصوليا",
+          "date": "٢٠٢٥-٠٨-١١"
+        }
+      },
+      {
+        "id": "trash_1755172552730_dj4s9q1ue",
+        "section": "sales",
+        "deletedAt": "2025-08-14T11:55:52.730Z",
+        "item": {
+          "id": "sale_1753983603201",
+          "storeId": "store_1753983581309",
+          "packageId": "custom",
+          "reason": "4 كروت شهري",
+          "quantity": 0,
+          "amount": 12000,
+          "pricePerUnit": 12000,
+          "total": 12000,
+          "date": "٢٠٢٥-٠٧-٣١"
+        }
+      },
+      {
+        "id": "trash_1755172556365_fwc3p918o",
+        "section": "payments",
+        "deletedAt": "2025-08-14T11:55:56.365Z",
+        "item": {
+          "id": "payment_1754682868829",
+          "storeId": "store_1753983581309",
+          "amount": 12000,
+          "notes": "مع محمد مهيوب",
+          "date": "٢٠٢٥-٠٨-٠٨"
+        }
+      },
+      {
+        "id": "trash_1755172592914_xkkrjjzdy",
+        "section": "payments",
+        "deletedAt": "2025-08-14T11:56:32.914Z",
+        "item": {
+          "id": "payment_1753588805213",
+          "storeId": "store_1753586199593",
+          "amount": 50000,
+          "notes": "واصل 35 الف و 15 الف",
+          "date": "٢٠٢٥-٠٧-٢٧"
+        }
+      },
+      {
+        "id": "trash_1755172594837_qvi44z6wp",
+        "section": "payments",
+        "deletedAt": "2025-08-14T11:56:34.837Z",
+        "item": {
+          "id": "payment_1753644511502",
+          "storeId": "store_1753586199593",
+          "amount": 40000,
+          "notes": "حق تسديد كهرباء",
+          "date": "٢٠٢٥-٠٧-٢٧"
+        }
+      },
+      {
+        "id": "trash_1755172666722_8cing6iuq",
+        "section": "sales",
+        "deletedAt": "2025-08-14T11:57:46.722Z",
+        "item": {
+          "id": "sale_1753723126270",
+          "storeId": "store_1753586199593",
+          "packageId": "pkg_1753586105318",
+          "reason": "",
+          "quantity": 100,
+          "amount": 0,
+          "pricePerUnit": 90,
+          "total": 9000,
+          "date": "٢٠٢٥-٠٧-٢٨"
+        }
+      },
+      {
+        "id": "trash_1755172669164_bl52mdt89",
+        "section": "sales",
+        "deletedAt": "2025-08-14T11:57:49.165Z",
+        "item": {
+          "id": "sale_1753588770745",
+          "storeId": "store_1753586199593",
+          "packageId": "pkg_1753586144449",
+          "reason": "",
+          "quantity": 100,
+          "amount": 0,
+          "pricePerUnit": 450,
+          "total": 45000,
+          "date": "٢٠٢٥-٠٧-٢٧"
+        }
+      },
+      {
+        "id": "trash_1755172713713_d7mvmqblp",
+        "section": "sales",
+        "deletedAt": "2025-08-14T11:58:33.713Z",
+        "item": {
+          "id": "sale_1753588960889",
+          "storeId": "store_1753586220564",
+          "packageId": "pkg_1753586105318",
+          "reason": "",
+          "quantity": 200,
+          "amount": 0,
+          "pricePerUnit": 90,
+          "total": 18000,
+          "date": "٢٠٢٥-٠٧-٢٧"
+        }
+      },
+      {
+        "id": "trash_1755172715537_r1fh3gusw",
+        "section": "sales",
+        "deletedAt": "2025-08-14T11:58:35.537Z",
+        "item": {
+          "id": "sale_1753588974227",
+          "storeId": "store_1753586220564",
+          "packageId": "pkg_1753586124436",
+          "reason": "",
+          "quantity": 500,
+          "amount": 0,
+          "pricePerUnit": 180,
+          "total": 90000,
+          "date": "٢٠٢٥-٠٧-٢٧"
+        }
+      },
+      {
+        "id": "trash_1755172717533_m8tg6ix5v",
+        "section": "sales",
+        "deletedAt": "2025-08-14T11:58:37.533Z",
+        "item": {
+          "id": "sale_1753588983034",
+          "storeId": "store_1753586220564",
+          "packageId": "pkg_1753586144449",
+          "reason": "",
+          "quantity": 100,
+          "amount": 0,
+          "pricePerUnit": 450,
+          "total": 45000,
+          "date": "٢٠٢٥-٠٧-٢٧"
+        }
+      },
+      {
+        "id": "trash_1755172719968_6qvo42dgf",
+        "section": "payments",
+        "deletedAt": "2025-08-14T11:58:39.968Z",
+        "item": {
+          "id": "payment_1754069286870",
+          "storeId": "store_1753586220564",
+          "amount": 53000,
+          "notes": "",
+          "date": "٢٠٢٥-٠٨-٠١"
+        }
+      },
+      {
+        "id": "trash_1755172723986_wc2cm2hds",
+        "section": "payments",
+        "deletedAt": "2025-08-14T11:58:43.986Z",
+        "item": {
+          "id": "payment_1753588992896",
+          "storeId": "store_1753586220564",
+          "amount": 100000,
+          "notes": "",
+          "date": "٢٠٢٥-٠٧-٢٧"
+        }
+      },
+      {
+        "id": "trash_1755206419170_mf7rp0ubt",
+        "section": "sales",
+        "deletedAt": "2025-08-14T21:20:19.170Z",
+        "item": {
+          "id": "sale_1755206405257",
+          "storeId": "store_1753586260622",
+          "packageId": "pkg_1753586105318",
+          "reason": "",
+          "quantity": 100,
+          "amount": 0,
+          "pricePerUnit": 90,
+          "total": 9000,
+          "date": "٢٠٢٥-٠٨-١٥"
+        }
+      },
+      {
+        "id": "trash_1755705531714_dt6ptnvo6",
+        "section": "sales",
+        "deletedAt": "2025-08-20T15:58:51.714Z",
+        "item": {
+          "id": "sale_1753644614118",
+          "storeId": "store_1753586271939",
+          "packageId": "pkg_1753586144449",
+          "reason": "",
+          "quantity": 10,
+          "amount": 0,
+          "pricePerUnit": 450,
+          "total": 4500,
+          "date": "٢٠٢٥-٠٧-٢٧"
+        }
+      },
+      {
+        "id": "trash_1755705635092_mly8bjo1r",
+        "section": "sales",
+        "deletedAt": "2025-08-20T16:00:35.092Z",
+        "item": {
+          "id": "sale_1755111022992",
+          "storeId": "store_1753586271939",
+          "packageId": "pkg_1753586124436",
+          "reason": "",
+          "quantity": 25,
+          "amount": 0,
+          "pricePerUnit": 180,
+          "total": 4500,
+          "date": "٢٠٢٥-٠٨-١٣"
+        }
+      },
+      {
+        "id": "trash_1755705636816_gfbe7vyl3",
+        "section": "sales",
+        "deletedAt": "2025-08-20T16:00:36.816Z",
+        "item": {
+          "id": "sale_1753589566479",
+          "storeId": "store_1753586271939",
+          "packageId": "pkg_1753586105318",
+          "reason": "",
+          "quantity": 30,
+          "amount": 0,
+          "pricePerUnit": 90,
+          "total": 2700,
+          "date": "٢٠٢٥-٠٧-٢٦"
+        }
+      },
+      {
+        "id": "trash_1755705648890_zitn4gx5e",
+        "section": "sales",
+        "deletedAt": "2025-08-20T16:00:48.890Z",
+        "item": {
+          "id": "sale_1755111063247",
+          "storeId": "store_1753586271939",
+          "packageId": "pkg_1753586144449",
+          "reason": "",
+          "quantity": 20,
+          "amount": 0,
+          "pricePerUnit": 450,
+          "total": 9000,
+          "date": "٢٠٢٥-٠٨-١٣"
+        }
+      },
+      {
+        "id": "trash_1755705650384_x5jwj0772",
+        "section": "sales",
+        "deletedAt": "2025-08-20T16:00:50.384Z",
+        "item": {
+          "id": "sale_1753589554177",
+          "storeId": "store_1753586271939",
+          "packageId": "pkg_1753586144449",
+          "reason": "",
+          "quantity": 2,
+          "amount": 0,
+          "pricePerUnit": 450,
+          "total": 900,
+          "date": "٢٠٢٥-٠٧-٢٦"
+        }
+      },
+      {
+        "id": "trash_1756094115680_xksq7y0d6",
+        "section": "sales",
+        "deletedAt": "2025-08-25T03:55:15.680Z",
+        "item": {
+          "id": "sale_1755883396313",
+          "storeId": "store_1754586350290",
+          "packageId": "custom",
+          "reason": "محول عليه من خالي",
+          "quantity": 0,
+          "amount": 18000,
+          "pricePerUnit": 0,
+          "total": 18000,
+          "date": "٢٠٢٥-٠٨-٢٢"
+        }
+      },
+      {
+        "id": "trash_1756304180345_axpyqg4m3",
+        "section": "payments",
+        "deletedAt": "2025-08-27T14:16:20.345Z",
+        "item": {
+          "id": "payment_1753983548104",
+          "storeId": "store_1753586199593",
+          "amount": 30000,
+          "notes": "بالبيت لما طلعنا",
+          "date": "٢٠٢٥-٠٨-٠٢"
+        }
+      },
+      {
+        "id": "trash_1756304188566_tqwaq5wz4",
+        "section": "stores",
+        "deletedAt": "2025-08-27T14:16:28.566Z",
+        "item": {
+          "id": "store_1753586199593",
+          "name": "الخويل عبدالكريم",
+          "priceType": "wholesale",
+          "createdAt": "٢٠٢٥-٠٧-٢٧"
+        }
+      },
+      {
+        "id": "trash_1756476684821_44oa1ln7i",
+        "section": "sales",
+        "deletedAt": "2025-08-29T14:11:24.821Z",
+        "item": {
+          "id": "sale_1754682891681",
+          "storeId": "store_1753983581309",
+          "packageId": "custom",
+          "reason": "كرت شهري",
+          "quantity": 0,
+          "amount": 3000,
+          "pricePerUnit": 3000,
+          "total": 3000,
+          "date": "٢٠٢٥-٠٨-٠٨"
+        }
+      }
+    ],
+    "settings": {
+      "display": {
+        "theme": "dark",
+        "fontSize": "medium",
+        "fontWeight": "normal",
+        "fontStyle": "normal",
+        "textDecoration": "none",
+        "letterSpacing": "normal",
+        "lineHeight": "normal",
+        "fontFamily": "default",
+        "primaryColor": "#c4123f",
+        "secondaryColor": "#6c757d",
+        "textColor": "#212529",
+        "density": "compact",
+        "animations": true,
+        "showIcons": true,
+        "roundedCorners": true,
+        "sidebarPosition": "right"
+      },
+      "financial": {
+        "currency": "YER",
+        "currencyName": "ريال",
+        "currencyPosition": "after",
+        "decimalSeparator": ".",
+        "thousandsSeparator": ",",
+        "decimals": 2,
+        "numberFormat": "en",
+        "taxRate": 15,
+        "taxIncluded": false,
+        "roundingMethod": "normal",
+        "showZeroDecimals": false,
+        "negativeFormat": "minus"
+      },
+      "notifications": {
+        "enabled": true,
+        "position": "top-right",
+        "duration": 3000,
+        "soundEnabled": true,
+        "soundVolume": 50,
+        "browserNotifications": false,
+        "lowStock": {
+          "enabled": true,
+          "threshold": 10,
+          "urgentThreshold": 5,
+          "checkInterval": "daily"
+        },
+        "dueDates": {
+          "enabled": true,
+          "daysBefore": 3,
+          "reminderTime": "09:00",
+          "repeatReminder": true
+        },
+        "targets": {
+          "enabled": true,
+          "dailyTarget": true,
+          "weeklyTarget": true,
+          "monthlyTarget": true
+        }
+      },
+      "backup": {
+        "autoBackup": true,
+        "frequency": "daily",
+        "time": "02:00",
+        "keepCount": 7,
+        "location": "local",
+        "compress": false,
+        "encrypt": false,
+        "includeSettings": true,
+        "includeReports": false,
+        "notifyOnSuccess": false,
+        "notifyOnFailure": true,
+        "autoRestore": false,
+        "cloudSync": false
+      },
+      "security": {
+        "appLock": false,
+        "lockType": "none",
+        "autoLockMinutes": 15,
+        "pinLength": 4,
+        "passwordMinLength": 8,
+        "requireUppercase": true,
+        "requireNumbers": true,
+        "requireSpecialChars": false,
+        "encryptSensitive": true,
+        "hideBalances": false,
+        "blurSensitive": false,
+        "activityLog": true,
+        "maxLoginAttempts": 5,
+        "sessionTimeout": 30,
+        "twoFactorAuth": false
+      },
+      "reports": {
+        "companyName": "شبكة خيال",
+        "companyLogo": "",
+        "companyPhone": "775396439",
+        "companyEmail": "n1993love@gmail.com",
+        "companyAddress": "تعز - الجمهوري - نادي الصحة",
+        "commercialRegister": "",
+        "taxNumber": "",
+        "reportFooter": "شكراً لتعاملكم معنا",
+        "dateFormat": "DD/MM/YYYY",
+        "timeFormat": "24h",
+        "paperSize": "A4",
+        "orientation": "portrait",
+        "margins": {
+          "top": 20,
+          "right": 20,
+          "bottom": 20,
+          "left": 20
+        },
+        "showGridLines": true,
+        "showPageNumbers": true,
+        "defaultExportFormat": "pdf",
+        "includeCharts": true,
+        "watermark": "",
+        "qrCode": false,
+        "partners": {
+          "list": [
+            {
+              "id": "p1",
+              "name": "خليل المجيدي",
+              "sharePercent": null
+            },
+            {
+              "id": "p2",
+              "name": "نجيب المقداد ",
+              "sharePercent": null
+            }
+          ],
+          "adjustments": {
+            "٢٠٢٥-٠٩-٠١_٢٠٢٥-٠٩-٠٧": [
+              {
+                "partnerId": "p1",
+                "amount": 25000,
+                "date": "2025-09-07",
+                "notes": "محولة من عبدالله الشرعبي"
+              },
+              {
+                "partnerId": "p1",
+                "amount": 30000,
+                "date": "2025-08-30",
+                "notes": "قيمة الاكسس بالحارة"
+              }
+            ]
+          },
+          "adjustmentsAll": [
+            {
+              "partnerId": "p1",
+              "amount": 25000,
+              "date": "2025-08-30",
+              "notes": "محولة من عبدالله الشرعبي"
+            },
+            {
+              "partnerId": "p1",
+              "amount": 30000,
+              "date": "2025-08-30",
+              "notes": "قيمة الاكسس بالحارة"
+            }
+          ],
+          "count": 2
+        }
+      },
+      "partners": {
+        "count": 2,
+        "list": [
+          {
+            "id": "p1",
+            "name": "خليل المجيدي",
+            "sharePercent": 50
+          },
+          {
+            "id": "p2",
+            "name": "نجيب المقداد",
+            "sharePercent": 50
+          }
+        ],
+        "distribution": "percent",
+        "adjustments": {},
+        "carryover": {}
+      },
+      "performance": {
+        "cacheEnabled": true,
+        "cacheSize": "medium",
+        "cacheDuration": 10,
+        "lazyLoading": true,
+        "itemsPerPage": 25,
+        "preloadData": true,
+        "virtualScrolling": false,
+        "imageOptimization": true,
+        "compressionLevel": "medium",
+        "offlineMode": true,
+        "syncInterval": 5,
+        "reducedMotion": false,
+        "powerSaveMode": false
+      },
+      "inventory": {
+        "trackStock": true,
+        "allowNegativeStock": false,
+        "defaultUnit": "قطعة",
+        "showStockAlerts": true,
+        "autoReorder": false,
+        "reorderPoint": 10,
+        "barcodeScanning": false,
+        "batchTracking": false,
+        "expiryTracking": false,
+        "serialTracking": false,
+        "categoriesEnabled": true,
+        "brandsEnabled": false,
+        "variantsEnabled": false,
+        "priceHistory": true
+      },
+      "sales": {
+        "invoicePrefix": "INV-",
+        "startingNumber": 1,
+        "autoIncrementNumber": true,
+        "requireCustomer": true,
+        "defaultPaymentMethod": "cash",
+        "allowPartialPayment": true,
+        "allowDiscount": true,
+        "maxDiscountPercent": 50,
+        "requireDiscountReason": false,
+        "printAfterSave": false,
+        "emailAfterSave": false,
+        "showProfitInSales": false,
+        "allowPriceEdit": true,
+        "returnPeriodDays": 7,
+        "requireReturnReason": true
+      },
+      "customers": {
+        "requirePhone": false,
+        "requireEmail": false,
+        "requireAddress": false,
+        "creditLimit": true,
+        "defaultCreditLimit": 10000,
+        "loyaltyProgram": false,
+        "pointsPerCurrency": 1,
+        "birthdayReminders": false,
+        "customerGroups": true,
+        "priceListsEnabled": false,
+        "statementPeriod": "monthly",
+        "autoArchiveInactive": false,
+        "inactiveDays": 365
+      },
+      "advanced": {
+        "debugMode": false,
+        "showConsoleErrors": false,
+        "performanceMonitor": false,
+        "apiEndpoint": "",
+        "apiKey": "",
+        "webhooksEnabled": false,
+        "webhookUrl": "",
+        "customCSS": "",
+        "customJS": "",
+        "experimentalFeatures": false,
+        "telemetry": false,
+        "errorReporting": true,
+        "maintenanceMode": false,
+        "dataRetentionDays": 0,
+        "allowDataExport": true,
+        "allowDataImport": true
+      }
+    }
+  },
+  "metadata": {
+    "storesCount": 11,
+    "salesCount": 56,
+    "paymentsCount": 51,
+    "expensesCount": 14,
+    "totalRecords": 161
+  }
+}

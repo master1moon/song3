@@ -26,6 +26,11 @@
  * المدخلات: storeId
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة addPayment — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: storeId
+ * المخرجات: راجع التنفيذ
+ */
 function addPayment(storeId) {
   document.getElementById('paymentModalTitle').textContent = 'إضافة تسديد';
   document.getElementById('paymentId').value = '';
@@ -41,6 +46,11 @@ function addPayment(storeId) {
  * يتحقق من صحة البيانات المدخلة (المبلغ يجب أن يكون موجباً)
  * يحدث تفاصيل المحل وجميع التقارير ذات الصلة
  * يعرض إشعار بنجاح العملية
+ */
+/**
+ * ملاحظة: الدالة savePayment — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: بدون
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة savePayment — وصف تلقائي موجز لوظيفتها.
@@ -85,6 +95,11 @@ function savePayment() {
  * المدخلات: id
  * المخرجات: راجع التنفيذ
  */
+/**
+ * ملاحظة: الدالة editPayment — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
+ */
 function editPayment(id) {
   const payment = data.payments.find(p => p.id === id); if (!payment) return;
   document.getElementById('paymentModalTitle').textContent = 'تعديل التسديد';
@@ -109,6 +124,11 @@ function editPayment(id) {
  * ينقل التسديد المحذوف إلى سلة المحذوفات
  * يبطل كاش المحل والتقارير ذات الصلة
  * @param {string} id - معرف التسديد المراد حذفه
+ */
+/**
+ * ملاحظة: الدالة deletePayment — وصف تلقائي موجز لوظيفتها.
+ * المدخلات: id
+ * المخرجات: راجع التنفيذ
  */
 /**
  * ملاحظة: الدالة deletePayment — وصف تلقائي موجز لوظيفتها.

@@ -24,10 +24,20 @@
    * المدخلات: بدون
    * المخرجات: راجع التنفيذ
    */
+  /**
+   * ملاحظة: الدالة openDB — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   function openDB(){
     if (dbPromise) return dbPromise;
     dbPromise = new Promise((resolve, reject) => {
       const req = indexedDB.open(DB_NAME, DB_VERSION);
+      /**
+       * ملاحظة: الدالة req.onupgradeneeded — وصف تلقائي موجز لوظيفتها.
+       * المدخلات: بدون
+       * المخرجات: راجع التنفيذ
+       */
       req.onupgradeneeded = function(){
         const db = req.result;
         if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
@@ -37,13 +47,28 @@
     });
     return dbPromise;
   }
+  /**
+   * ملاحظة: الدالة idbGet — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: key
+   * المخرجات: راجع التنفيذ
+   */
   async function idbGet(key){
     try { const db = await openDB(); return await new Promise((res, rej)=>{ const tx=db.transaction(STORE,'readonly'); const os=tx.objectStore(STORE); const r=os.get(key); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); } catch { return undefined; }
   }
+  /**
+   * ملاحظة: الدالة idbSet — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: key, val
+   * المخرجات: راجع التنفيذ
+   */
   async function idbSet(key, val){
     try { const db = await openDB(); return await new Promise((res, rej)=>{ const tx=db.transaction(STORE,'readwrite'); const os=tx.objectStore(STORE); const r=os.put(val, key); r.onsuccess=()=>res(true); r.onerror=()=>rej(r.error); }); } catch { return false; }
   }
 
+  /**
+   * ملاحظة: الدالة hasPermission — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: handle, mode='readwrite'
+   * المخرجات: راجع التنفيذ
+   */
   async function hasPermission(handle, mode='readwrite'){
     if (!handle) return false;
     if (await handle.queryPermission({ mode }) === 'granted') return true;
@@ -53,6 +78,11 @@
   async function getBackupHandle(){ return await idbGet('fileHandle'); }
   async function setBackupHandle(h){ return await idbSet('fileHandle', h); }
 
+  /**
+   * ملاحظة: الدالة requestLocalBackupFile — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   async function requestLocalBackupFile(){
     if (!window.showSaveFilePicker) {
       showNotification('المتصفح لا يدعم الحفظ المباشر للملفات. استخدم مزامنة GitHub أو متصفح كروم/إيدج.', 'error');
@@ -75,6 +105,11 @@
     }
   }
 
+  /**
+   * ملاحظة: الدالة writeLocalBackup — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: dataObj
+   * المخرجات: راجع التنفيذ
+   */
   async function writeLocalBackup(dataObj){
     try {
       let handle = await getBackupHandle();
@@ -88,6 +123,11 @@
     } catch (_) { return false; }
   }
 
+  /**
+   * ملاحظة: الدالة updateBackupStatus — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: active
+   * المخرجات: راجع التنفيذ
+   */
   /**
    * ملاحظة: الدالة updateBackupStatus — وصف تلقائي موجز لوظيفتها.
    * المدخلات: active
@@ -112,6 +152,11 @@
 
   // Hook into saveData to mirror backups
   const prevSaveData = window.saveData;
+  /**
+   * ملاحظة: الدالة window.saveData — وصف تلقائي موجز لوظيفتها.
+   * المدخلات: بدون
+   * المخرجات: راجع التنفيذ
+   */
   window.saveData = function(){
     const res = prevSaveData ? prevSaveData() : undefined;
     try { if (typeof window.data !== 'undefined') { writeLocalBackup(window.data); } } catch(_){}

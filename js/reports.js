@@ -344,7 +344,7 @@ function generatePartnerReports() {
   let discountsTableHtml = '';
   if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts')) {
     try {
-      const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate, toDate));
+      const salesInPeriod = (data.sales||[]).filter(s=> inPeriod(s.date, fromDate || '0000-01-01', toDate || '9999-12-31'));
       const rows = salesInPeriod
         .filter(s => s && s.discount && (Number(s.discount.value)||0) > 0)
         .map(s => {
@@ -359,7 +359,7 @@ function generatePartnerReports() {
         const headers = ['التاريخ','المحل','الباقة','الإجمالي','الخصم','الصافي','السبب'];
         discountsTableHtml = renderTable('تفاصيل الخصومات', headers, rows);
       }
-    } catch(_) {}
+    } catch(err) { try { console.warn('PartnerReport discounts table build failed:', err); } catch(_) {} }
   }
 
   const html = `
@@ -757,7 +757,7 @@ function getReportStyles() {
  * المدخلات: periodText, partnersCount, paysList, expsList, totalPays, totalExps, net, perPartner, adjustments = [], partnersList = [], partnerSharesRows = [], monthsData = []
  * المخرجات: راجع التنفيذ
  */
-function buildPartnerReportHTML(periodText, partnersCount, paysList, expsList, totalPays, totalExps, net, perPartner, adjustments = [], partnersList = [], partnerSharesRows = [], monthsData = [], totalDiscounts = 0){
+function buildPartnerReportHTML(periodText, partnersCount, paysList, expsList, totalPays, totalExps, net, perPartner, adjustments = [], partnersList = [], partnerSharesRows = [], monthsData = [], totalDiscounts = 0, fromDate = null, toDate = null){
   const settings = getReportSettings();
   let html='';
   html += '<!doctype html><html lang="ar" dir="rtl">';
@@ -2605,7 +2605,7 @@ function exportPartners(format){
           monthsData.push({ label, totalPays: mTotalPays, totalExps: mTotalExps, totalWithdrawals: mTotalWithdrawals, partnerShares: mPartnerShares, listPays: monthListPays, listExps: monthListExps, adjustments: o.adjs });
         });
       } catch(_) {}
-      const html = buildPartnerReportHTML(text, partners, listPays, listExps, totalPays, totalExps, net, perPartner, adjustments, partnersList, partnerSharesRows, monthsData, (discountsEnabled? totalDiscounts: 0));
+      const html = buildPartnerReportHTML(text, partners, listPays, listExps, totalPays, totalExps, net, perPartner, adjustments, partnersList, partnerSharesRows, monthsData, (discountsEnabled? totalDiscounts: 0), fromDate, toDate);
       const win = window.open('', '_blank'); if (!win || !win.document) { showNotification('يمنع المتصفح النوافذ المنبثقة. الرجاء السماح بها.', 'error'); return; }
       win.document.open(); win.document.write(html); win.document.close();
       showNotification(format==='pdf' ? 'تم فتح صفحة الطباعة. اضغط حفظ كـ PDF.' : 'تم فتح صفحة التقرير.', 'success');

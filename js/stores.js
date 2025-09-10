@@ -1156,20 +1156,68 @@ function toggleFilterType(storeId, type){
 
 // إعادة بناء الجداول وفق الفلترة النشطة
 function updateStoreDetailsWithFilter(storeId){
-  const filter = window.storeFilter.getActiveStoreFilter(storeId) || { data:{ includeTypes:['sale','payment'] } };
+  const filter = window.storeFilter.getActiveStoreFilter(storeId) || { type:'cycle', id:'current_cycle', data:{ includeTypes:['sale','payment'] } };
   const includeSales = filter.data.includeTypes.includes('sale');
   const includePayments = filter.data.includeTypes.includes('payment');
+
+  // اشتقاق نطاق التاريخ من الفلتر
+  const { from, to, description, subtitle } = (function deriveRange(){
+    const today = (typeof moment!=='undefined') ? moment().format('YYYY-MM-DD') : getTodayDate();
+    let fromDate = null, toDate = null, desc = '', sub = '';
+    const parse = (d)=> (typeof formatDateEn==='function') ? formatDateEn(d) : d;
+    const salesAll = (data.sales||[]).filter(s=> s.storeId===storeId);
+    const paysAll = (data.payments||[]).filter(p=> p.storeId===storeId);
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+    const getDisc = (s)=>{ if(!discountsEnabled||!s||!s.discount) return 0; const t=Number(s.total)||0; const v=Number(s.discount.value)||0; return s.discount.type==='percent' ? Math.min(t*v/100, t) : Math.min(v,t); };
+    const tx = [];
+    salesAll.forEach(s=> tx.push({ type:'sale', date: parse(s.date), amount: Math.max(0,(Number(s.total)||0) - getDisc(s)), id:s.id }));
+    paysAll.forEach(p=> tx.push({ type:'payment', date: parse(p.date), amount: Number(p.amount)||0, id:p.id }));
+    tx.sort((a,b)=> a.date.localeCompare(b.date) || (a.type==='payment'?1:-1));
+    function findZeroIndices(){ let bal=0; const zeros=[]; for(let i=0;i<tx.length;i++){ const t=tx[i]; if(t.type==='sale') bal+=t.amount; else if(t.type==='payment') bal-=t.amount; if (Math.abs(bal) < 0.0000001) zeros.push(i); } return {zeros, lastBalance:bal}; }
+    if (filter.type==='cycle'){
+      const {zeros} = findZeroIndices();
+      if (filter.id==='current_cycle'){
+        const lastZero = zeros.length ? zeros[zeros.length-1] : -1;
+        fromDate = (lastZero>=0 && tx[lastZero+1]) ? tx[lastZero+1].date : (tx[0]?tx[0].date:today);
+        toDate = today; desc='الدورة المالية الحالية'; sub='من آخر تصفير حتى الآن';
+      } else if (filter.id==='previous_cycle'){
+        if (zeros.length>=2){
+          const lastZero = zeros[zeros.length-1];
+          const prevZero = zeros[zeros.length-2];
+          fromDate = (tx[prevZero+1]?tx[prevZero+1].date: (tx[0]?tx[0].date: today));
+          toDate = (tx[lastZero]?tx[lastZero].date: today);
+        } else {
+          fromDate = tx[0]?tx[0].date: today; toDate = today;
+        }
+        desc='الدورة السابقة'; sub='الدورة المالية المكتملة السابقة';
+      }
+    } else if (filter.type==='time'){
+      const id = filter.id;
+      if (id==='all_time'){ fromDate = tx[0]?tx[0].date: today; toDate = today; desc='من البداية'; sub='كل العمليات المسجلة'; }
+      else if (id==='today'){ fromDate = today; toDate = today; desc='اليوم'; sub=today; }
+      else if (id==='last_7_days'){ const s=(typeof moment!=='undefined')? moment(today).subtract(6,'days').format('YYYY-MM-DD') : today; fromDate=s; toDate=today; desc='آخر 7 أيام'; sub='آخر أسبوع'; }
+      else if (id==='last_30_days'){ const s=(typeof moment!=='undefined')? moment(today).subtract(29,'days').format('YYYY-MM-DD') : today; fromDate=s; toDate=today; desc='آخر 30 يوم'; sub='آخر شهر'; }
+      else if (id==='this_month'){ const s=(typeof moment!=='undefined')? moment().startOf('month').format('YYYY-MM-DD'): today; fromDate=s; toDate=today; desc='هذا الشهر'; sub='الشهر الحالي'; }
+      else if (id==='last_month'){ if (typeof moment!=='undefined'){ fromDate=moment().subtract(1,'month').startOf('month').format('YYYY-MM-DD'); toDate=moment().subtract(1,'month').endOf('month').format('YYYY-MM-DD'); } else { fromDate=today; toDate=today; } desc='الشهر السابق'; sub='الشهر الماضي'; }
+      else if (id==='custom'){ fromDate = parse(filter.data.from||today); toDate = parse(filter.data.to||today); desc='فترة مخصصة'; sub=`${fromDate} إلى ${toDate}`; }
+    }
+    return { from: fromDate, to: toDate, description: desc, subtitle: sub };
+  })();
+
+  const inPeriod = (d)=>{ if(!from && !to) return true; const x=(typeof formatDateEn==='function')? formatDateEn(d): d; return (!from || x>=from) && (!to || x<=to); };
+
   const salesTBody = document.getElementById('storeSalesTable');
   const paysTBody = document.getElementById('storePaymentsTable');
   if (!salesTBody || !paysTBody) return;
   if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(salesTBody, ''); } else { salesTBody.innerHTML = ''; }
   if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(paysTBody, ''); } else { paysTBody.innerHTML = ''; }
 
-  const sales = (data.sales||[]).filter(s => s.storeId === storeId);
-  const payments = (data.payments||[]).filter(p => p.storeId === storeId);
+  const salesAll = (data.sales||[]).filter(s => s.storeId === storeId && inPeriod(s.date));
+  const paymentsAll = (data.payments||[]).filter(p => p.storeId === storeId && inPeriod(p.date));
 
+  // تعبئة الجداول
   if (includeSales) {
-    sales.forEach(sale => {
+    salesAll.forEach(sale => {
       const pkg = sale.packageId ? data.packages.find(p => p.id === sale.packageId) : null;
       const isCustom = sale.packageId === 'custom';
       const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
@@ -1186,7 +1234,7 @@ function updateStoreDetailsWithFilter(storeId){
         <td>${isCustom ? ('<span class="currency">' + formatNumber(sale.amount) + '</span>') : formatNumber(sale.quantity, false)}</td>
         <td class="currency">${formatNumber(sale.total)}${(discountsEnabled && sale.discount) ? ('<div class="small text-muted">خصم: ' + formatNumber(discountAmount) + ' | صافي: ' + formatNumber(net) + '</div>') : ''}</td>
         <td class="action-buttons">
-          <button class="btn btn-sm btn-warning edit-sale" data-id="${sale.id}"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-sm btn-warning edit-sale" data-id="${sale.id}"><i class="fas را-edit"></i></button>
           <button class="btn btn-sm btn-danger delete-sale" data-id="${sale.id}"><i class="fas fa-trash"></i></button>
         </td>`;
       salesTBody.appendChild(row);
@@ -1194,7 +1242,7 @@ function updateStoreDetailsWithFilter(storeId){
   }
 
   if (includePayments) {
-    payments.forEach(payment => {
+    paymentsAll.forEach(payment => {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${payment.date}</td>
@@ -1207,4 +1255,50 @@ function updateStoreDetailsWithFilter(storeId){
       paysTBody.appendChild(row);
     });
   }
+
+  // ملخص الفلترة
+  updateFilterButton(storeId, { description, subtitle });
+
+  // كشف حساب متحرك إذا كان العرض الزمني ظاهر
+  const timeline = document.getElementById(`timelineViewContent_${storeId}`);
+  const container = document.getElementById(`timelineContainer_${storeId}`);
+  if (timeline && container && timeline.style.display !== 'none') {
+    // حساب الرصيد السابق قبل from
+    const prevBal = (function(){
+      if (!from) return 0;
+      const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+      const salesPrev = (data.sales||[]).filter(s=> s.storeId===storeId && s.date < from);
+      const paysPrev = (data.payments||[]).filter(p=> p.storeId===storeId && p.date < from);
+      const sd = salesPrev.reduce((s,x)=>{ let disc=0; if(discountsEnabled && x.discount){ const t=Number(x.total)||0; const v=Number(x.discount.value)||0; disc = x.discount.type==='percent' ? Math.min(t*v/100,t) : Math.min(v,t);} return s + Math.max(0,(Number(x.total)||0)-disc); },0);
+      const pd = paysPrev.reduce((s,x)=> s + (Number(x.amount)||0), 0);
+      return sd - pd;
+    })();
+    const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
+    const tx = [];
+    if (includeSales) salesAll.forEach(s=>{ let disc=0; if(discountsEnabled&&s.discount){ const t=Number(s.total)||0; const v=Number(s.discount.value)||0; disc=s.discount.type==='percent'?Math.min(t*v/100,t):Math.min(v,t);} tx.push({type:'sale', date: (typeof formatDateEn==='function')?formatDateEn(s.date):s.date, amount: Number(s.total)||0, discount: disc, id:s.id}); });
+    if (includePayments) paymentsAll.forEach(p=> tx.push({type:'payment', date: (typeof formatDateEn==='function')?formatDateEn(p.date):p.date, amount: Number(p.amount)||0, id:p.id}));
+    tx.sort((a,b)=> a.date.localeCompare(b.date) || (a.type==='payment'?1:-1));
+    let running = prevBal; let html='';
+    html += `<div class="mb-2 small text-muted">الفترة: ${from||'—'} إلى ${to||'اليوم'} | الرصيد السابق: <strong class="currency">${formatNumber(running)}</strong></div>`;
+    html += '<div class="timeline">';
+    tx.forEach(t=>{
+      if (t.type==='sale'){ const net = (Number(t.amount)||0) - (Number(t.discount)||0); running += net; html += `<div class="timeline-item"><div class="ti-date">${t.date}</div><div class="ti-type text-danger">بيع</div><div class="ti-amount currency">${formatNumber(t.amount)}</div>${(discountsEnabled&&t.discount)?`<div class=\"ti-discount text-muted\">خصم: ${formatNumber(t.discount)} | صافي: ${formatNumber(net)}</div>`:''}<div class="ti-balance">الرصيد: <span class="currency">${formatNumber(running)}</span></div></div>`; }
+      else { running -= t.amount; html += `<div class="timeline-item"><div class="ti-date">${t.date}</div><div class="ti-type text-success">تسديد</div><div class="ti-amount currency">${formatNumber(t.amount)}</div><div class="ti-balance">الرصيد: <span class="currency">${formatNumber(running)}</span></div></div>`; }
+    });
+    html += '</div>';
+    if (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('safeDomRendering') && typeof setHTML === 'function') { setHTML(container, html); } else { container.innerHTML = html; }
+  }
+}
+
+// فلترة مخصصة بالتاريخ من واجهة المستخدم
+function applyCustomDateFilter(storeId) {
+  const fromInput = document.getElementById(`customStartDate_${storeId}`);
+  const toInput = document.getElementById(`customEndDate_${storeId}`);
+  if (!fromInput || !toInput) { showNotification('يرجى فتح قسم التاريخ المخصص أولاً', 'warning'); return; }
+  const from = fromInput.value ? formatDateEn(fromInput.value) : '';
+  const to = toInput.value ? formatDateEn(toInput.value) : '';
+  const filter = { type:'time', id:'custom', data:{ from, to, includeTypes: getActiveFilterTypes(storeId) }, description:'فترة مخصصة', subtitle: `${from||'—'} إلى ${to||'—'}` };
+  window.storeFilter.setActiveStoreFilter(storeId, filter);
+  updateFilterButton(storeId, filter);
+  updateStoreDetailsWithFilter(storeId);
 }

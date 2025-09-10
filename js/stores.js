@@ -657,7 +657,7 @@ function showStoreDetails(storeId) {
       console.error('Filter button not found');
     }
     
-    if (window.storeFilter) {
+    if (window.storeFilter && typeof updateStoreDetailsWithFilter === 'function') {
       updateStoreDetailsWithFilter(storeId);
     }
   }, 100);
@@ -1061,7 +1061,9 @@ function applyFilter(storeId, type, filterId) {
   }
   
   // تحديث الزر
-  updateFilterButton(storeId, filter);
+  if (typeof updateFilterButton === 'function') {
+    updateFilterButton(storeId, filter);
+  }
   
   // تحديث العرض
   if (typeof updateStoreDetailsWithFilter === 'function') {

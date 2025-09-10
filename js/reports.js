@@ -1057,18 +1057,29 @@ function buildAccountStatementHTML(store, periodText, allTransactions, previousB
   
   // حساب الرصيد المتحرك
   let runningBalance = previousBalance;
+  const discountsEnabled = (typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts'));
   const transactionsWithBalance = allTransactions.map(t => {
+    let delta = 0;
     if (t.type === 'sale') {
-      runningBalance += t.amount;
+      // خصم اختياري لا يظهر إلا عند تفعيل العلم
+      let disc = 0; if (discountsEnabled && t.id) {
+        const s = (data.sales||[]).find(x=> x.id===t.id);
+        if (s && s.discount){ const tt=Number(s.total)||0; const v=Number(s.discount.value)||0; if (s.discount.type==='percent') disc=Math.min(tt*v/100, tt); else if (s.discount.type==='amount') disc=Math.min(v, tt); }
+      }
+      delta = t.amount - (disc||0);
+      runningBalance += delta;
+      return { ...t, discount: (disc||0), netAmount: delta, balance: runningBalance };
     } else if (t.type === 'payment') {
-      runningBalance -= t.amount;
+      delta = t.amount;
+      runningBalance -= delta;
+      return { ...t, balance: runningBalance };
     }
     return { ...t, balance: runningBalance };
   });
   
   // حساب الإجماليات
-  const totalDebits = allTransactions.filter(t => t.type === 'sale').reduce((sum, t) => sum + t.amount, 0);
-  const totalCredits = allTransactions.filter(t => t.type === 'payment').reduce((sum, t) => sum + t.amount, 0);
+  const totalDebits = transactionsWithBalance.filter(t => t.type === 'sale').reduce((sum, t) => sum + (discountsEnabled ? (t.netAmount||t.amount) : t.amount), 0);
+  const totalCredits = transactionsWithBalance.filter(t => t.type === 'payment').reduce((sum, t) => sum + t.amount, 0);
   
   // بناء HTML
   let html = `<!DOCTYPE html>
@@ -1428,7 +1439,7 @@ function buildAccountStatementHTML(store, periodText, allTransactions, previousB
                 <tr class="${rowClass}">
                     <td>${dayTransactionCount}</td>
                     <td>🛍️ بيع: ${packageName}${quantity > 1 ? ` (كمية: ${quantity})` : ''}</td>
-                    <td class="debit">${formatNumber(t.amount)}</td>
+                    <td class="debit">${formatNumber((typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts')) ? (t.netAmount || t.amount) : t.amount)}${(typeof FeatureFlags !== 'undefined' && FeatureFlags.isEnabled('discounts') && t.discount) ? ('<div class="small text-muted">خصم: '+formatNumber(t.discount)+'</div>') : ''}</td>
                     <td>-</td>
                     <td class="${balanceClass}">${formatNumber(Math.abs(t.balance))} ${balanceText}</td>
                     <td>${t.notes || ''}</td>
